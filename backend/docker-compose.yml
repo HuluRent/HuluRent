@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: hulurent
+    ports:
+      - '5432:5432'
+    volumes:
+      - hulurent_db_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/hulurent
+      PORT: 3000
+      NODE_ENV: development
+      JWT_SECRET: change-me-in-production
+      FRONTEND_ORIGIN: http://localhost:5173
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+volumes:
+  hulurent_db_data:
