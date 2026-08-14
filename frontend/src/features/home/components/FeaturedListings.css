@@ -1,0 +1,121 @@
+.featured-listings {
+  padding: 64px 40px;
+  background: #f3f4f5;
+}
+
+.featured-listings__container {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.featured-listings__heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.featured-listings__heading h2 {
+  margin: 0;
+  color: #191c1d;
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 600;
+}
+
+.featured-listings__heading p {
+  margin: 8px 0 0;
+  color: #3f484a;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.featured-listings__heading button {
+  border: none;
+  background: transparent;
+  color: #0d5c63;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.featured-listings__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.featured-listings__mobile-button {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .featured-listings__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .featured-listings {
+    padding: 48px 16px;
+  }
+
+  .featured-listings__heading h2 {
+    font-size: 24px;
+    line-height: 32px;
+  }
+
+  .featured-listings__heading p {
+    font-size: 14px;
+  }
+
+  .featured-listings__heading button {
+    display: none;
+  }
+
+  .featured-listings__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .featured-listings__mobile-button {
+    display: block;
+    width: 100%;
+    margin-top: 24px;
+    padding: 12px 24px;
+    border: 1px solid #0d5c63;
+    border-radius: 8px;
+    background: transparent;
+    color: #0d5c63;
+    font-size: 12px;
+    font-weight: 500;
+  }
+}
+
+.discover-listings-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 32px;
+  padding: 12px 20px;
+
+  border: 1px solid #0d5c63;
+  border-radius: 8px;
+
+  background: transparent;
+  color: #17191a;
+
+  font: inherit;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.discover-listings-button:hover {
+  background: #0d5c63;
+  color: #f8f6f6;
+}
