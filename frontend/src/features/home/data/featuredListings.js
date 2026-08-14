@@ -6,7 +6,7 @@ const featuredListings = [
     rating: 4.9,
     location: 'Bole, Addis Ababa',
     price: 1500,
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD5GqHNDPuNqnFF9sH2llpQIzoNeuZeyVtpp7ABiXUrDKlNeLYlL8cspHgKdukMnB3V7o9og8guHws4a0cF2Xe-uXrsi-rnd9ImRwTIDGKthHMPXbsgKpaagv1P9e61UwPTPKIGGCYii4BkQjJpF7u36TeUFi36pDP70XNLgbmijOau6JFqXIkaRsJGN0hZiMHfpqgtEOv04eq34l2JAUrZWTaF2dX6Pn_P_QQDp9wrX5y9gyfJHDcY',
+    image: 'https://i.pinimg.com/1200x/43/6f/ff/436fff928588b1460d238c779c5acb4e.jpg',
   },
   {
     id: 2,
