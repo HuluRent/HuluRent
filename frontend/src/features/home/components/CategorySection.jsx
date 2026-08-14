@@ -16,7 +16,34 @@ const categories = [
       { name: 'Other Electronics', slug: 'other-electronics' },
     ],
   },
-
+{
+  name: 'Books & Education',
+  slug: 'books-education',
+  icon: 'menu_book',
+  subcategories: [
+    { name: 'Textbooks', slug: 'textbooks' },
+    { name: 'Academic Books', slug: 'academic-books' },
+    { name: 'Professional Books', slug: 'professional-books' },
+    { name: 'Exam Preparation', slug: 'exam-preparation' },
+    { name: 'Novels & Literature', slug: 'novels-literature' },
+    { name: 'Children’s Books', slug: 'childrens-books' },
+    { name: 'Other Books', slug: 'other-books' },
+  ],
+},
+{
+  name: 'Musical Instruments',
+  slug: 'musical-instruments',
+  icon: 'music_note',
+  subcategories: [
+    { name: 'Guitars', slug: 'guitars' },
+    { name: 'Keyboards & Pianos', slug: 'keyboards-pianos' },
+    { name: 'Drums & Percussion', slug: 'drums-percussion' },
+    { name: 'String Instruments', slug: 'string-instruments' },
+    { name: 'Wind Instruments', slug: 'wind-instruments' },
+    { name: 'DJ Equipment', slug: 'dj-equipment' },
+    { name: 'Other Instruments', slug: 'other-instruments' },
+  ],
+},
   {
     name: 'Furniture',
     slug: 'furniture',
@@ -86,7 +113,7 @@ const categories = [
       { name: 'Bicycles', slug: 'bicycles' },
       { name: 'Outdoor Equipment', slug: 'outdoor-equipment' },
       { name: 'Fitness Equipment', slug: 'fitness-equipment' },
-      { name: 'Musical Instruments', slug: 'musical-instruments' },
+   
       { name: 'Other Outdoor Gear', slug: 'other-outdoor-gear' },
     ],
   },

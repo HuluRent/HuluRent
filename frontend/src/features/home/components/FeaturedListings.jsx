@@ -13,9 +13,7 @@ function FeaturedListings() {
             <p>High-quality gear available near you.</p>
           </div>
 
-          <button type="button">
-            View all
-          </button>
+          
         </div>
 
         <div className="featured-listings__grid">
@@ -27,15 +25,19 @@ function FeaturedListings() {
           ))}
         </div>
 
-        <button
-          type="button"
-          className="featured-listings__mobile-button"
-        >
-          View All Listings
-        </button>
+       <button
+  type="button"
+  className="discover-listings-button"
+>
+  Discover All Listings
+  <span className="material-symbols-outlined">
+    arrow_forward
+  </span>
+</button>
       </div>
     </section>
   );
 }
 
 export default FeaturedListings;
+
