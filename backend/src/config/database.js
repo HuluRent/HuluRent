@@ -1,2 +1,5 @@
-// Prisma client instantiation, exported as a singleton
-// TODO: implement
+const { PrismaClient } = require('@prisma/client');
+
+const prisma = new PrismaClient();
+
+module.exports = { prisma };
