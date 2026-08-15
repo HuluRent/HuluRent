@@ -7,7 +7,7 @@
 // prisma/migrations/manual/booking_overlap_constraint.sql (this repo).
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
 }
 
 datasource db {
@@ -72,96 +72,96 @@ enum ReportStatus {
 // ── Core entities ────────────────────────────────────────────────────
 
 model User {
-  id                   String                @id @default(uuid())
-  email                String                @unique
-  phone                String?               @unique
-  passwordHash         String
-  role                 Role                  @default(USER)
-  createdAt            DateTime              @default(now())
-  updatedAt            DateTime              @updatedAt
+  id           String   @id @default(uuid())
+  email        String   @unique
+  phone        String?  @unique
+  passwordHash String
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   profile              Profile?
   identityVerification IdentityVerification?
 
-  itemsOwned           Item[]                @relation("ItemOwner")
-  bookingsAsOwner      Booking[]             @relation("BookingOwner")
-  bookingsAsRenter     Booking[]             @relation("BookingRenter")
+  itemsOwned       Item[]    @relation("ItemOwner")
+  bookingsAsOwner  Booking[] @relation("BookingOwner")
+  bookingsAsRenter Booking[] @relation("BookingRenter")
 
-  conversations        ConversationParticipant[]
-  messagesSent         Message[]
+  conversations ConversationParticipant[]
+  messagesSent  Message[]
 
-  evidenceSubmitted    Evidence[]
+  evidenceSubmitted Evidence[]
 
-  reviewsWritten       Review[]              @relation("ReviewAuthor")
-  reviewsReceived      Review[]              @relation("ReviewSubject")
+  reviewsWritten  Review[] @relation("ReviewAuthor")
+  reviewsReceived Review[] @relation("ReviewSubject")
 
-  reportsFiled         Report[]              @relation("ReportAuthor")
-  reportsAgainst       Report[]              @relation("ReportSubject")
+  reportsFiled   Report[] @relation("ReportAuthor")
+  reportsAgainst Report[] @relation("ReportSubject")
 
-  notifications        Notification[]
-  auditEvents          AuditEvent[]
+  notifications Notification[]
+  auditEvents   AuditEvent[]
 
   @@index([email])
 }
 
 model Profile {
-  id           String   @id @default(uuid())
-  userId       String   @unique
-  user         User     @relation(fields: [userId], references: [id])
-  displayName  String
-  bio          String?
-  avatarUrl    String?
-  city         String?
-  latitude     Float?
-  longitude    Float?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  displayName String
+  bio         String?
+  avatarUrl   String?
+  city        String?
+  latitude    Float?
+  longitude   Float?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model IdentityVerification {
-  id           String             @id @default(uuid())
-  userId       String             @unique
-  user         User               @relation(fields: [userId], references: [id])
-  status       VerificationStatus @default(UNVERIFIED)
-  provider     String?
-  reference    String?
-  verifiedAt   DateTime?
-  createdAt    DateTime           @default(now())
-  updatedAt    DateTime           @updatedAt
+  id         String             @id @default(uuid())
+  userId     String             @unique
+  user       User               @relation(fields: [userId], references: [id])
+  status     VerificationStatus @default(UNVERIFIED)
+  provider   String?
+  reference  String?
+  verifiedAt DateTime?
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
 }
 
 model Category {
-  id        String   @id @default(uuid())
-  name      String   @unique
-  slug      String   @unique
-  parentId  String?
-  parent    Category? @relation("CategoryParent", fields: [parentId], references: [id])
-  children  Category[] @relation("CategoryParent")
+  id       String     @id @default(uuid())
+  name     String     @unique
+  slug     String     @unique
+  parentId String?
+  parent   Category?  @relation("CategoryParent", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryParent")
 
-  items     Item[]
+  items Item[]
 }
 
 model Item {
-  id             String        @id @default(uuid())
-  ownerId        String
-  owner          User          @relation("ItemOwner", fields: [ownerId], references: [id])
-  categoryId     String
-  category       Category      @relation(fields: [categoryId], references: [id])
+  id         String   @id @default(uuid())
+  ownerId    String
+  owner      User     @relation("ItemOwner", fields: [ownerId], references: [id])
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
 
-  name           String
-  description    String
-  pricePerUnit   Decimal       @db.Decimal(10, 2)
-  pricingUnit    String        // e.g. "day", "hour"
-  depositAmount  Decimal?      @db.Decimal(10, 2)
+  name          String
+  description   String
+  pricePerUnit  Decimal  @db.Decimal(10, 2)
+  pricingUnit   String // e.g. "day", "hour"
+  depositAmount Decimal? @db.Decimal(10, 2)
 
   latitude       Float
   longitude      Float
-  approxLocation String        // e.g. "Bole" — public-facing, not exact address
+  approxLocation String // e.g. "Bole" — public-facing, not exact address
 
-  status         ListingStatus @default(DRAFT)
+  status ListingStatus @default(DRAFT)
 
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   images         ItemImage[]
   availabilities Availability[]
@@ -207,27 +207,27 @@ model Availability {
 // a follow-up raw migration rather than in this schema file.
 
 model Booking {
-  id          String        @id @default(uuid())
-  itemId      String
-  item        Item          @relation(fields: [itemId], references: [id])
-  ownerId     String
-  owner       User          @relation("BookingOwner", fields: [ownerId], references: [id])
-  renterId    String
-  renter      User          @relation("BookingRenter", fields: [renterId], references: [id])
+  id       String @id @default(uuid())
+  itemId   String
+  item     Item   @relation(fields: [itemId], references: [id])
+  ownerId  String
+  owner    User   @relation("BookingOwner", fields: [ownerId], references: [id])
+  renterId String
+  renter   User   @relation("BookingRenter", fields: [renterId], references: [id])
 
   startDate   DateTime
   endDate     DateTime
   agreedPrice Decimal       @db.Decimal(10, 2)
   status      BookingStatus @default(REQUESTED)
 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  agreements  RentalAgreement[]
-  inspections Inspection[]
-  evidence    Evidence[]
+  agreements   RentalAgreement[]
+  inspections  Inspection[]
+  evidence     Evidence[]
   conversation Conversation?
-  reviews     Review[]
+  reviews      Review[]
 
   @@index([itemId, status])
   @@index([ownerId])
@@ -235,28 +235,28 @@ model Booking {
 }
 
 model RentalAgreement {
-  id            String   @id @default(uuid())
-  bookingId     String
-  booking       Booking  @relation(fields: [bookingId], references: [id])
-  version       Int      @default(1)
-  terms         Json     // permitted use, return expectations, cancellation terms, etc.
-  ownerAccepted Boolean  @default(false)
-  renterAccepted Boolean @default(false)
-  createdAt     DateTime @default(now())
+  id             String   @id @default(uuid())
+  bookingId      String
+  booking        Booking  @relation(fields: [bookingId], references: [id])
+  version        Int      @default(1)
+  terms          Json // permitted use, return expectations, cancellation terms, etc.
+  ownerAccepted  Boolean  @default(false)
+  renterAccepted Boolean  @default(false)
+  createdAt      DateTime @default(now())
 
   @@unique([bookingId, version])
   @@index([bookingId])
 }
 
 model Inspection {
-  id        String            @id @default(uuid())
-  bookingId String
-  booking   Booking           @relation(fields: [bookingId], references: [id])
+  id          String           @id @default(uuid())
+  bookingId   String
+  booking     Booking          @relation(fields: [bookingId], references: [id])
   scheduledAt DateTime
-  status    InspectionStatus  @default(REQUESTED)
-  notes     String?
-  createdAt DateTime          @default(now())
-  updatedAt DateTime          @updatedAt
+  status      InspectionStatus @default(REQUESTED)
+  notes       String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 }
 
 model Conversation {
@@ -292,71 +292,71 @@ model Message {
 }
 
 model Evidence {
-  id           String       @id @default(uuid())
-  bookingId    String
-  booking      Booking      @relation(fields: [bookingId], references: [id])
-  submittedById String
-  submittedBy  User         @relation(fields: [submittedById], references: [id])
-  type         EvidenceType
-  photoUrls    String[]
-  conditionNotes String?
-  acknowledgedByOwner  Boolean @default(false)
-  acknowledgedByRenter Boolean @default(false)
-  createdAt    DateTime     @default(now())
+  id                   String       @id @default(uuid())
+  bookingId            String
+  booking              Booking      @relation(fields: [bookingId], references: [id])
+  submittedById        String
+  submittedBy          User         @relation(fields: [submittedById], references: [id])
+  type                 EvidenceType
+  photoUrls            String[]
+  conditionNotes       String?
+  acknowledgedByOwner  Boolean      @default(false)
+  acknowledgedByRenter Boolean      @default(false)
+  createdAt            DateTime     @default(now())
 
   @@index([bookingId, type])
 }
 
 model Review {
-  id          String   @id @default(uuid())
-  bookingId   String
-  booking     Booking  @relation(fields: [bookingId], references: [id])
-  authorId    String
-  author      User     @relation("ReviewAuthor", fields: [authorId], references: [id])
-  subjectId   String
-  subject     User     @relation("ReviewSubject", fields: [subjectId], references: [id])
-  rating      Int      // 1–5
-  comment     String?
-  createdAt   DateTime @default(now())
+  id        String   @id @default(uuid())
+  bookingId String
+  booking   Booking  @relation(fields: [bookingId], references: [id])
+  authorId  String
+  author    User     @relation("ReviewAuthor", fields: [authorId], references: [id])
+  subjectId String
+  subject   User     @relation("ReviewSubject", fields: [subjectId], references: [id])
+  rating    Int // 1–5
+  comment   String?
+  createdAt DateTime @default(now())
 
   @@unique([bookingId, authorId])
   @@index([subjectId])
 }
 
 model Report {
-  id          String       @id @default(uuid())
-  authorId    String
-  author      User         @relation("ReportAuthor", fields: [authorId], references: [id])
-  subjectId   String?
-  subject     User?        @relation("ReportSubject", fields: [subjectId], references: [id])
-  reason      String
-  details     String?
-  status      ReportStatus @default(OPEN)
-  createdAt   DateTime     @default(now())
-  resolvedAt  DateTime?
+  id         String       @id @default(uuid())
+  authorId   String
+  author     User         @relation("ReportAuthor", fields: [authorId], references: [id])
+  subjectId  String?
+  subject    User?        @relation("ReportSubject", fields: [subjectId], references: [id])
+  reason     String
+  details    String?
+  status     ReportStatus @default(OPEN)
+  createdAt  DateTime     @default(now())
+  resolvedAt DateTime?
 }
 
 model Notification {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
   type      String
   payload   Json
   readAt    DateTime?
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 
   @@index([userId, readAt])
 }
 
 model AuditEvent {
-  id        String   @id @default(uuid())
-  actorId   String?
-  actor     User?    @relation(fields: [actorId], references: [id])
-  action    String
+  id         String   @id @default(uuid())
+  actorId    String?
+  actor      User?    @relation(fields: [actorId], references: [id])
+  action     String
   entityType String
-  entityId  String
-  metadata  Json?
-  createdAt DateTime @default(now())
+  entityId   String
+  metadata   Json?
+  createdAt  DateTime @default(now())
 
   @@index([entityType, entityId])
 }
