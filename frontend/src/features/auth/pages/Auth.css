@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap');
 
 .hr-login {
-  --hr-primary: #0F3D31;
-  --hr-primary-hover: #123F32;
-  --hr-accent: #1C6B54;
+  --hr-primary:#004349;
+  --hr-primary-hover: #004349;
+  --hr-accent: #004349;
   --hr-bg: #FAF6EF;
   --hr-card: #FFFFFF;
   --hr-text: #1C1C1A;
@@ -33,7 +33,7 @@
   justify-content: center;
   min-height: 100vh;
   padding: 3rem;
-  background: var(--hr-primary, #1F3D32);
+  background: var(--hr-primary, #004349);
   color: #FFFFFF;
   overflow: hidden;
 }
@@ -146,14 +146,21 @@
     align-items: flex-start;
   }
 
-  .hr-auth__mobile-logo {
-    display: block;
-    position: absolute;
-    top: 1.25rem;
-    left: 1.25rem;
-    font-size: 1.25rem;
-    font-weight: 800;
-  }
+ .hr-login__logo {
+  flex-shrink: 0;
+
+  color: var(--color-primary);
+  font-size: 32px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+
+  transition: color 0.2s ease;
+}
+
+.hr-login__logo:hover {
+  color: var(--color-primary-container);
+}
 
   .hr-card {
     margin-top: 3.5rem;
@@ -178,7 +185,7 @@
 
 .hr-login__logo {
   font-family: 'Fraunces', serif;
-  font-weight: 600;
+  font-weight: 700;
   font-size: 1.35rem;
   letter-spacing: 0.01em;
   margin-bottom: 3.5rem;
@@ -217,7 +224,7 @@
   align-items: center;
   justify-content: center;
 }
-
+/*
 .hr-still-life__item svg { width: 60%; height: 60%; }
 
 .hr-still-life__item--camera   { width: 108px; height: 88px;  top: 0;    left: 0; }
@@ -262,6 +269,7 @@
   color: var(--hr-muted);
   font-size: 0.95rem;
   margin: 0 0 1.75rem;
+  position: center;
 }
 
 .hr-alert {

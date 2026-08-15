@@ -99,7 +99,7 @@ export default function Login() {
 
       {/* RIGHT — auth card */}
       <main className="hr-login__main">
-        <div className="hr-login__mobile-logo">HuluRent</div>
+        <div className="hr-login__logo">HuluRent</div>
 
         <div className="hr-card">
           <h2 className="hr-card__title">Log in to HuluRent</h2>
