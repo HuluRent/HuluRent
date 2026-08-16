@@ -1,5 +1,5 @@
 // Parses req, calls evidence.service, shapes HTTP response
-// TODO: implement
+
 const evidenceService = require('./evidence.service');
 const asyncHandler = require('../../shared/utils/async-handler');
 const { ValidationError } = require('../../shared/errors/ValidationError');

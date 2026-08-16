@@ -1,5 +1,5 @@
 // Prisma queries for RentalAgreement
-// TODO: implement
+
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 

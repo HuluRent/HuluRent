@@ -1,5 +1,5 @@
 // Business logic for evidence submission, acknowledgement, ownership checks
-// TODO: implement
+
 const evidenceRepository = require('./evidence.repository');
 const { ValidationError } = require('../../shared/errors/ValidationError');
 

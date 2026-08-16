@@ -1,5 +1,5 @@
 // Business logic — generate agreement from template, record acceptance, versioning
-// TODO: implement
+
 const agreementsRepository = require('./agreements.repository');
 const { NotFoundError } = require('../../shared/errors/NotFoundError');
 const { ValidationError } = require('../../shared/errors/ValidationError');
