@@ -1,2 +1,13 @@
-// Redirects unauthenticated users to login — UX convenience only, backend re-checks everything
-// TODO: implement
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+
+export default function ProtectedRoute() {
+  const { user } = useAuth();
+  const location = useLocation();
+
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return <Outlet />;
+}
