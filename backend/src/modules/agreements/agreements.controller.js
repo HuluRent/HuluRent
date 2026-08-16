@@ -1,5 +1,5 @@
 // Parses req, calls agreements.service, shapes HTTP response
-// TODO: implement
+
 const agreementsService = require('./agreements.service');
 const asyncHandler = require('../../shared/utils/async-handler');
 

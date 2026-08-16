@@ -1,5 +1,4 @@
-// Express routes for pickup/return evidence submission.
-// TODO: add real route handlers — wire middleware (authenticate, authorize,
+
 // ownershipGuard, validateRequest) in order, then delegate to the controller.
 
 const express = require('express');

@@ -1,5 +1,5 @@
 // Single source of truth for legal booking status transitions
-// TODO: implement
+
 // 1. Import our custom error handler for validation issues
 const { ValidationError } = require('../../shared/errors/ValidationError');
 
