@@ -6,27 +6,25 @@ async function main() {
 
   // 1. Create Categories
   console.log('Seeding categories...');
-  
-  const categoryNames = [
-    'Electronics',
-    'Cameras',
-    'Tools',
-    'Camping',
-    'Event Gear',
-    'Furniture'
-  ];
+  const catElectronics = await prisma.category.upsert({
+    where: { slug: 'electronics' },
+    update: {},
+    create: {
+      name: 'Electronics',
+      slug: 'electronics',
+    },
+  });
 
-  const categories = {};
-  for (const name of categoryNames) {
-    const slug = name.toLowerCase().replace(/\s+/g, '-');
-    categories[slug] = await prisma.category.upsert({
-      where: { slug },
-      update: {},
-      create: { name, slug },
-    });
-  }
+  const catTools = await prisma.category.upsert({
+    where: { slug: 'tools' },
+    update: {},
+    create: {
+      name: 'Tools',
+      slug: 'tools',
+    },
+  });
 
-  const catElectronics = categories['electronics'];
+
   
   // 2. Create a Test User
   console.log('Seeding test user...');

@@ -19,7 +19,6 @@ const env = {
   nodeEnv: requireEnv('NODE_ENV', 'development'),
   databaseUrl: requireEnv('DATABASE_URL'),
   jwtSecret: requireEnv('JWT_SECRET'),
-  jwtRefreshSecret: requireEnv('JWT_REFRESH_SECRET'),
   frontendOrigin: requireEnv('FRONTEND_ORIGIN', 'http://localhost:5173'),
 };
 

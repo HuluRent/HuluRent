@@ -1,5 +1,5 @@
 // Express routes for rental agreement view/accept.
-
+// TODO: add real route handlers — wire middleware (authenticate, authorize,
 // ownershipGuard, validateRequest) in order, then delegate to the controller.
 
 const express = require('express');
