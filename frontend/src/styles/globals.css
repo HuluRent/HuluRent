@@ -36,3 +36,53 @@ body {
   background-color: theme('colors.outline-variant');
   border-radius: 20px;
 }
+/* Legacy CSS variable compatibility
+ * Used by recovered components such as Navbar.css.
+ * Values intentionally mirror the Tailwind design tokens.
+ */
+
+:root {
+  --color-primary: #004349;
+  --color-primary-container: #0d5c63;
+  --color-primary-light: #8fd1d9;
+
+  --color-background: #f8f9fa;
+  --color-surface: #ffffff;
+  --color-surface-low: #f3f4f5;
+  --color-surface-container: #edeeef;
+  --color-surface-variant: #e1e3e4;
+
+  --color-text: #191c1d;
+  --color-text-secondary: #3f484a;
+  --color-text-muted: #6f797a;
+
+  --color-border: #bfc8c9;
+  --color-accent: #d4a373;
+
+  --color-error: #ba1a1a;
+  --color-error-light: #ffdad6;
+
+  --font-sans: 'Inter', sans-serif;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+
+  --page-padding-mobile: 16px;
+  --page-padding-tablet: 24px;
+  --page-padding-desktop: 40px;
+
+  --content-gutter: 24px;
+  --container-max: 1280px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  --shadow-subtle: 0 2px 12px rgba(45, 49, 66, 0.06);
+  --shadow-hover: 0 8px 24px rgba(45, 49, 66, 0.12);
+}
