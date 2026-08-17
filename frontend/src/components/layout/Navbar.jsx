@@ -19,7 +19,8 @@ export function Navbar() {
   return (
     <>
       {/* Desktop / top header */}
-      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-margin-mobile md:px-margin-desktop bg-surface max-w-container-max mx-auto h-[72px] border-b border-outline-variant">
+<header className="fixed top-0 left-0 w-full z-50 bg-surface border-b border-outline-variant">
+  <div className="max-w-container-max mx-auto h-[72px] flex justify-between items-center px-margin-mobile md:px-margin-desktop">
         <div className="flex items-center gap-stack-lg">
           <Link to="/" className="font-headline-lg text-headline-lg font-bold text-primary">
             HuluRent
@@ -85,6 +86,7 @@ export function Navbar() {
               </Link>
             </>
           )}
+          </div>
         </div>
       </header>
 
