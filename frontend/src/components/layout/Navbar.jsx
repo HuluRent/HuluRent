@@ -32,9 +32,9 @@ export function Navbar() {
               Browse
             </Link>
             {/* TODO: no "How it Works" route yet — marketing page, not in router.jsx */}
-            <span className="text-on-surface-variant font-label-sm text-label-sm cursor-default">
+            <a href="#" className="text-on-surface-variant font-label-sm text-label-sm">
               How it Works
-            </span>
+            </a>
           </nav>
         </div>
 

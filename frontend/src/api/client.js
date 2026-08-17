@@ -1,2 +1,10 @@
-// Shared axios/fetch instance — base URL, JWT header injection, 401 interceptor
-// TODO: implement
+import axios from 'axios';
+
+const client = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || '',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+export default client;
