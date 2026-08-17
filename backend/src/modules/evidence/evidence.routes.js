@@ -1,27 +1,13 @@
-
+// Express routes for pickup/return evidence submission.
+// TODO: add real route handlers — wire middleware (authenticate, authorize,
 // ownershipGuard, validateRequest) in order, then delegate to the controller.
 
-const express = require('express');
-const router = express.Router();
+const { Router } = require('express');
 
-const evidenceController = require('./evidence.controller');
-const authenticate = require('../../shared/middleware/authenticate');
-const upload = require('../../shared/middleware/upload'); // Your multer configuration
+const evidenceRouter = Router();
 
-// 1. POST route to upload a condition photo
-// 'photo' matches the key name the frontend must use in FormData
-router.post(
-  '/:bookingId',
-  authenticate,
-  upload.single('photo'), 
-  evidenceController.uploadEvidence
-);
+// Example shape once implemented:
+// router.get('/', asyncHandler(controller.list));
+// router.post('/', authenticate, validateRequest(schema), asyncHandler(controller.create));
 
-// 2. GET route to view all evidence photos for a booking
-router.get(
-  '/:bookingId',
-  authenticate,
-  evidenceController.getBookingEvidence
-);
-
-module.exports = router;
+module.exports = { evidenceRouter };
