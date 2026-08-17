@@ -1,0 +1,561 @@
+
+
+[
+  {
+    "id": "FE-01",
+    "title": "chore(frontend): implement formatDate.js and validators.js",
+    "area": "Utils",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "none",
+    "labels": [
+      "frontend",
+      "chore"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-02",
+    "title": "chore(frontend): implement geo.js, useDebounce.js, useGeolocation.js",
+    "area": "Utils / Hooks",
+    "description": "",
+    "acceptance_criteria": "useGeolocation degrades gracefully (no crash) if the user denies location permission.",
+    "priority": "P1",
+    "complexity": "S",
+    "dependencies": "none",
+    "labels": [
+      "frontend",
+      "chore"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-03",
+    "title": "fix(frontend): resolve useLogin/useRegister/useSession vs. AuthContext redundancy",
+    "area": "Auth",
+    "description": "Decide whether auth pages call useAuth().login() directly or through the currently-unused hook wrappers — pick one pattern before building the login form, don't leave both half-built.",
+    "acceptance_criteria": "Decision documented in a code comment in AuthContext.jsx or the hooks themselves · unused files either implemented or deleted, not left as dead stubs.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "none",
+    "labels": [
+      "frontend",
+      "auth"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-04",
+    "title": "feat(frontend): build LoginPage form UI",
+    "area": "Auth",
+    "description": "",
+    "acceptance_criteria": "Email/password fields with validation (FE-01) · loading state during submit · error message on 401 · redirects to the page the user was trying to reach before being bounced to login (ProtectedRoute's state.from).",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "FE-03",
+    "labels": [
+      "frontend",
+      "auth"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-05",
+    "title": "feat(frontend): build RegisterPage form UI",
+    "area": "Auth",
+    "description": "",
+    "acceptance_criteria": "Same pattern as FE-04 · 409 (duplicate email) shown as a clear inline error, not a generic failure message.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "FE-03",
+    "labels": [
+      "frontend",
+      "auth"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-06",
+    "title": "feat(frontend): implement users.api.js and ProfilePage",
+    "area": "Profile",
+    "description": "",
+    "acceptance_criteria": "View + edit form, only sends changed fields on PATCH (matches api-reference.md's partial-update contract).",
+    "priority": "P1",
+    "complexity": "M",
+    "dependencies": "BE-14",
+    "labels": [
+      "frontend",
+      "profile"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-07",
+    "title": "feat(frontend): implement listings.api.js",
+    "area": "Listings",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "BE-17",
+    "labels": [
+      "frontend",
+      "listings"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-08",
+    "title": "feat(frontend): build ListingForm shared component",
+    "area": "Listings",
+    "description": "Shared between create and edit — see ARCHITECTURE.md §4's note on this pattern.",
+    "acceptance_criteria": "Category picker uses useCategories (already built) · price/deposit fields validate as positive decimals.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "FE-07",
+    "labels": [
+      "frontend",
+      "listings"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-09",
+    "title": "feat(frontend): build ListingCreatePage and ListingEditPage",
+    "area": "Listings",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "FE-08",
+    "labels": [
+      "frontend",
+      "listings"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-10",
+    "title": "feat(frontend): build MyListingsPage",
+    "area": "Listings",
+    "description": "",
+    "acceptance_criteria": "Shows all statuses including DRAFT, matches GET /listings/mine.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "FE-07",
+    "labels": [
+      "frontend",
+      "listings"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-11",
+    "title": "feat(frontend): build ListingDetailPage + ListingGallery",
+    "area": "Listings",
+    "description": "",
+    "acceptance_criteria": "Non-owner viewing a DRAFT listing sees a proper 403/not-found state, not a crash · gallery handles zero, one, and many images.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "FE-07",
+    "labels": [
+      "frontend",
+      "listings"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-12",
+    "title": "feat(frontend): implement listing image upload UI",
+    "area": "Listings",
+    "description": "",
+    "acceptance_criteria": "Multi-file select, preview before upload, progress/error state.",
+    "priority": "P1",
+    "complexity": "M",
+    "dependencies": "BE-19, FE-11",
+    "labels": [
+      "frontend",
+      "listings"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-13",
+    "title": "feat(frontend): implement availability.api.js + real AvailabilityCalendar",
+    "area": "Availability / Bookings",
+    "description": "One component, two modes — owner-editable (listings feature) and renter-read-only (reused inside the booking request form, per ARCHITECTURE.md §4.2's explicit note on this).",
+    "acceptance_criteria": "A display bug here shouldn't be possible to ship without both modes being tested, since it directly risks double-booking attempts.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "BE-21",
+    "labels": [
+      "frontend",
+      "availability",
+      "bookings"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-14",
+    "title": "feat(frontend): implement bookings.api.js",
+    "area": "Bookings",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "BE-24",
+    "labels": [
+      "frontend",
+      "bookings"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-15",
+    "title": "feat(frontend): build BookingRequestForm + BookingRequestPage",
+    "area": "Bookings",
+    "description": "",
+    "acceptance_criteria": "Uses the read-only AvailabilityCalendar (FE-13) to prevent selecting already-booked dates client-side · shows the backend's 409 conflict message clearly if a race happens anyway.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "FE-13, FE-14",
+    "labels": [
+      "frontend",
+      "bookings"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-16",
+    "title": "feat(frontend): build BookingDetailPage + BookingTimeline + BookingStatusBadge",
+    "area": "Bookings",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "FE-14",
+    "labels": [
+      "frontend",
+      "bookings"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-17",
+    "title": "feat(frontend): build MyBookingsPage with owner/renter toggle",
+    "area": "Bookings",
+    "description": "",
+    "acceptance_criteria": "Calls GET /bookings/mine twice (once per role) per the documented contract, not once expecting both.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "FE-14",
+    "labels": [
+      "frontend",
+      "bookings"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-18",
+    "title": "feat(frontend): wire booking transition actions (accept/reject/confirm/cancel)",
+    "area": "Bookings",
+    "description": "",
+    "acceptance_criteria": "Buttons only shown to the correct actor per state (owner sees accept/reject on REQUESTED, etc.) · optimistic UI update, rolled back on error.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "FE-16, BE-26",
+    "labels": [
+      "frontend",
+      "bookings"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-19",
+    "title": "feat(frontend): implement agreements.api.js + AgreementViewer + AgreementReviewPage",
+    "area": "Agreements",
+    "description": "",
+    "acceptance_criteria": "Displays the off-platform handoff clause prominently, not buried — this is a disclosed policy, not fine print.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "BE-28",
+    "labels": [
+      "frontend",
+      "agreements"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-20",
+    "title": "feat(frontend): implement inspections.api.js + InspectionScheduler + InspectionPage",
+    "area": "Inspections",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P1",
+    "complexity": "M",
+    "dependencies": "BE-29",
+    "labels": [
+      "frontend",
+      "inspections"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-21",
+    "title": "feat(frontend): implement messaging.api.js + ConversationList",
+    "area": "Messaging",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P1",
+    "complexity": "M",
+    "dependencies": "BE-30",
+    "labels": [
+      "frontend",
+      "messaging"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-22",
+    "title": "feat(frontend): build MessageThread + MessageInput + ChatPage",
+    "area": "Messaging",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P1",
+    "complexity": "M",
+    "dependencies": "FE-21",
+    "labels": [
+      "frontend",
+      "messaging"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-23",
+    "title": "feat(frontend): implement real SocketContext + wire real-time messaging",
+    "area": "Messaging",
+    "description": "One shared connection app-wide (per ARCHITECTURE.md §4.2), not one per component.",
+    "acceptance_criteria": "Falls back gracefully (still works via REST refresh) if the socket disconnects.",
+    "priority": "P2",
+    "complexity": "L",
+    "dependencies": "BE-31, FE-22",
+    "labels": [
+      "frontend",
+      "messaging",
+      "websocket"
+    ],
+    "role": "Frontend (first cut if behind schedule — see schedule.md)"
+  },
+  {
+    "id": "FE-24",
+    "title": "feat(frontend): implement evidence.api.js + PhotoUploader",
+    "area": "Evidence",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "BE-32",
+    "labels": [
+      "frontend",
+      "evidence"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-25",
+    "title": "feat(frontend): build ConditionForm + PickupDocumentationPage + ReturnDocumentationPage",
+    "area": "Evidence",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "FE-24, BE-33",
+    "labels": [
+      "frontend",
+      "evidence"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-26",
+    "title": "feat(frontend): implement reviews.api.js + ReviewForm + ReviewSubmitPage",
+    "area": "Reviews",
+    "description": "",
+    "acceptance_criteria": "Only reachable/enabled for COMPLETED bookings not yet reviewed by this user.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "BE-34",
+    "labels": [
+      "frontend",
+      "reviews"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-27",
+    "title": "feat(frontend): implement reports.api.js + ReportForm + ReportPage",
+    "area": "Reports",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P1",
+    "complexity": "S",
+    "dependencies": "BE-35",
+    "labels": [
+      "frontend",
+      "reports"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-28",
+    "title": "feat(frontend): implement notifications.api.js + NotificationBell + NotificationsPage",
+    "area": "Notifications",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P2",
+    "complexity": "M",
+    "dependencies": "BE-39",
+    "labels": [
+      "frontend",
+      "notifications"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-29",
+    "title": "feat(frontend): implement admin.api.js",
+    "area": "Admin",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P2",
+    "complexity": "S",
+    "dependencies": "BE-36, BE-38",
+    "labels": [
+      "frontend",
+      "admin"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-30",
+    "title": "feat(frontend): build AdminDashboardPage",
+    "area": "Admin",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P2",
+    "complexity": "S",
+    "dependencies": "FE-29",
+    "labels": [
+      "frontend",
+      "admin"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-31",
+    "title": "feat(frontend): build AdminReportsPage + ModerationQueue",
+    "area": "Admin",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P2",
+    "complexity": "M",
+    "dependencies": "FE-29",
+    "labels": [
+      "frontend",
+      "admin"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-32",
+    "title": "feat(frontend): build AdminUsersPage + AuditLogTable",
+    "area": "Admin",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P2",
+    "complexity": "M",
+    "dependencies": "FE-29",
+    "labels": [
+      "frontend",
+      "admin"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-33",
+    "title": "fix(frontend): consistent loading/error state pass across all pages",
+    "area": "Polish",
+    "description": "Every page that fetches data should use LoadingSpinner/EmptyState the same way SearchPage already does — check for pages that were built before this pattern was established, or built quickly under time pressure.",
+    "acceptance_criteria": "",
+    "priority": "P1",
+    "complexity": "M",
+    "dependencies": "most feature work above",
+    "labels": [
+      "frontend",
+      "polish"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-34",
+    "title": "fix(frontend): responsive design QA pass",
+    "area": "Polish",
+    "description": "",
+    "acceptance_criteria": "Every page tested at mobile width, including the fixed bottom nav not overlapping page content (check pb-24 pattern from AppShell.jsx is applied consistently).",
+    "priority": "P1",
+    "complexity": "M",
+    "dependencies": "most feature work above",
+    "labels": [
+      "frontend",
+      "polish"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-35",
+    "title": "feat(frontend): resolve the Favorites scope decision",
+    "area": "Product Decision",
+    "description": "Currently local-only, unpersisted state in ListingCard.jsx — a real product decision, not a bug. Either descope it from the UI entirely, or write it up as a real feature (schema + endpoint + doc) and hand it to backend.",
+    "acceptance_criteria": "A decision is made and reflected consistently — not half-built forever.",
+    "priority": "P2",
+    "complexity": "S (decision) / M (if building it for real)",
+    "dependencies": "none",
+    "labels": [
+      "frontend",
+      "product-decision"
+    ],
+    "role": "Team Lead"
+  },
+  {
+    "id": "FE-36",
+    "title": "test(frontend): unit tests for useFilters and useSearchListings",
+    "area": "Testing",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P1",
+    "complexity": "S",
+    "dependencies": "none (already built)",
+    "labels": [
+      "frontend",
+      "testing"
+    ],
+    "role": "Frontend"
+  },
+  {
+    "id": "FE-37",
+    "title": "test(frontend): integration test for the auth flow",
+    "area": "Testing",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P1",
+    "complexity": "M",
+    "dependencies": "FE-04, FE-05",
+    "labels": [
+      "frontend",
+      "testing"
+    ],
+    "role": "Frontend"
+  }
+]
