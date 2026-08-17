@@ -1,6 +1,2 @@
-import client from './client';
-
-export async function getFeaturedListings() {
-  const response = await client.get('/listings/featured');
-  return response.data;
-}
+// Thin wrapper functions around client.js for the listings backend module — no React, no state
+// TODO: implement
