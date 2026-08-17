@@ -10,7 +10,7 @@ const ownershipGuard = require('../../shared/middleware/ownership-guard');
 const validateRequest = require('../../shared/middleware/validate-request');
 
 // 3. Import Validation Schemas (assuming you have a Joi schema defined)
-const { createBookingSchema, updateStatusSchema } = require('./bookings.schemas');
+const { createBookingSchema, updateStatusSchema } = require('./bookings.validation');
 
 // 4. Import the database helper for the ownership guard
 const { getBookingOwnerId } = require('./bookings.repository');
