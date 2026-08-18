@@ -1,0 +1,107 @@
+.hr-booking-page {
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--hr-text, #1C1C1A);
+}
+
+.hr-booking-page--loading,
+.hr-booking-page--error {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--hr-muted, #6B655A);
+}
+
+.hr-booking-page__header {
+  margin-bottom: 2rem;
+}
+
+.hr-booking-page__header h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 2rem;
+  font-weight: 500;
+  margin: 1rem 0 0;
+}
+
+.hr-booking-page__back {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--hr-muted, #6B655A);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.hr-booking-page__back:hover {
+  color: var(--hr-text, #1C1C1A);
+  text-decoration: underline;
+}
+
+.hr-booking-page__content {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 768px) {
+  .hr-booking-page__content {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hr-booking-page__listing-preview {
+  background: var(--hr-card, #FFFFFF);
+  border: 1px solid var(--hr-border, #E7E0D2);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.hr-booking-page__listing-image {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+
+.hr-booking-page__listing-image-placeholder {
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: #E1E3E4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--hr-muted, #6B655A);
+}
+
+.hr-booking-page__listing-info {
+  padding: 1.25rem;
+}
+
+.hr-booking-page__listing-info h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  line-height: 1.4;
+}
+
+.hr-booking-page__listing-location {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--hr-muted, #6B655A);
+  margin: 0 0 1rem;
+}
+
+.hr-booking-page__listing-location .material-symbols-outlined {
+  font-size: 1.1rem;
+}
+
+.hr-booking-page__listing-price {
+  margin: 0;
+  font-size: 1.1rem;
+}

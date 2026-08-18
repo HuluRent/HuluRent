@@ -2,6 +2,11 @@ import { createBrowserRouter } from 'react-router-dom';
 import HomePage from '../features/home/pages/HomePage';
 import LoginPage from '../features/auth/pages/LoginPage';
 import RegisterPage from '../features/auth/pages/RegisterPage';
+import { AppShell } from '../components/layout/AppShell';
+
+import BookingRequestPage from '../features/bookings/pages/BookingRequestPage';
+import MyBookingsPage from '../features/bookings/pages/MyBookingsPage';
+import BookingDetailPage from '../features/bookings/pages/BookingDetailPage';
 
 const router = createBrowserRouter([
   {
@@ -15,6 +20,23 @@ const router = createBrowserRouter([
   {
     path: '/register',
     element: <RegisterPage />,
+  },
+  {
+    element: <AppShell />,
+    children: [
+      {
+        path: '/bookings',
+        element: <MyBookingsPage />,
+      },
+      {
+        path: '/bookings/:bookingId',
+        element: <BookingDetailPage />,
+      },
+      {
+        path: '/listings/:listingId/book',
+        element: <BookingRequestPage />,
+      },
+    ],
   },
 ]);
 

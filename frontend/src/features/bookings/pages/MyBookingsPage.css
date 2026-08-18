@@ -1,0 +1,124 @@
+.hr-my-bookings {
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: 'Inter', system-ui, sans-serif;
+  color: var(--hr-text, #1C1C1A);
+}
+
+.hr-my-bookings__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.hr-my-bookings__header h1 {
+  font-family: 'Fraunces', serif;
+  font-size: 2rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.hr-my-bookings__toggle {
+  display: inline-flex;
+  background: var(--hr-bg, #FAF6EF);
+  border: 1px solid var(--hr-border, #E7E0D2);
+  border-radius: 8px;
+  padding: 0.25rem;
+}
+
+.hr-my-bookings__toggle-btn {
+  background: transparent;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--hr-muted, #6B655A);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.hr-my-bookings__toggle-btn:hover {
+  color: var(--hr-text, #1C1C1A);
+}
+
+.hr-my-bookings__toggle-btn--active {
+  background: var(--hr-card, #FFFFFF);
+  color: var(--hr-text, #1C1C1A);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.hr-my-bookings__state {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--hr-muted, #6B655A);
+  background: var(--hr-card, #FFFFFF);
+  border: 1px dashed var(--hr-border, #E7E0D2);
+  border-radius: 12px;
+}
+
+.hr-my-bookings__state--error {
+  color: var(--hr-error, #B3261E);
+  background: var(--hr-error-bg, #FBEBEA);
+  border-color: #F1C9C6;
+}
+
+.hr-my-bookings__state p {
+  margin-bottom: 1.5rem;
+}
+
+.hr-my-bookings__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.hr-my-bookings__card {
+  background: var(--hr-card, #FFFFFF);
+  border: 1px solid var(--hr-border, #E7E0D2);
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.hr-my-bookings__card:hover,
+.hr-my-bookings__card:focus {
+  outline: none;
+  border-color: var(--hr-primary, #0F3D31);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.hr-my-bookings__card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.hr-my-bookings__card-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.hr-my-bookings__card-body {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.hr-my-bookings__card-detail {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--hr-muted, #6B655A);
+  font-size: 0.9rem;
+}
+
+.hr-my-bookings__card-detail .material-symbols-outlined {
+  font-size: 1.1rem;
+}
