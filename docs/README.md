@@ -16,6 +16,7 @@ HuluRent lets people rent out physical items they already own — cameras, tools
 | **Collaborator Handle** | `insa-ctc-devhub` |
 
 **Team**
+- Hawlet Romedan - CTC-3877-26
 - Kalab Araya — CTC-140-26
 - Leoul Zerihun — CTC-3644-26
 - Mahlet Getinet — CTC-1238-26
