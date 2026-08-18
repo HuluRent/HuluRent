@@ -1,0 +1,694 @@
+
+[
+  {
+    "id": "BE-01",
+    "title": "chore(backend): implement core shared utils (password, jwt, async-handler, date, geo)",
+    "area": "Shared utils",
+    "description": "Bundle the five small, pure-function utility files: password.js (bcrypt wrapper), jwt.js (sign/verify), async-handler.js, date.js (overlap-range helpers for bookings), geo.js (distance calc for search).",
+    "acceptance_criteria": "All five exported and unit-testable in isolation · async-handler correctly forwards thrown errors to Express's error middleware · date.js overlap function has at least one test case for adjacent (non-overlapping) ranges.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "none",
+    "labels": [
+      "backend",
+      "chore"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-02",
+    "title": "feat(backend): implement Prisma client singleton and logger",
+    "area": "Config",
+    "description": "config/database.js (single shared PrismaClient instance, not one per request) and config/logger.js.",
+    "acceptance_criteria": "Importing database.js from two different files returns the same client instance · app logs a startup message confirming DB connectivity.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "none",
+    "labels": [
+      "backend",
+      "chore"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-03",
+    "title": "feat(backend): implement JWT authentication middleware",
+    "area": "Auth / Middleware",
+    "description": "authenticate.js — verifies Authorization: Bearer header, attaches req.user, returns 401 per api-reference.md error shape on missing/invalid token.",
+    "acceptance_criteria": "Missing header → 401 · Expired/invalid token → 401 · Valid token → req.user populated with id and role.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "BE-01",
+    "labels": [
+      "backend",
+      "security"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-04",
+    "title": "feat(backend): implement role authorization + ownership guard middleware",
+    "area": "Auth / Middleware",
+    "description": "authorize.js (role check, e.g. ADMIN-only routes) and ownership-guard.js (does req.user.id own the resource being mutated).",
+    "acceptance_criteria": "Non-admin hitting an admin route → 403 · Non-owner mutating another user's listing/booking → 403 · Owner succeeds.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "BE-03",
+    "labels": [
+      "backend",
+      "security"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-05",
+    "title": "feat(backend): implement request validation middleware",
+    "area": "Middleware",
+    "description": "validate-request.js running a module's *.validation.js (zod) schema before the controller, returning 400 with details per api-reference.md's error shape.",
+    "acceptance_criteria": "Invalid body → 400 with field-level details · Valid body passes through unchanged to controller.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "none",
+    "labels": [
+      "backend"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-06",
+    "title": "chore(backend): implement rate limiter and request logger middleware",
+    "area": "Middleware",
+    "description": "rate-limiter.js (apply to /auth/* and other write-heavy routes) and request-logger.js.",
+    "acceptance_criteria": "Repeated rapid login attempts get throttled with a clear error · every request logs method/path/status/duration.",
+    "priority": "P1",
+    "complexity": "S",
+    "dependencies": "BE-02",
+    "labels": [
+      "backend",
+      "security"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-07",
+    "title": "feat(backend): implement multer upload middleware + object storage config",
+    "area": "Middleware / Config",
+    "description": "upload.js (multer config: file type/size limits) and config/storage.js (object storage SDK setup — pick a provider, e.g. S3-compatible or local disk for dev).",
+    "acceptance_criteria": "Rejects files over the size limit and non-image types for image uploads · returns a usable file reference/URL on success.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "none",
+    "labels": [
+      "backend"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-08",
+    "title": "chore(backend): stand up local Postgres and verify prisma migrate dev",
+    "area": "Database",
+    "description": "Get docker-compose up -d db (or equivalent) running, run the first real migration, confirm tables match schema.prisma.",
+    "acceptance_criteria": "npx prisma migrate dev completes clean · npx prisma studio shows all expected tables.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "none",
+    "labels": [
+      "backend",
+      "database"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-09",
+    "title": "chore(backend): apply and verify the booking overlap exclusion constraint",
+    "area": "Database",
+    "description": "Apply prisma/migrations/manual/booking_overlap_constraint.sql to the dev DB, confirm btree_gist extension installs, write a manual test proving an overlapping insert is rejected.",
+    "acceptance_criteria": "Attempting to insert two overlapping CONFIRMED bookings on the same item raises exclusion_violation · non-overlapping bookings succeed.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "BE-08",
+    "labels": [
+      "backend",
+      "database",
+      "bookings"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-10",
+    "title": "chore(backend): write prisma/seed.js with realistic sample data",
+    "area": "Database",
+    "description": "Seed categories, a few test users (one ADMIN), sample listings, so frontend devs aren't blocked on empty data.",
+    "acceptance_criteria": "npm run prisma:seed populates enough data for the browse page to show real results · idempotent (safe to re-run).",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "BE-08, BE-18",
+    "labels": [
+      "backend",
+      "database"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-11",
+    "title": "feat(backend): implement POST /auth/register",
+    "area": "Auth",
+    "description": "Per api-reference.md 'Auth' section — exact request/response shape is already locked, don't renegotiate it here.",
+    "acceptance_criteria": "Duplicate email → 409 · password hashed via password.js, never stored plain · response matches { token, user } exactly · unit test for both cases.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "BE-01, BE-02",
+    "labels": [
+      "backend",
+      "auth"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-12",
+    "title": "feat(backend): implement POST /auth/login",
+    "area": "Auth",
+    "description": "",
+    "acceptance_criteria": "Wrong password and non-existent email both return the same 401 message (no user enumeration) · correct credentials return { token, user } matching the documented shape.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "BE-11",
+    "labels": [
+      "backend",
+      "auth"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-13",
+    "title": "feat(backend): implement GET /auth/me and POST /auth/logout",
+    "area": "Auth",
+    "description": "",
+    "acceptance_criteria": "/me returns 401 without a token, correct user shape with one · /logout returns { success: true }.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "BE-03, BE-12",
+    "labels": [
+      "backend",
+      "auth"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-14",
+    "title": "feat(backend): implement GET /users/:id and PATCH /users/me",
+    "area": "Users",
+    "description": "",
+    "acceptance_criteria": "Public GET never returns email/phone · PATCH only updates fields present in the request body · PATCH requires auth and only allows self-edit.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "BE-03",
+    "labels": [
+      "backend",
+      "users"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-15",
+    "title": "feat(backend): implement identity verification endpoints",
+    "area": "Identity Verification",
+    "description": "",
+    "acceptance_criteria": "POST sets status to PENDING · GET /me returns current status · both require auth.",
+    "priority": "P1",
+    "complexity": "S",
+    "dependencies": "BE-03",
+    "labels": [
+      "backend"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-16",
+    "title": "feat(backend): implement GET /categories + seed default categories",
+    "area": "Categories",
+    "description": "",
+    "acceptance_criteria": "Returns flat list with parentId per contract · seeded with real categories matching the design (Electronics, Cameras, Tools, Camping, Event Gear, Furniture, etc.).",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "BE-08",
+    "labels": [
+      "backend",
+      "categories"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-17",
+    "title": "feat(backend): implement listing CRUD (POST, PATCH, DELETE, GET /listings/:id)",
+    "area": "Listings",
+    "description": "",
+    "acceptance_criteria": "POST defaults status to DRAFT · PATCH/DELETE require ownership (BE-04) · DELETE soft-deletes to ARCHIVED, never hard-deletes · GET on a DRAFT listing is 403 for non-owners.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "BE-04, BE-05",
+    "labels": [
+      "backend",
+      "listings"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-18",
+    "title": "feat(backend): implement GET /listings/mine",
+    "area": "Listings",
+    "description": "",
+    "acceptance_criteria": "Returns paginated own listings including DRAFT status, matches the pagination envelope from pagination.js.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "BE-17",
+    "labels": [
+      "backend",
+      "listings"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-19",
+    "title": "feat(backend): implement POST /listings/:id/images",
+    "area": "Listings",
+    "description": "",
+    "acceptance_criteria": "Multipart upload, owner-only, returns image URLs per contract.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "BE-07, BE-17",
+    "labels": [
+      "backend",
+      "listings"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-20",
+    "title": "feat(backend): implement GET /search per the documented contract",
+    "area": "Search",
+    "description": "Includes the two revisions made during the frontend build: category, owner.{avatarUrl, isVerified, rating, reviewCount}, location, verifiedOnly, sort, multi-value categoryId.",
+    "acceptance_criteria": "Owner rating/reviewCount computed via Review aggregate where subjectId = owner (not a stored field) · owner with zero reviews returns rating: null, reviewCount: 0 · only PUBLISHED listings returned · response matches contract exactly (this is the endpoint the frontend is already built against — mismatches will surface immediately in hulurent-frontend).",
+    "priority": "P0",
+    "complexity": "L",
+    "dependencies": "BE-16, BE-17",
+    "labels": [
+      "backend",
+      "search"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-21",
+    "title": "feat(backend): implement availability endpoints (POST, GET, DELETE)",
+    "area": "Availability",
+    "description": "",
+    "acceptance_criteria": "POST/DELETE require item ownership · GET is public, unpaginated.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "BE-04, BE-17",
+    "labels": [
+      "backend",
+      "availability"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-22",
+    "title": "feat(backend): implement bookings.state-machine.js",
+    "area": "Bookings",
+    "description": "Single source of truth for legal status transitions — see ARCHITECTURE.md §2.2.",
+    "acceptance_criteria": "Every legal transition documented in api-reference.md's Bookings section is allowed · every illegal transition (e.g. REQUESTED → COMPLETED) throws · unit tested exhaustively.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "none",
+    "labels": [
+      "backend",
+      "bookings"
+    ],
+    "role": "Backend (highest-risk module — assign your strongest backend person)"
+  },
+  {
+    "id": "BE-23",
+    "title": "feat(backend): implement bookings.conflict-check.js",
+    "area": "Bookings",
+    "description": "Row-locked (SELECT ... FOR UPDATE) overlap check — the app-level half of the dual defense described in ARCHITECTURE.md §3.",
+    "acceptance_criteria": "Two near-simultaneous booking requests for overlapping dates on the same item — only one succeeds · non-overlapping requests both succeed · unit tested for adjacent/same-day edge cases.",
+    "priority": "P0",
+    "complexity": "L",
+    "dependencies": "BE-09",
+    "labels": [
+      "backend",
+      "bookings"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-24",
+    "title": "feat(backend): implement POST /bookings",
+    "area": "Bookings",
+    "description": "",
+    "acceptance_criteria": "409 ConflictError on overlap, identical response body whether caught by BE-23's app-level check or the DB's exclusion_violation (per ARCHITECTURE.md §3) · success response matches contract exactly.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "BE-22, BE-23",
+    "labels": [
+      "backend",
+      "bookings"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-25",
+    "title": "feat(backend): implement GET /bookings/:id and GET /bookings/mine",
+    "area": "Bookings",
+    "description": "",
+    "acceptance_criteria": "/mine requires role=owner|renter query param · /:id is 403 for non-participants.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "BE-24",
+    "labels": [
+      "backend",
+      "bookings"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-26",
+    "title": "feat(backend): implement booking transition endpoints (accept, reject, confirm, cancel)",
+    "area": "Bookings",
+    "description": "",
+    "acceptance_criteria": "Each endpoint enforces the correct actor (owner vs. renter) per api-reference.md · each routes through the state machine (BE-22), never sets status directly.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "BE-22, BE-24",
+    "labels": [
+      "backend",
+      "bookings"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-27",
+    "title": "feat(backend): implement agreement-template.js",
+    "area": "Agreements",
+    "description": "Generates agreement terms JSON from booking data, must include the off-platform handoff clause from product/trust-and-liability.md §1 — this isn't optional boilerplate, it's the documented liability policy.",
+    "acceptance_criteria": "Generated terms.offPlatformHandoffClause matches the disclosed policy text · terms include price, deposit, cancellation policy.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "none",
+    "labels": [
+      "backend",
+      "agreements",
+      "legal"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-28",
+    "title": "feat(backend): implement GET/POST agreement endpoints",
+    "area": "Agreements",
+    "description": "",
+    "acceptance_criteria": "POST /accept sets the correct field (ownerAccepted/renterAccepted) based on caller's role on the booking · versioning works (new row, never in-place update).",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "BE-27",
+    "labels": [
+      "backend",
+      "agreements"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-29",
+    "title": "feat(backend): implement inspection scheduling endpoints",
+    "area": "Inspections",
+    "description": "",
+    "acceptance_criteria": "Confirm can only be called by the party who didn't request it · matches all three documented endpoints.",
+    "priority": "P1",
+    "complexity": "S",
+    "dependencies": "BE-04",
+    "labels": [
+      "backend",
+      "inspections"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-30",
+    "title": "feat(backend): implement REST messaging endpoints",
+    "area": "Messaging",
+    "description": "",
+    "acceptance_criteria": "Only conversation participants can read/post · pagination works, oldest-first.",
+    "priority": "P1",
+    "complexity": "M",
+    "dependencies": "BE-04",
+    "labels": [
+      "backend",
+      "messaging"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-31",
+    "title": "feat(backend): implement messaging.socket.js real-time delivery",
+    "area": "Messaging",
+    "description": "Persistence still goes through the same repository as the REST endpoint — a dropped socket connection must never mean a lost message.",
+    "acceptance_criteria": "Message sent via REST also emits to the other participant's socket in real time · message is in the DB even if the recipient's socket is disconnected.",
+    "priority": "P2",
+    "complexity": "L",
+    "dependencies": "BE-30",
+    "labels": [
+      "backend",
+      "messaging",
+      "websocket"
+    ],
+    "role": "Backend (this is the schedule's designated first cut if the team falls behind — see schedule.md)"
+  },
+  {
+    "id": "BE-32",
+    "title": "feat(backend): implement evidence.upload.js",
+    "area": "Evidence",
+    "description": "",
+    "acceptance_criteria": "Validates file type/size, pushes to object storage, returns references only (never raw files) to the service layer.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "BE-07",
+    "labels": [
+      "backend",
+      "evidence"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-33",
+    "title": "feat(backend): implement evidence submission and acknowledgement endpoints",
+    "area": "Evidence",
+    "description": "",
+    "acceptance_criteria": "Only booking participants can submit/acknowledge · type must be PICKUP or RETURN · acknowledgement sets the correct field for the other party, not the submitter.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "BE-32",
+    "labels": [
+      "backend",
+      "evidence"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-34",
+    "title": "feat(backend): implement review submission and fetch endpoints",
+    "area": "Reviews",
+    "description": "",
+    "acceptance_criteria": "409 if booking isn't COMPLETED or already reviewed by this author (@@unique([bookingId, authorId])) · public fetch by user works.",
+    "priority": "P0",
+    "complexity": "S",
+    "dependencies": "BE-26",
+    "labels": [
+      "backend",
+      "reviews"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-35",
+    "title": "feat(backend): implement report filing endpoint",
+    "area": "Reports",
+    "description": "",
+    "acceptance_criteria": "Requires auth · subjectId optional · returns 201 per contract.",
+    "priority": "P1",
+    "complexity": "S",
+    "dependencies": "BE-03",
+    "labels": [
+      "backend",
+      "reports"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-36",
+    "title": "feat(backend): implement admin report moderation endpoints",
+    "area": "Admin",
+    "description": "",
+    "acceptance_criteria": "ADMIN-only (BE-04) · every status change writes an AuditEvent via audit.service.js, not optional.",
+    "priority": "P1",
+    "complexity": "M",
+    "dependencies": "BE-04, BE-35, BE-37",
+    "labels": [
+      "backend",
+      "admin"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-37",
+    "title": "feat(backend): implement audit.service.js",
+    "area": "Audit",
+    "description": "No routes — called internally from other services.",
+    "acceptance_criteria": "Callable from admin.service.js · writes a correctly-shaped AuditEvent row.",
+    "priority": "P1",
+    "complexity": "S",
+    "dependencies": "none",
+    "labels": [
+      "backend",
+      "admin"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-38",
+    "title": "feat(backend): implement admin user restriction endpoint",
+    "area": "Admin",
+    "description": "",
+    "acceptance_criteria": "ADMIN-only · writes an audit event · returns the documented shape.",
+    "priority": "P2",
+    "complexity": "S",
+    "dependencies": "BE-36",
+    "labels": [
+      "backend",
+      "admin"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-39",
+    "title": "feat(backend): implement notifications endpoints",
+    "area": "Notifications",
+    "description": "",
+    "acceptance_criteria": "GET paginated, newest-first · PATCH .../read requires ownership.",
+    "priority": "P2",
+    "complexity": "S",
+    "dependencies": "BE-04",
+    "labels": [
+      "backend",
+      "notifications"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-40",
+    "title": "chore(backend): implement expire-pending-bookings job + scheduler",
+    "area": "Jobs",
+    "description": "",
+    "acceptance_criteria": "A REQUESTED booking older than the configured window transitions to EXPIRED automatically · scheduler runs on an interval without blocking the main event loop.",
+    "priority": "P2",
+    "complexity": "M",
+    "dependencies": "BE-22",
+    "labels": [
+      "backend",
+      "jobs"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-41",
+    "title": "chore(backend): implement expire-inspection-requests job",
+    "area": "Jobs",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P2",
+    "complexity": "S",
+    "dependencies": "BE-29, BE-40",
+    "labels": [
+      "backend",
+      "jobs"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-42",
+    "title": "test(backend): unit tests for bookings.state-machine.js and conflict-check.js",
+    "area": "Testing",
+    "description": "",
+    "acceptance_criteria": "Every state transition (legal and illegal) covered · overlap edge cases (adjacent, same-day) covered.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "BE-22, BE-23",
+    "labels": [
+      "backend",
+      "testing",
+      "bookings"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-43",
+    "title": "test(backend): integration tests for auth flow",
+    "area": "Testing",
+    "description": "",
+    "acceptance_criteria": "Register → login → /me → logout covered end-to-end against a test DB.",
+    "priority": "P1",
+    "complexity": "M",
+    "dependencies": "BE-13",
+    "labels": [
+      "backend",
+      "testing"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-44",
+    "title": "test(backend): integration tests for listings and search",
+    "area": "Testing",
+    "description": "",
+    "acceptance_criteria": "",
+    "priority": "P1",
+    "complexity": "M",
+    "dependencies": "BE-17, BE-20",
+    "labels": [
+      "backend",
+      "testing"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-45",
+    "title": "test(backend): end-to-end test for the full rental lifecycle",
+    "area": "Testing",
+    "description": "Register → list → book → agree → pickup evidence → return evidence → complete → review, matching the MVP completion criterion in README.md.",
+    "acceptance_criteria": "",
+    "priority": "P1",
+    "complexity": "L",
+    "dependencies": "most of the above",
+    "labels": [
+      "backend",
+      "testing"
+    ],
+    "role": "Backend"
+  },
+  {
+    "id": "BE-46",
+    "title": "chore(backend): security pass — verify authorize/ownership-guard on every mutating route",
+    "area": "Security",
+    "description": "A checklist cross-referencing every PATCH/POST/DELETE route in api-reference.md against its middleware chain — none missing an auth check that the doc says it needs.",
+    "acceptance_criteria": "A checklist cross-referencing every PATCH/POST/DELETE route in api-reference.md against its middleware chain — none missing an auth check that the doc says it needs.",
+    "priority": "P0",
+    "complexity": "M",
+    "dependencies": "all controller work above",
+    "labels": [
+      "backend",
+      "security"
+    ],
+    "role": "Backend Lead (do this yourself, don't delegate — it's the last line of defense)"
+  }
+]
