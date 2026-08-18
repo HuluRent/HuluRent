@@ -116,15 +116,13 @@ See [`technical/testing-strategy.md`](technical/testing-strategy.md) for full de
 
 Developed for the **Information Network Security Administration (INSA) CTC Program**.
 
-| Name | Role | Primary Responsibilities |
-|---|---|---|
-| **Kaleab Araya** | **Team Leader / Backend Engineer** | Overall system architecture, database modeling, conflict prevention, E2E integration |
-| **Hawlet Romedan Yesuf** | **System Architect and Frontend Engineer** | Authentication, user management, booking state machine, PostgreSQL constraints |
-| **Mahlet Getnet** | **Frontend Engineer (UI/UX & Core Features)** | Responsive design system, listing flows, booking UI, state management |
-| **Leoul Zerihun** | **Backend / Security & DevOps Engineer** | Digital agreements, condition evidence upload, audit logging, Docker setup |
-| **Makbel Temesgen** | **Frontend Engineer and Presentation** | Geospatial search UI, real-time messaging, reviews, automated testing |
-
----
+| Name                     | Role                                                   | Primary Responsibilities                                                                                                                         |
+| ------------------------ | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Mahlet Getnet**        | **Team Leader / System Architect & Frontend Engineer** | Overall system architecture, technical coordination, frontend architecture, UI/UX, core frontend features, API integration, and state management |
+| **Hawlet Romedan Yesuf** | **Frontend Support & Documentation**                   | Frontend support, authentication and user management interfaces, documentation, and technical specifications                                     |
+| **Kaleab Araya**         | **Backend Engineer**                                   | Database modeling, backend services, conflict prevention, and E2E integration                                                                    |
+| **Leoul Zerihun**        | **Backend / Security & DevOps Engineer**               | Backend services, digital agreements, evidence handling, security, audit logging, and Docker setup                                               |
+| **Makbel Temesgen**      | **Frontend Support & Presentation**                    | Frontend support, geospatial search UI, messaging, reviews, automated testing, and project presentation                                          |
 
 ## License
 
