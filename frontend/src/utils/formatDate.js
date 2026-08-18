@@ -1,62 +1,34 @@
-// Formats: "Aug 14, 2026"
-export function formatDate(date) {
-  const d = new Date(date);
-  if (isNaN(d)) return '';
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+// Date formatting helpers. No date library dependency (date-fns/dayjs
+// aren't installed) — native Date + Intl.DateTimeFormat cover everything
+// this project needs (display formatting, date-only ISO strings for
+// calendar comparisons).
+
+export function formatDate(dateInput, { month = 'short', day = 'numeric', year = 'numeric' } = {}) {
+  const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+  if (Number.isNaN(date?.getTime())) return '—';
+  return date.toLocaleDateString('en-US', { month, day, year });
 }
 
-// Formats: "Aug 14, 2026, 3:45 PM"
-export function formatDateTime(date) {
-  const d = new Date(date);
-  if (isNaN(d)) return '';
-  return d.toLocaleString('en-US', {
-    month: 'short', day: 'numeric', year: 'numeric',
-    hour: 'numeric', minute: '2-digit',
-  });
-}
+export function formatDateRange(startInput, endInput) {
+  const start = typeof startInput === 'string' ? new Date(startInput) : startInput;
+  const end = typeof endInput === 'string' ? new Date(endInput) : endInput;
+  if (Number.isNaN(start?.getTime()) || Number.isNaN(end?.getTime())) return '—';
 
-// Formats a booking range: "Aug 14 – Aug 18, 2026"
-export function formatDateRange(start, end) {
-  const s = new Date(start);
-  const e = new Date(end);
-  if (isNaN(s) || isNaN(e)) return '';
-
-  const sameYear = s.getFullYear() === e.getFullYear();
-  const sameMonth = sameYear && s.getMonth() === e.getMonth();
-
-  const startFmt = s.toLocaleDateString('en-US', {
+  const sameYear = start.getFullYear() === end.getFullYear();
+  const startLabel = start.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  const endLabel = end.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
     year: sameYear ? undefined : 'numeric',
   });
-  const endFmt = e.toLocaleDateString('en-US', {
-    month: sameMonth ? undefined : 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-
-  return `${startFmt} – ${endFmt}`;
+  return `${startLabel} – ${endLabel}, ${end.getFullYear()}`;
 }
 
-// "2 days ago", "in 3 days", "today"
-export function formatRelative(date) {
-  const d = new Date(date);
-  if (isNaN(d)) return '';
-
-  const now = new Date();
-  const diffMs = d.setHours(0, 0, 0, 0) - now.setHours(0, 0, 0, 0);
-  const diffDays = Math.round(diffMs / 86400000);
-
-  if (diffDays === 0) return 'today';
-  if (diffDays === 1) return 'tomorrow';
-  if (diffDays === -1) return 'yesterday';
-  if (diffDays > 0) return `in ${diffDays} days`;
-  return `${Math.abs(diffDays)} days ago`;
-}
-
-// Number of nights between two dates (booking duration)
-export function nightsBetween(start, end) {
-  const s = new Date(start).setHours(0, 0, 0, 0);
-  const e = new Date(end).setHours(0, 0, 0, 0);
-  return Math.round((e - s) / 86400000);
+// 'YYYY-MM-DD' — used for date-only comparisons (calendar grids, availability
+// windows) where time-of-day and timezone shifts would cause off-by-one bugs.
+export function toISODateString(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
