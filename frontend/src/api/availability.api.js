@@ -1,7 +1,7 @@
 // Thin wrapper around client.js for the availability backend module.
 // See docs/technical/api-reference.md "Availability" section.
 
-import { client } from './client';
+import client from './client';
 
 export function getAvailability(itemId) {
   return client.get(`/availability/${itemId}`).then((res) => res.data);
