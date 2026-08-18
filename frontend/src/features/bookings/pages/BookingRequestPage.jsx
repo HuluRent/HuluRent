@@ -1,97 +1,27 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+// Wraps BookingRequestForm with the listing data it needs (price, name,
+// pricingUnit). Route: /listings/:itemId/book (see router.jsx), gated by
+// VerifiedGuard.
+
+import { useParams } from 'react-router-dom';
+import { useListing } from '../../listings/hooks/useListing';
 import { BookingRequestForm } from '../components/BookingRequestForm';
-import { useCreateBooking } from '../hooks/useCreateBooking';
-import client from '../../../api/client';
-import './BookingRequestPage.css';
+import { LoadingSpinner } from '../../../components/LoadingSpinner';
+import { EmptyState } from '../../../components/EmptyState';
 
-// Mock function for now, since useListing is stubbed
-async function fetchListing(id) {
-  const { data } = await client.get(`/listings/${id}`);
-  return data;
-}
+export function BookingRequestPage() {
+  const { itemId } = useParams();
+  const { data: item, isLoading, isError } = useListing(itemId);
 
-export default function BookingRequestPage() {
-  const { listingId } = useParams();
-  const navigate = useNavigate();
-  const { mutateAsync: createBooking, isPending } = useCreateBooking();
-
-  const { data: listing, isLoading, error } = useQuery({
-    queryKey: ['listing', listingId],
-    queryFn: () => fetchListing(listingId),
-  });
-
-  const handleSubmit = async (formData) => {
-    try {
-      const result = await createBooking({
-        itemId: listingId,
-        ...formData,
-      });
-      // Navigate to the new booking detail page
-      navigate(`/bookings/${result.id}`);
-    } catch (err) {
-      console.error('Failed to create booking', err);
-      alert(err.response?.data?.error?.message || 'Failed to request booking. Please try again.');
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="hr-booking-page hr-booking-page--loading">
-        Loading listing details...
-      </div>
-    );
-  }
-
-  if (error || !listing) {
-    return (
-      <div className="hr-booking-page hr-booking-page--error">
-        <h3>Listing not found</h3>
-        <button onClick={() => navigate(-1)} className="hr-btn-secondary">Go back</button>
-      </div>
-    );
+  if (isLoading) return <LoadingSpinner label="Loading listing…" />;
+  if (isError || !item) {
+    return <EmptyState icon="error" title="Listing not found" />;
   }
 
   return (
-    <div className="hr-booking-page">
-      <div className="hr-booking-page__header">
-        <button className="hr-booking-page__back" onClick={() => navigate(-1)}>
-          &larr; Back
-        </button>
-        <h1>Request Booking</h1>
-      </div>
-
-      <div className="hr-booking-page__content">
-        <div className="hr-booking-page__listing-preview">
-          {listing.images && listing.images.length > 0 ? (
-            <img 
-              src={listing.images[0].url} 
-              alt={listing.name} 
-              className="hr-booking-page__listing-image"
-            />
-          ) : (
-            <div className="hr-booking-page__listing-image-placeholder">No Image</div>
-          )}
-          <div className="hr-booking-page__listing-info">
-            <h2>{listing.name}</h2>
-            <p className="hr-booking-page__listing-location">
-              <span className="material-symbols-outlined">location_on</span>
-              {listing.approxLocation}
-            </p>
-            <p className="hr-booking-page__listing-price">
-              <strong>{parseFloat(listing.pricePerUnit).toLocaleString()} ETB</strong> / {listing.pricingUnit}
-            </p>
-          </div>
-        </div>
-
-        <div className="hr-booking-page__form-container">
-          <BookingRequestForm 
-            listing={listing} 
-            onSubmit={handleSubmit} 
-            loading={isPending} 
-          />
-        </div>
-      </div>
+    <div className="max-w-lg mx-auto">
+      <h1 className="font-headline-lg text-headline-lg text-on-surface mb-1">Request to Book</h1>
+      <p className="font-body-md text-on-surface-variant mb-stack-lg">{item.name}</p>
+      <BookingRequestForm item={item} />
     </div>
   );
 }
