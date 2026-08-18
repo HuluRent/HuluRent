@@ -2,7 +2,7 @@ const jwt = require ('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const authRepo = require ('./auth.repository');
 const { ConflictError } = require('../../shared/errors/ConflictError');
-const { BadRequestError } = require('../../shared/errors/UnauthorizedError');
+const { UnauthorizedError } = require('../../shared/errors/UnauthorizedError');
 const { env } = require('../../config/env');
 
 
