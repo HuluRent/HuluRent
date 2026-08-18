@@ -1,2 +1,2 @@
-// Reads/refreshes the current session from AuthContext
-// TODO: implement
+// Re-export the shared useAuth hook for backwards compatibility within the auth feature
+export { useAuth } from '../../../hooks/useAuth';

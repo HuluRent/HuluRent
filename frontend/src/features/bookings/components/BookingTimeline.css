@@ -1,0 +1,89 @@
+.hr-booking-timeline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1.5rem 0;
+  overflow-x: auto;
+}
+
+.hr-booking-timeline__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+}
+
+.hr-booking-timeline__node {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--hr-border, #E7E0D2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: all 0.3s ease;
+}
+
+.hr-booking-timeline__node .material-symbols-outlined {
+  font-size: 14px;
+  color: white;
+  font-weight: bold;
+}
+
+.hr-booking-timeline__label {
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--hr-muted, #6B655A);
+  text-align: center;
+}
+
+.hr-booking-timeline__connector {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background-color: var(--hr-border, #E7E0D2);
+  z-index: 1;
+}
+
+/* Completed Step */
+.hr-booking-timeline__step--completed .hr-booking-timeline__node {
+  background-color: var(--hr-primary, #0F3D31);
+}
+.hr-booking-timeline__step--completed .hr-booking-timeline__connector {
+  background-color: var(--hr-primary, #0F3D31);
+}
+.hr-booking-timeline__step--completed .hr-booking-timeline__label {
+  color: var(--hr-text, #1C1C1A);
+}
+
+/* Current Step */
+.hr-booking-timeline__step--current .hr-booking-timeline__node {
+  background-color: var(--hr-accent, #1C6B54);
+  box-shadow: 0 0 0 4px var(--hr-success-bg, #E9F3EC);
+}
+.hr-booking-timeline__step--current .hr-booking-timeline__label {
+  color: var(--hr-text, #1C1C1A);
+  font-weight: 600;
+}
+.hr-booking-timeline__step--current .hr-booking-timeline__connector {
+  background-color: var(--hr-border, #E7E0D2);
+}
+
+/* Upcoming Step */
+.hr-booking-timeline__step--upcoming .hr-booking-timeline__node {
+  background-color: var(--hr-border, #E7E0D2);
+}
+
+/* Terminal Step */
+.hr-booking-timeline__step--terminal .hr-booking-timeline__node {
+  background-color: var(--hr-error, #B3261E);
+}
+.hr-booking-timeline__step--terminal .hr-booking-timeline__label {
+  color: var(--hr-muted, #6B655A);
+  text-decoration: line-through;
+}
