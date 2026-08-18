@@ -2,7 +2,7 @@
 // resource": paginated list responses. Use this so every module's list
 // endpoint returns the same envelope instead of each inventing its own.
 
-function paginated(items = [], { page = 1, limit = 20, total = 0 } = {}) {
+function paginated(items, { page, limit, total }) {
   return { items, page, limit, total };
 }
 
