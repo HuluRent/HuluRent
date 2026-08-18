@@ -72,79 +72,10 @@ A single user account can seamlessly operate in both capacities:
 
 ---
 
-## Explicit Scope Boundaries
-
-HuluRent is a peer-to-peer transaction platform and digital record layer, **not**:
-- An insurance underwriter (no automatic compensation for damage or theft).
-- A private arbitration service (users retain civil recourse using platform records).
-- A delivery logistics provider (physical handoff is coordinated between parties).
-- A continuous location tracker (exact physical coordinates are never tracked or shared).
-
-Rentals conducted outside the recorded platform workflow fall outside HuluRent dispute-support and evidence protections. See [`product/trust-and-liability.md`](product/trust-and-liability.md).
-
----
-
-## Tech Stack
-
-| Layer | Technology | Key Libraries |
-|---|---|---|
-| **Frontend** | React 18 + Vite | React Router 6, TanStack Query, Axios, Lucide Icons |
-| **Backend** | Node.js + Express | Prisma ORM, Socket.IO, Zod, Bcrypt, JsonWebToken, Multer |
-| **Database** | PostgreSQL 15+ | `btree_gist` extension for exclusion constraints |
-| **Storage** | Object Storage / Disk | Multi-image listing and condition evidence storage |
-| **Testing** | Vitest & Supertest | Unit, integration, and end-to-end lifecycle test runners |
-
----
-
-## Rental Lifecycle
-
-```
-[LIST] ──> [SEARCH & DISCOVER] ──> [CHECK AVAILABILITY] ──> [REQUEST BOOKING]
-                                                                   │
-[CONFIRM AGREEMENT] <── [INSPECT ITEM (Opt.)] <── [ACCEPT REQUEST] <┘
-         │
-         ▼
-[PICKUP EVIDENCE] ──> [ACTIVE RENTAL] ──> [RETURN EVIDENCE] ──> [COMPLETE] ──> [TWO-SIDED REVIEW]
-```
-
-**Booking State Machine:**
-`REQUESTED` $\rightarrow$ `ACCEPTED` $\rightarrow$ `CONFIRMED` $\rightarrow$ `ACTIVE` $\rightarrow$ `RETURN_PENDING` $\rightarrow$ `COMPLETED`  
-*(Terminal / Alternative States: `REJECTED`, `CANCELLED`, `EXPIRED`, `DISPUTED`)*
-
----
-
-## Documentation Index
-
-| Issue ID | Document | Path | Purpose |
-|---|---|---|---|
-| **`[DOC-01]`** | **Project Overview & README** | [`README.md`](README.md) | High-level project summary, architecture index, team roles |
-| **`[DOC-02]`** | **Open Source License** | [`LICENSE.md`](LICENSE.md) | MIT License terms and INSA copyright notice |
-| **`[DOC-03]`** | **Contribution Guidelines** | [`CONTRIBUTING.md`](CONTRIBUTING.md) | Branching strategy, commit conventions, PR workflows |
-| **`[DOC-04]`** | **Pitch Deck Outline** | [`presentation/pitch-deck-outline.md`](presentation/pitch-deck-outline.md) | Executive pitch structure, problem, solution, market size, demo |
-| **`[DOC-05]`** | **Judge Q&A Preparation** | [`presentation/judge-qa-prep.md`](presentation/judge-qa-prep.md) | Deep-dive answers for competition judges (architecture, security, trust) |
-| **`[DOC-06]`** | **Local Setup Guide** | [`guides/local-setup.md`](guides/local-setup.md) | Step-by-step developer setup (Node, Postgres, Prisma, Docker) |
-| **`[DOC-07]`** | **Product & Functional Spec** | [`product/spec.md`](product/spec.md) | User personas, stories, functional requirements, state rules |
-| **`[DOC-08]`** | **Testing Strategy** | [`technical/testing-strategy.md`](technical/testing-strategy.md) | Unit, integration, E2E, concurrency, and security test plans |
-| **`[DOC-09]`** | **Limitations & Roadmap** | [`product/limitations-and-future.md`](product/limitations-and-future.md) | Known MVP boundaries and future roadmap (boosts, IoT lockers) |
-| **`[DOC-10]`** | **Installation & Usage Guide** | [`guides/installation-and-usage.md`](guides/installation-and-usage.md) | Evaluation guide for submission examiners with test accounts |
-| **`[DOC-11]`** | **Screenshots & Walkthrough** | [`presentation/demo-walkthrough.md`](presentation/demo-walkthrough.md) | Interactive demo script, user walkthrough, UI flows |
-| **`[DOC-12]`** | **API Reference** | [`technical/api-reference.md`](technical/api-reference.md) | Complete REST API contract, WebSocket specs, status codes |
-| — | **System Architecture** | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Modular monolith architecture, folder trees, DB layer |
-| — | **Trust & Liability Model** | [`product/trust-and-liability.md`](product/trust-and-liability.md) | Off-platform policy, evidence model, liability framework |
-| — | **14-Day Schedule** | [`planning/schedule.md`](planning/schedule.md) | Milestone schedule, day-by-day plan, scope contingency |
-| — | **Prisma Database Schema** | [`prisma/schema.prisma`](prisma/schema.prisma) | Canonical PostgreSQL data models, relations, indices |
-| — | **Manual Overlap Migration** | [`booking_overlap_constraint.sql`](booking_overlap_constraint.sql) | PostgreSQL exclusion constraint migration script |
-
----
-
-## Getting Started & Local Setup
+## Getting Started
 
 ```bash
-# 1. Clone repository
-git clone https://github.com/HuluRent/HuluRent-main.git
-cd HuluRent-main
-
-# 2. Setup Backend
+# 1. Setup Backend
 cd backend
 npm install
 cp .env.example .env
@@ -153,8 +84,8 @@ npx prisma migrate dev
 node prisma/seed.js
 npm run dev
 
-# 3. Setup Frontend (in a new terminal)
-cd ../frontend
+# 2. Setup Frontend (in a new terminal)
+cd frontend
 npm install
 cp .env.example .env
 npm run dev
@@ -164,27 +95,10 @@ For complete step-by-step configuration, see [`guides/local-setup.md`](guides/lo
 
 ---
 
-## Development Methodology
-
-Agile development organized into 6 core phases:
-1. **Phase 1: Foundation**: Monorepo scaffolding, auth, JWT, Prisma schema, DB migrations.
-2. **Phase 2: Marketplace**: Category management, listing CRUD, photo uploads, search & filtering.
-3. **Phase 3: Rental Lifecycle**: Booking state machine, conflict prevention, acceptance/rejection flow.
-4. **Phase 4: Transaction Layer**: Agreements, inspections, WebSockets, condition evidence documentation.
-5. **Phase 5: Trust & Governance**: Reviews, reporting, admin moderation, immutable audit trail.
-6. **Phase 6: Integration & Release**: End-to-end integration, performance tuning, demo preparation.
-
----
-
 ## Testing & Quality Assurance
 
-- **Unit Testing**: Tests domain logic in isolation (availability rules, pricing calculations, state transitions).
-- **Integration Testing**: Validates API endpoints, database interactions, auth guards, and validation errors.
-- **Concurrency Testing**: Verifies that parallel booking requests cannot double-book overlapping dates.
-- **Security Testing**: OWASP top 10 verification, role authorization, rate limiting, and ownership protection.
-
-Run backend tests: `cd backend && npm test`  
-Run frontend tests: `cd frontend && npm test`  
+- Run backend tests: `cd backend && npm test`  
+- Run frontend tests: `cd frontend && npm test`  
 See [`technical/testing-strategy.md`](technical/testing-strategy.md) for full details.
 
 ---
@@ -193,17 +107,8 @@ See [`technical/testing-strategy.md`](technical/testing-strategy.md) for full de
 
 - **Data Minimization**: Approximate location strings are displayed publicly; exact coordinates remain private.
 - **Password Security**: Salted Bcrypt password hashing (`shared/utils/password.js`).
-- **Identity Privacy**: Verification stores validation status ("VERIFIED"), never raw identity documents.
 - **Access Control**: Enforced at route boundaries using `authenticate`, `authorize`, and `ownershipGuard`.
 - **Immutable Auditing**: Critical moderation and state actions write immutable records to `AuditEvent`.
-
----
-
-## Monetization Model
-
-In the MVP stage, HuluRent operates free of transaction fees to accelerate network liquidity.
-
-Long-term monetization is structured around **Paid Visibility Boosts** (sponsored listing placements in category browsing and search results). See [`product/trust-and-liability.md`](product/trust-and-liability.md) §4.
 
 ---
 
@@ -211,13 +116,13 @@ Long-term monetization is structured around **Paid Visibility Boosts** (sponsore
 
 Developed for the **Information Network Security Administration (INSA) CTC Program**.
 
-| Name | Role | CTC ID | Primary Responsibilities |
-|---|---|---|---|
-| **Kaleab Araya** | **Team Leader / Backend Engineer** | `CTC-140-26` | Overall system architecture, database modeling, conflict prevention, E2E integration |
-| **Hawlet Romedan Yesuf** | **System arcthect and frontend engineer** | `CTC-3877-26` | Authentication, user management, booking state machine, PostgreSQL constraints |
-| **Mahlet Getnet** | **Frontend Engineer (UI/UX & Core Features)** | `CTC-1238-26` | Responsive design system, listing flows, booking UI, state management |
-| **Leoul Zerihun** | **Backend / Security & DevOps Engineer** | `CTC-3644-26` | Digital agreements, condition evidence upload, audit logging, Docker setup |
-| **Makbel Temesgen** | **Frontend Engineer and presentation** | `CTC-1418-26` | Geospatial search UI, real-time messaging, reviews, automated testing |
+| Name | Role | Primary Responsibilities |
+|---|---|---|
+| **Kaleab Araya** | **Team Leader / Backend Engineer** | Overall system architecture, database modeling, conflict prevention, E2E integration |
+| **Hawlet Romedan Yesuf** | **System Architect and Frontend Engineer** | Authentication, user management, booking state machine, PostgreSQL constraints |
+| **Mahlet Getnet** | **Frontend Engineer (UI/UX & Core Features)** | Responsive design system, listing flows, booking UI, state management |
+| **Leoul Zerihun** | **Backend / Security & DevOps Engineer** | Digital agreements, condition evidence upload, audit logging, Docker setup |
+| **Makbel Temesgen** | **Frontend Engineer and Presentation** | Geospatial search UI, real-time messaging, reviews, automated testing |
 
 ---
 

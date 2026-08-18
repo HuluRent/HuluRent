@@ -105,124 +105,30 @@ backend/
     │       └── response.js             # Standard envelope helper (e.g. paginated)
     │
     └── modules/
-        ├── admin/
-        │   ├── admin.routes.js         # /api/admin/reports, /api/admin/users
-        │   ├── admin.controller.js
-        │   ├── admin.service.js        # User restrictions, report reviews, audit triggers
-        │   └── admin.repository.js
-        │
-        ├── agreements/
-        │   ├── agreements.routes.js    # /api/agreements/:bookingId, /accept
-        │   ├── agreements.controller.js
-        │   ├── agreements.service.js   # Versioned agreement generation & signing
-        │   ├── agreements.validation.js
-        │   ├── agreements.repository.js
-        │   └── agreement-template.js   # Terms generator & liability disclosures
-        │
-        ├── audit/
-        │   ├── audit.service.js        # Immutable audit trail writer
-        │   └── audit.repository.js
-        │
-        ├── auth/
-        │   ├── auth.routes.js          # /api/auth/register, /login, /me, /logout
-        │   ├── auth.controller.js
-        │   ├── auth.service.js         # Authentication, registration, token generation
-        │   ├── auth.validation.js
-        │   └── auth.repository.js
-        │
-        ├── availability/
-        │   ├── availability.routes.js  # /api/availability
-        │   ├── availability.controller.js
-        │   ├── availability.service.js # Item blackout dates & availability rules
-        │   ├── availability.validation.js
-        │   └── availability.repository.js
-        │
-        ├── bookings/
-        │   ├── bookings.routes.js      # /api/bookings, /accept, /reject, /confirm, /cancel
-        │   ├── bookings.controller.js
-        │   ├── bookings.service.js     # Rental workflow orchestrator
-        │   ├── bookings.validation.js
-        │   ├── bookings.repository.js
-        │   ├── bookings.state-machine.js # Legal lifecycle transitions validator
-        │   └── bookings.conflict-check.js # Concurrent date overlap checker (SELECT FOR UPDATE)
-        │
-        ├── categories/
-        │   ├── categories.routes.js    # /api/categories
-        │   ├── categories.controller.js
-        │   ├── categories.service.js
-        │   ├── categories.validation.js
-        │   └── categories.repository.js
-        │
-        ├── evidence/
-        │   ├── evidence.routes.js      # /api/evidence, /acknowledge
-        │   ├── evidence.controller.js
-        │   ├── evidence.service.js     # Condition documentation (pickup/return photos & notes)
-        │   ├── evidence.validation.js
-        │   ├── evidence.repository.js
-        │   └── evidence.upload.js      # Image processing and object storage persistence
-        │
-        ├── identity-verification/
-        │   ├── identity.routes.js      # /api/identity-verification, /me
-        │   ├── identity.controller.js
-        │   ├── identity.service.js     # Verification submissions and status tracking
-        │   ├── identity.validation.js
-        │   └── identity.repository.js
-        │
-        ├── inspections/
-        │   ├── inspections.routes.js   # /api/inspections, /confirm, /cancel
-        │   ├── inspections.controller.js
-        │   ├── inspections.service.js  # Item pre-rental inspection appointment scheduler
-        │   ├── inspections.validation.js
-        │   └── inspections.repository.js
-        │
-        ├── listings/
-        │   ├── listings.routes.js      # /api/listings, /mine, /:id/images
-        │   ├── listings.controller.js
-        │   ├── listings.service.js     # Item listing CRUD & lifecycle management
-        │   ├── listings.validation.js
-        │   ├── listings.repository.js
-        │   └── listing-images.service.js # Multi-photo association & ordering
-        │
-        ├── messaging/
-        │   ├── messaging.routes.js     # /api/messaging/conversations
-        │   ├── messaging.controller.js
-        │   ├── messaging.service.js    # Transaction-linked chat message storage
-        │   ├── messaging.validation.js
-        │   ├── messaging.repository.js
-        │   └── messaging.socket.js     # Real-time WebSocket event broadcaster
-        │
-        ├── notifications/
-        │   ├── notifications.routes.js # /api/notifications, /:id/read
-        │   ├── notifications.controller.js
-        │   ├── notifications.service.js # In-app notification dispatcher
-        │   └── notifications.repository.js
-        │
-        ├── reports/
-        │   ├── reports.routes.js       # /api/reports
-        │   ├── reports.controller.js
-        │   ├── reports.service.js      # User and listing reporting system
-        │   ├── reports.validation.js
-        │   └── reports.repository.js
-        │
-        ├── reviews/
-        │   ├── reviews.routes.js       # /api/reviews, /user/:userId
-        │   ├── reviews.controller.js
-        │   ├── reviews.service.js      # Two-sided review system for COMPLETED bookings
-        │   ├── reviews.validation.js
-        │   └── reviews.repository.js
-        │
-        ├── search/
-        │   ├── search.routes.js        # /api/search
-        │   ├── search.controller.js
-        │   ├── search.service.js       # Keyword, category, price, and geo-distance search
-        │   └── search.repository.js
-        │
-        └── users/
-            ├── users.routes.js         # /api/users/:id, /me
-            ├── users.controller.js
-            ├── users.service.js        # User profiles & location settings
-            ├── users.validation.js
-            └── users.repository.js
+        ├── admin/                  # User restrictions, report reviews, audit triggers
+        ├── agreements/             # Versioned agreement generation & signing
+        ├── audit/                  # Immutable audit trail writer
+        ├── auth/                   # Authentication, registration, token generation
+        ├── availability/           # Item blackout dates & availability rules
+        ├── bookings/               # Rental workflow orchestrator & conflict checking
+        ├── categories/             # Marketplace categories
+        ├── evidence/               # Condition documentation (pickup/return photos & notes)
+        ├── identity-verification/  # Verification submissions and status tracking
+        ├── inspections/            # Item pre-rental inspection appointment scheduler
+        ├── listings/               # Item listing CRUD & lifecycle management
+        ├── messaging/              # Transaction-linked chat message storage
+        ├── notifications/          # In-app notification dispatcher
+        ├── reports/                # User and listing reporting system
+        ├── reviews/                # Two-sided review system for COMPLETED bookings
+        ├── search/                 # Keyword, category, price, and geo-distance search
+        └── users/                  # User profiles & location settings
+        
+        *Note: Each module follows a standard layered structure:*
+        - `*.routes.js`
+        - `*.controller.js`
+        - `*.service.js`
+        - `*.repository.js`
+        - `*.validation.js` (optional)
 ```
 
 ---
@@ -305,160 +211,27 @@ frontend/
     │   └── router.jsx                  # React Router 6 configuration and route definitions
     │
     └── features/
-        ├── home/
-        │   ├── components/
-        │   │   ├── CategorySection.jsx
-        │   │   ├── CategorySection.css
-        │   │   ├── FeaturedListingCard.jsx
-        │   │   ├── FeaturedListingCard.css
-        │   │   ├── FeaturedListings.jsx
-        │   │   ├── FeaturedListings.css
-        │   │   ├── FinalCTA.jsx
-        │   │   ├── FinalCTA.css
-        │   │   ├── HeroSection.jsx
-        │   │   ├── HeroSection.css
-        │   │   ├── TrustSafety.jsx
-        │   │   └── TrustSafety.css
-        │   ├── data/
-        │   │   └── featuredListings.js
-        │   └── pages/
-        │       ├── HomePage.jsx
-        │       └── __tests__/
-        │           └── HomePage.test.jsx
-        │
-        ├── auth/
-        │   ├── hooks/
-        │   │   ├── useLogin.js
-        │   │   ├── useRegister.js
-        │   │   └── useSession.js
-        │   └── pages/
-        │       ├── Auth.css
-        │       ├── LoginPage.jsx
-        │       └── RegisterPage.jsx
-        │
-        ├── profile/
-        │   ├── hooks/
-        │   │   └── useProfile.js
-        │   └── pages/
-        │       ├── ProfilePage.jsx
-        │       ├── ProfilePage.css
-        │       ├── EditProfilePage.jsx
-        │       └── EditProfilePage.css
-        │
-        ├── listings/
-        │   ├── hooks/
-        │   │   ├── useListing.js
-        │   │   ├── useCreateListing.js
-        │   │   └── useMyListings.js
-        │   ├── components/
-        │   │   ├── ListingCard.jsx
-        │   │   ├── ListingForm.jsx
-        │   │   ├── ListingGallery.jsx
-        │   │   └── AvailabilityCalendar.jsx
-        │   └── pages/
-        │       ├── ListingBrowsePage.jsx
-        │       ├── ListingCreatePage.jsx
-        │       ├── ListingDetailPage.jsx
-        │       ├── ListingEditPage.jsx
-        │       └── MyListingsPage.jsx
-        │
-        ├── search/
-        │   ├── hooks/
-        │   │   ├── useSearchListings.js
-        │   │   └── useFilters.js
-        │   ├── components/
-        │   │   ├── SearchBar.jsx
-        │   │   ├── FilterPanel.jsx
-        │   │   └── ResultsGrid.jsx
-        │   └── pages/
-        │       └── SearchPage.jsx
-        │
-        ├── bookings/
-        │   ├── hooks/
-        │   │   ├── useBooking.js
-        │   │   ├── useCreateBooking.js
-        │   │   └── useMyBookings.js
-        │   ├── components/
-        │   │   ├── BookingRequestForm.jsx
-        │   │   ├── BookingStatusBadge.jsx
-        │   │   └── BookingTimeline.jsx
-        │   └── pages/
-        │       ├── BookingRequestPage.jsx
-        │       ├── BookingDetailPage.jsx
-        │       └── MyBookingsPage.jsx
-        │
-        ├── agreements/
-        │   ├── hooks/
-        │   │   └── useAgreement.js
-        │   ├── components/
-        │   │   └── AgreementViewer.jsx
-        │   └── pages/
-        │       └── AgreementReviewPage.jsx
-        │
-        ├── inspections/
-        │   ├── hooks/
-        │   │   └── useInspection.js
-        │   ├── components/
-        │   │   └── InspectionScheduler.jsx
-        │   └── pages/
-        │       └── InspectionPage.jsx
-        │
-        ├── messaging/
-        │   ├── hooks/
-        │   │   ├── useConversations.js
-        │   │   ├── useMessages.js
-        │   │   └── useSocket.js
-        │   ├── components/
-        │   │   ├── ConversationList.jsx
-        │   │   ├── MessageThread.jsx
-        │   │   └── MessageInput.jsx
-        │   └── pages/
-        │       └── ChatPage.jsx
-        │
-        ├── evidence/
-        │   ├── hooks/
-        │   │   └── useUploadEvidence.js
-        │   ├── components/
-        │   │   ├── PhotoUploader.jsx
-        │   │   └── ConditionForm.jsx
-        │   └── pages/
-        │       ├── PickupDocumentationPage.jsx
-        │       └── ReturnDocumentationPage.jsx
-        │
-        ├── reviews/
-        │   ├── hooks/
-        │   │   └── useSubmitReview.js
-        │   ├── components/
-        │   │   └── ReviewForm.jsx
-        │   └── pages/
-        │       └── ReviewSubmitPage.jsx
-        │
-        ├── reports/
-        │   ├── hooks/
-        │   │   └── useSubmitReport.js
-        │   ├── components/
-        │   │   └── ReportForm.jsx
-        │   └── pages/
-        │       └── ReportPage.jsx
-        │
-        ├── admin/
-        │   ├── hooks/
-        │   │   └── useAdminReports.js
-        │   ├── components/
-        │   │   ├── ModerationQueue.jsx
-        │   │   └── AuditLogTable.jsx
-        │   └── pages/
-        │       ├── AdminDashboardPage.jsx
-        │       ├── AdminReportsPage.jsx
-        │       └── AdminUsersPage.jsx
-        │
-        └── notifications/
-            ├── hooks/
-            │   └── useNotifications.js
-            ├── components/
-            │   └── NotificationBell.jsx
-            └── pages/
-                └── NotificationsPage.jsx
+    └── features/
+        ├── admin/                  # Moderation queue, user management, audit logs
+        ├── agreements/             # Agreement review & acceptance UI
+        ├── auth/                   # Login, register, session management
+        ├── bookings/               # Booking requests, timelines, and details
+        ├── evidence/               # Condition photos uploader and documentation
+        ├── home/                   # Landing page, featured listings, category browser
+        ├── inspections/            # Pre-rental inspection scheduler
+        ├── listings/               # Listing creation, gallery, and detail views
+        ├── messaging/              # Real-time chat threads and conversations
+        ├── notifications/          # In-app notification drop-down and list
+        ├── profile/                # User profile display and editing
+        ├── reports/                # Item/user reporting UI
+        ├── reviews/                # Post-rental rating submission
+        └── search/                 # Geospatial search bar, filters, and results grid
+        
+        *Note: Each feature follows a standard structure:*
+        - `hooks/` (e.g., `useLogin.js`)
+        - `components/` (feature-specific UI)
+        - `pages/` (routed views)
+        - `data/` (optional mock/static data)
 ```
 
 ---

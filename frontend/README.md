@@ -1,6 +1,6 @@
 # HuluRent — Frontend
 
-React + Vite web client. See the root [`ARCHITECTURE.md`](../ARCHITECTURE.md) §4 for the full structure and reasoning behind it.
+React + Vite web client. See the [`ARCHITECTURE.md`](../docs/ARCHITECTURE.md) §3 for the full structure and reasoning behind it.
 
 ## Setup
 

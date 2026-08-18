@@ -1,6 +1,6 @@
 # HuluRent — Backend
 
-Node.js + Express API, modular monolith. This is its own repo (`hulurent-backend`) — see `hulurent-docs`' `ARCHITECTURE.md` §2–3 for the full module structure, layering rules, and database design behind it.
+Node.js + Express API, modular monolith. See [`ARCHITECTURE.md`](../docs/ARCHITECTURE.md) §2 and §4 for the full module structure, layering rules, and database design.
 
 ## Setup
 
@@ -28,7 +28,7 @@ Every module file was scaffolded with a one-line comment describing its responsi
 
 ## Booking overlap defense (read before touching `bookings/`)
 
-Two layers, both required — see `ARCHITECTURE.md` §3 in `hulurent-docs`:
+Two layers, both required — see [`ARCHITECTURE.md`](../docs/ARCHITECTURE.md) §4.2:
 
 1. App-level row lock in `bookings.conflict-check.js`
 2. DB-level exclusion constraint — apply `prisma/migrations/manual/booking_overlap_constraint.sql` manually after your first `prisma migrate dev`
