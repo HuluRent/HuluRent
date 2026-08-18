@@ -1,2 +1,6 @@
-// Multer (or similar) config for multipart file uploads
-// TODO: implement
+const multer = require('multer');
+
+// Configure multer for file uploads
+const upload = multer({ dest: 'uploads/' });
+
+module.exports = upload;
