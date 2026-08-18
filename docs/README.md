@@ -220,11 +220,11 @@ Developed for the **Information Network Security Administration (INSA) CTC Progr
 
 | Name | Role | CTC ID | Primary Responsibilities |
 |---|---|---|---|
-| **Kaleab Araya** | **Team Leader / Full-Stack & System Architect** | `CTC-140-26` | Overall system architecture, database modeling, conflict prevention, E2E integration |
-| **Hawlet Romedan Yesuf** | **Backend Engineer (Auth & Bookings)** | `CTC-3877-26` | Authentication, user management, booking state machine, PostgreSQL constraints |
+| **Kaleab Araya** | **Team Leader / Backend Engineer** | `CTC-140-26` | Overall system architecture, database modeling, conflict prevention, E2E integration |
+| **Hawlet Romedan Yesuf** | **System arcthect and frontend engineer** | `CTC-3877-26` | Authentication, user management, booking state machine, PostgreSQL constraints |
 | **Mahlet Getnet** | **Frontend Engineer (UI/UX & Core Features)** | `CTC-1238-26` | Responsive design system, listing flows, booking UI, state management |
 | **Leoul Zerihun** | **Backend / Security & DevOps Engineer** | `CTC-3644-26` | Digital agreements, condition evidence upload, audit logging, Docker setup |
-| **Makbel Temesgen** | **Frontend / QA & Integration Engineer** | `CTC-1418-26` | Geospatial search UI, real-time messaging, reviews, automated testing |
+| **Makbel Temesgen** | **Frontend Engineer and presentation** | `CTC-1418-26` | Geospatial search UI, real-time messaging, reviews, automated testing |
 
 ---
 
