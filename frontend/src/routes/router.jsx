@@ -4,7 +4,7 @@ import LoginPage from '../features/auth/pages/LoginPage';
 import RegisterPage from '../features/auth/pages/RegisterPage';
 import { AppShell } from '../components/layout/AppShell';
 
-import BookingRequestPage from '../features/bookings/pages/BookingRequestPage';
+import { BookingRequestPage } from '../features/bookings/pages/BookingRequestPage';
 import MyBookingsPage from '../features/bookings/pages/MyBookingsPage';
 import BookingDetailPage from '../features/bookings/pages/BookingDetailPage';
 

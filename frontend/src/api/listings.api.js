@@ -1,2 +1,5 @@
-// Thin wrapper functions around client.js for the listings backend module — no React, no state
-// TODO: implement
+import client from './client';
+
+export function getListing(id) {
+  return client.get(`/listings/${id}`).then((res) => res.data);
+}
