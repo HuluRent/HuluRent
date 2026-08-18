@@ -1,9 +1,5 @@
 # HuluRent — Installation & Examiner Usage Guide
 
-Lives in: **`hulurent-docs`** (`guides/installation-and-usage.md`)  
-Reference Issue: **`[DOC-10]`** (Write installation and usage guide for final submission)  
-Audience: **INSA CTC Evaluation Committee & Project Reviewers**
-
 ---
 
 ## 1. Executive Evaluation Overview

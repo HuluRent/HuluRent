@@ -1,9 +1,6 @@
 # HuluRent — API Reference
 
-Lives in: **`hulurent-docs`** (`technical/api-reference.md`)  
-Reference Issue: **`[DOC-12]`** (Standing Task: keep API reference in sync)
-
-This document is the **binding contract** between the `HuluRent-backend` API and the `HuluRent-frontend` web client. It details all RESTful endpoints, query parameters, request/response bodies, status codes, and WebSocket events.
+This document details all RESTful endpoints, query parameters, request/response bodies, status codes, and WebSocket events for the HuluRent platform.
 
 All API routes are served under the base prefix `/api`. For instance, `/auth/login` maps to `http://localhost:3000/api/auth/login`.
 

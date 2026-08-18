@@ -1,10 +1,5 @@
 # HuluRent — Comprehensive Testing Strategy
 
-Lives in: **`hulurent-docs`** (`technical/testing-strategy.md`)  
-Reference Issue: **`[DOC-08]`** (Write testing strategy doc)
-
-This document establishes the quality assurance and automated testing framework across the HuluRent platform.
-
 ---
 
 ## 1. Testing Pyramid & Objectives

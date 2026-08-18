@@ -1,7 +1,5 @@
 # Contributing to HuluRent
 
-Lives in: **`hulurent-docs`** (`CONTRIBUTING.md`)  
-Reference Issue: **`[DOC-03]`** (Write CONTRIBUTING.md)
 
 Thank you for contributing to **HuluRent**! This guide outlines our development standards, branching strategies, commit conventions, and review processes to keep our codebases and documentation aligned.
 

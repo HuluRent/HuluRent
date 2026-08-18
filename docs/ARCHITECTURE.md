@@ -1,7 +1,5 @@
 # HuluRent — Architecture Reference
 
-This document serves as the architectural blueprint and source of truth for **HuluRent**. It specifies the system architecture, domain module boundaries, database models, and directory structures across both backend and frontend layers.
-
 HuluRent is built as a **modular monolith** with a **Node.js + Express** backend (layered into `routes → controller → service → repository`) and a **React + Vite** single-page frontend.
 
 ---
@@ -238,7 +236,6 @@ frontend/
 ├── package-lock.json
 ├── postcss.config.js
 ├── vite.config.js
-├── vitest.config.js
 ├── frontend_issues.json
 ├── import_frontend_issues.py
 ├── README.md

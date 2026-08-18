@@ -1,8 +1,5 @@
 # HuluRent — Product & Functional Specification
 
-Lives in: **`hulurent-docs`** (`product/spec.md`)  
-Reference Issue: **`[DOC-07]`** (Verify product/spec.md covers user roles, stories, and flows)
-
 ---
 
 ## 1. Executive Summary & Vision

@@ -1,7 +1,5 @@
 # HuluRent — Judge Q&A Preparation Guide
 
-Lives in: **`hulurent-docs`** (`presentation/judge-qa-prep.md`)  
-Reference Issue: **`[DOC-05]`** (Write judge Q&A prep doc)  
 Audience: **INSA CTC Evaluation Committee & Technical Judges**
 
 This document provides rigorous, technical, and strategic answers to anticipated questions from competition judges regarding architecture, security, concurrency, business model, and legal liability.

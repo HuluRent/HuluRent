@@ -1,7 +1,5 @@
 # HuluRent — Local Development Setup Guide
 
-Lives in: **`hulurent-docs`** (`guides/local-setup.md`)  
-Reference Issue: **`[DOC-06]`** (Write full-stack local setup guide)
 
 This guide provides end-to-end instructions for spinning up the complete HuluRent development environment on your local workstation.
 

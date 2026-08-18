@@ -1,7 +1,5 @@
 # HuluRent — Pitch Deck Outline
 
-Lives in: **`hulurent-docs`** (`presentation/pitch-deck-outline.md`)  
-Reference Issue: **`[DOC-04]`** (Write presentation / pitch deck outline)  
 Program: **INSA CTC Software Development Program**  
 Presentation Duration: **7–10 Minutes + Q&A**
 

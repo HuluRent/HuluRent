@@ -1,7 +1,5 @@
 # HuluRent — Live Demo Walkthrough Script & UI Flow
 
-Lives in: **`hulurent-docs`** (`presentation/demo-walkthrough.md`)  
-Reference Issue: **`[DOC-11]`** (Add screenshots and demo walkthrough)  
 Duration: **5–7 Minutes Live Demonstration**  
 Setup: **Split-screen browser (Left: Owner Alex, Right: Renter Sara)**
 

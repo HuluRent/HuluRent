@@ -1,10 +1,5 @@
 # HuluRent — Known Limitations & Future Roadmap
 
-Lives in: **`hulurent-docs`** (`product/limitations-and-future.md`)  
-Reference Issue: **`[DOC-09]`** (Write known limitations and future improvements)
-
-This document transparently documents the technical boundaries of the current MVP release alongside the strategic product and architectural roadmap for future development phases.
-
 ---
 
 ## 1. Known MVP Limitations
