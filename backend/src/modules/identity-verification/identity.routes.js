@@ -1,13 +1,14 @@
-// Express routes for identity verification submission/status.
-// TODO: add real route handlers — wire middleware (authenticate, authorize,
-// ownershipGuard, validateRequest) in order, then delegate to the controller.
-
 const { Router } = require('express');
+const controller = require('./identity.controller');
+const validateRequest = require('../../shared/middleware/validate-request');
+const authenticate = require('../../shared/middleware/authenticate');
+const asyncHandler = require('../../shared/utils/async-handler');
+const { initiateSchema, verifySchema } = require('./identity.validation');
 
 const identityRouter = Router();
 
-// Example shape once implemented:
-// router.get('/', asyncHandler(controller.list));
-// router.post('/', authenticate, validateRequest(schema), asyncHandler(controller.create));
+identityRouter.post('/initiate', authenticate, validateRequest(initiateSchema), asyncHandler(controller.initiate));
+identityRouter.post('/verify', authenticate, validateRequest(verifySchema), asyncHandler(controller.verify));
+identityRouter.get('/status', authenticate, asyncHandler(controller.getStatus));
 
 module.exports = { identityRouter };
