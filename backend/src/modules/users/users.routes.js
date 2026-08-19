@@ -9,5 +9,6 @@ const { updateProfileSchema } = require('./users.validation');
 
 usersRouter.get('/me', authenticate, asyncHandler(controller.getMe));
 usersRouter.patch('/me', authenticate, validateRequest(updateProfileSchema), asyncHandler(controller.updateMe));
+usersRouter.get('/:id', authenticate, asyncHandler(controller.getPublicProfile));
 
 module.exports = {usersRouter};
