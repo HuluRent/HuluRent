@@ -34,7 +34,7 @@ async function initiateVerification(userId, idNumber) {
     reference: idNumber
   });
 
-  return { message: 'Verification initiated successfully.', otp: responseData.otp };
+  return { message: 'Verification initiated successfully. Please check your email for the OTP.' };
 }
 
 async function verifyIdentity(userId, idNumber, otp) {
@@ -70,9 +70,6 @@ async function verifyIdentity(userId, idNumber, otp) {
     status: 'VERIFIED',
     verifiedAt: new Date()
   });
-
-  // (Optional: In the future, we could update the user's profile with the Mock Fayda data returned here)
-  // const { profile } = await response.json();
 
   return { message: 'Identity verified successfully' };
 }
