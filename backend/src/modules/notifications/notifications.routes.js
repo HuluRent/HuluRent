@@ -1,13 +1,13 @@
-// Express routes for listing/marking notifications read.
-// TODO: add real route handlers — wire middleware (authenticate, authorize,
-// ownershipGuard, validateRequest) in order, then delegate to the controller.
-
 const { Router } = require('express');
+const controller = require('./notifications.controller');
+const authenticate = require('../../shared/middleware/authenticate');
 
 const notificationsRouter = Router();
 
-// Example shape once implemented:
-// router.get('/', asyncHandler(controller.list));
-// router.post('/', authenticate, validateRequest(schema), asyncHandler(controller.create));
+notificationsRouter.use(authenticate);
+
+notificationsRouter.get('/', controller.list);
+notificationsRouter.put('/read-all', controller.markAllRead);
+notificationsRouter.put('/:id/read', controller.markRead);
 
 module.exports = { notificationsRouter };
