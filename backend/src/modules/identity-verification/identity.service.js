@@ -1,7 +1,8 @@
 const identityRepo = require('./identity.repository');
 const usersRepo = require('../users/users.repository');
+const { env } = require('../../config/env');
 
-const MOCK_FAYDA_URL = process.env.MOCK_FAYDA_URL || 'http://localhost:8888';
+const MOCK_FAYDA_URL = env.mockFaydaUrl;
 
 async function initiateVerification(userId, idNumber) {
   const user = await usersRepo.findById(userId);

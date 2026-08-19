@@ -1,5 +1,11 @@
 const { prisma } = require('../../config/database');
 
+async function findById(id) {
+  return prisma.user.findUnique({
+    where: { id }
+  });
+}
+
 async function findUserWithProfile(id) {
   return prisma.user.findUnique({
     where: { id },
@@ -23,6 +29,7 @@ async function updateProfile(userId, data) {
 }
 
 module.exports = {
+  findById,
   findUserWithProfile,
   updateProfile
 };

@@ -21,6 +21,7 @@ const env = {
   jwtSecret: requireEnv('JWT_SECRET'),
   jwtRefreshSecret: requireEnv('JWT_REFRESH_SECRET'),
   frontendOrigin: requireEnv('FRONTEND_ORIGIN', 'http://localhost:5173'),
+  mockFaydaUrl: requireEnv('MOCK_FAYDA_URL', 'http://localhost:8888'),
 };
 
 module.exports = { env };
