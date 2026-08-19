@@ -9,8 +9,8 @@ import { LoadingSpinner } from '../../../components/LoadingSpinner';
 import { EmptyState } from '../../../components/EmptyState';
 
 export function BookingRequestPage() {
-  const { itemId } = useParams();
-  const { data: item, isLoading, isError } = useListing(itemId);
+  const { listingId } = useParams();
+  const { data: item, isLoading, isError } = useListing(listingId);
 
   if (isLoading) return <LoadingSpinner label="Loading listing…" />;
   if (isError || !item) {
