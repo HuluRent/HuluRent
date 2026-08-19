@@ -2,17 +2,12 @@
 // ListingForm, and PATCHes only what changed (well — ListingForm always
 // sends the full form; the backend's PATCH contract accepts a full or
 // partial body either way, per api-reference.md).
-//
-// Also hosts the AvailabilityCalendar in edit mode (FE-13) — availability
-// windows reference an itemId, so this only makes sense once the item
-// exists, hence living on the edit page rather than the create page.
 
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useListing } from '../hooks/useListing';
 import { updateListing } from '../../../api/listings.api';
-import { ListingForm } from '../components/ListingForm';
-import { AvailabilityCalendar } from '../components/AvailabilityCalendar';
+import ListingForm from '../components/ListingForm';
 import { LoadingSpinner } from '../../../components/LoadingSpinner';
 import { EmptyState } from '../../../components/EmptyState';
 
@@ -45,15 +40,6 @@ export function ListingEditPage() {
         </p>
       )}
       <ListingForm initialData={item} onSubmit={mutate} isSubmitting={isPending} submitLabel="Save Changes" />
-
-      <div className="max-w-2xl mt-stack-lg">
-        <h2 className="font-headline-md text-headline-md text-on-surface mb-stack-md">Availability</h2>
-        <p className="font-body-sm text-body-sm text-on-surface-variant mb-stack-md">
-          Mark date ranges when this item is available to rent. Renters can only request booking dates
-          within a window you've added here.
-        </p>
-        <AvailabilityCalendar itemId={id} mode="edit" />
-      </div>
     </div>
   );
 }
