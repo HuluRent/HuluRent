@@ -4,14 +4,15 @@
 !.env.example
 !**/.env.example
 
-# Dependencies
+# Dependency directories
 node_modules/
 
-# Frontend build output
-frontend/dist/
+# Environment variables (Crucial for security!)
+.env
 
-# Logs
-*.log
+# Uploaded media files
+uploads/
 
-# macOS
+# OS generated files
 .DS_Store
+Thumbs.db
