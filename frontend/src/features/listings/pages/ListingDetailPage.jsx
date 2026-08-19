@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { useListing } from '../hooks/useListing';
 import { ListingGallery } from '../components/ListingGallery';
+import './ListingDetailPage.css';
 
 export function ListingDetailPage() {
   const { listingId } = useParams();
@@ -21,7 +22,7 @@ export function ListingDetailPage() {
 
     if (status === 403 || status === 404) {
       return (
-        <main>
+        <main className="listing-detail-page">
           <h1>Listing not found</h1>
           <p>
             This listing is unavailable or you do not have permission to
@@ -33,7 +34,7 @@ export function ListingDetailPage() {
     }
 
     return (
-      <main>
+  <main className="listing-detail-page">
         <h1>Unable to load listing</h1>
         <p>Please try again later.</p>
         <Link to="/">Back to home</Link>
@@ -43,17 +44,16 @@ export function ListingDetailPage() {
 
   if (!listing) {
     return (
-      <main>
+     <main className="listing-detail-page">
         <h1>Listing not found</h1>
         <Link to="/">Back to home</Link>
       </main>
     );
   }
-
-  return (
-    <main>
-      <section>
-        <h1>{listing.name}</h1>
+return (
+  <main className="listing-detail-page">
+    <section>
+      <h1>{listing.name}</h1>
 
         <ListingGallery
           images={listing.images}
