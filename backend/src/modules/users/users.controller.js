@@ -9,5 +9,9 @@ const updateMe = async (req, res) => {
   const user = await service.updateProfile(req.user.userId, req.body);
   return res.json(user);
 };
+const getPublicProfile = async (req, res) => {
+  const user = await service.getPublicProfile(req.params.id);
+  return res.json(user);
+};
 
-module.exports = {getMe, updateMe};
+module.exports = {getMe, updateMe, getPublicProfile};
