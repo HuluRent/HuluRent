@@ -1,0 +1,226 @@
+/* ==========================================================================
+   HuluRent — ListingDetailPage Styles
+   --------------------------------------------------------------------------
+   Editorial peer-to-peer rental marketplace item detail view.
+   Adheres to HuluRent design system:
+   - Primary Dark Teal (#004349) & Primary Teal (#0D5C63)
+   - Warm Accent (#D4A373)
+   - Background (#F8F9FA) & Surface (#FFFFFF)
+   - Typography (Inter)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Detail Canvas Container
+   -------------------------------------------------------------------------- */
+.listing-detail-page,
+main:has(.listing-gallery),
+main:has(section > .listing-gallery) {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 5rem;
+  box-sizing: border-box;
+  font-family: var(--font-sans, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  color: var(--color-text, #191c1d);
+}
+
+/* Card Surface Wrapper */
+main:has(.listing-gallery) > section,
+.listing-detail-page > section {
+  background-color: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #bfc8c9);
+  border-radius: var(--radius-xl, 20px);
+  padding: 2.5rem;
+  box-shadow: 0 4px 24px -2px rgba(25, 28, 29, 0.06), 0 2px 6px -1px rgba(25, 28, 29, 0.03);
+  display: flex;
+  flex-direction: column;
+}
+
+/* --------------------------------------------------------------------------
+   2. Listing Header & Title
+   -------------------------------------------------------------------------- */
+main:has(.listing-gallery) h1,
+.listing-detail-page h1 {
+  font-size: clamp(1.85rem, 3.5vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: var(--color-text, #191c1d);
+  margin: 0 0 1.75rem 0;
+}
+
+/* Gallery integration */
+main:has(.listing-gallery) .listing-gallery {
+  margin-bottom: 2rem;
+  border-radius: var(--radius-lg, 12px);
+  overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   3. Description Content
+   -------------------------------------------------------------------------- */
+main:has(.listing-gallery) section > p:not(:has(strong)),
+.listing-detail-page__description {
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--color-text-secondary, #3f484a);
+  margin: 0 0 2rem 0;
+  padding-bottom: 1.75rem;
+  border-bottom: 1px solid var(--color-surface-variant, #e1e3e4);
+}
+
+/* --------------------------------------------------------------------------
+   4. Structured Metadata Rows (Key-Value Badges)
+   -------------------------------------------------------------------------- */
+main:has(.listing-gallery) section > p:has(strong),
+.listing-detail-page__meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1.25rem;
+  background-color: var(--color-background, #f8f9fa);
+  border: 1px solid var(--color-surface-variant, #e1e3e4);
+  border-radius: var(--radius-md, 10px);
+  margin: 0.4rem 0;
+  font-size: 0.9375rem;
+  color: var(--color-text, #191c1d);
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+main:has(.listing-gallery) section > p:has(strong):hover {
+  background-color: #f1f4f5;
+  border-color: var(--color-border, #bfc8c9);
+}
+
+main:has(.listing-gallery) section > p:has(strong) strong {
+  font-weight: 600;
+  color: var(--color-primary, #004349);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* --------------------------------------------------------------------------
+   5. Booking Primary Call to Action
+   -------------------------------------------------------------------------- */
+main:has(.listing-gallery) a[href*="/book"],
+.listing-detail-page__book-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 52px;
+  margin-top: 2rem;
+  padding: 0 2rem;
+  background-color: var(--color-primary, #004349);
+  color: #ffffff;
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: var(--radius-md, 12px);
+  box-shadow: 0 3px 12px rgba(0, 67, 73, 0.2);
+  box-sizing: border-box;
+  transition:
+    background-color 0.18s ease,
+    transform 0.1s ease,
+    box-shadow 0.18s ease;
+}
+
+main:has(.listing-gallery) a[href*="/book"]:hover {
+  background-color: var(--color-primary-container, #0d5c63);
+  box-shadow: 0 6px 18px rgba(0, 67, 73, 0.26);
+  transform: translateY(-1px);
+}
+
+main:has(.listing-gallery) a[href*="/book"]:active {
+  background-color: #003237;
+  box-shadow: 0 2px 6px rgba(0, 67, 73, 0.15);
+  transform: translateY(0);
+}
+
+main:has(.listing-gallery) a[href*="/book"]:focus-visible {
+  outline: 2px solid var(--color-accent, #d4a373);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   6. Loading, Error & Not Found States
+   -------------------------------------------------------------------------- */
+.listing-detail-page:not(:has(.listing-gallery)) {
+  width: 100%;
+  max-width: 520px;
+  margin: 5rem auto;
+  padding: 3rem 2rem;
+  text-align: center;
+  background-color: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #bfc8c9);
+  border-radius: var(--radius-xl, 16px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  font-family: var(--font-sans, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  color: var(--color-text, #191c1d);
+  box-sizing: border-box;
+}
+
+.listing-detail-page:not(:has(.listing-gallery)) h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-text, #191c1d);
+  margin: 0 0 0.75rem 0;
+}
+
+.listing-detail-page:not(:has(.listing-gallery)) p {
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary, #3f484a);
+  margin: 0 0 1.75rem 0;
+  line-height: 1.5;
+}
+
+.listing-detail-page:not(:has(.listing-gallery)) a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.75rem;
+  background-color: var(--color-primary, #004349);
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border-radius: var(--radius-md, 10px);
+  transition: background-color 0.18s ease;
+}
+
+.listing-detail-page:not(:has(.listing-gallery)) a:hover {
+  background-color: var(--color-primary-container, #0d5c63);
+}
+
+/* --------------------------------------------------------------------------
+   7. Responsive Adaptations
+   -------------------------------------------------------------------------- */
+@media (max-width: 680px) {
+  .listing-detail-page,
+  main:has(.listing-gallery) {
+    padding: 1.5rem 1rem 4rem;
+  }
+
+  main:has(.listing-gallery) > section {
+    padding: 1.5rem 1.25rem;
+    border-radius: var(--radius-lg, 14px);
+  }
+
+  main:has(.listing-gallery) h1 {
+    font-size: 1.6rem;
+    margin-bottom: 1.25rem;
+  }
+
+  main:has(.listing-gallery) section > p:has(strong) {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  main:has(.listing-gallery) a[href*="/book"] {
+    height: 48px;
+    font-size: 0.95rem;
+  }
+}
