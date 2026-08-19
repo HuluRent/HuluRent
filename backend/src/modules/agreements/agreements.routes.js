@@ -1,13 +1,27 @@
 // Express routes for rental agreement view/accept.
-// TODO: add real route handlers — wire middleware (authenticate, authorize,
+
 // ownershipGuard, validateRequest) in order, then delegate to the controller.
 
-const { Router } = require('express');
+const express = require('express');
+const router = express.Router();
 
-const agreementsRouter = Router();
+const agreementsController = require('./agreements.controller');
+const authenticate = require('../../shared/middleware/authenticate');
 
-// Example shape once implemented:
-// router.get('/', asyncHandler(controller.list));
-// router.post('/', authenticate, validateRequest(schema), asyncHandler(controller.create));
+// 1. Route to create a new agreement for a specific booking
+// Example URL: POST /api/agreements/b5a2-4f1c-9923
+router.post(
+  '/:bookingId',
+  authenticate,
+  agreementsController.createAgreement
+);
 
-module.exports = { agreementsRouter };
+// 2. Route for a user to digitally sign an agreement
+// Example URL: POST /api/agreements/b5a2-4f1c-9923/sign
+router.post(
+  '/:bookingId/sign',
+  authenticate,
+  agreementsController.signAgreement
+);
+
+module.exports = router;
