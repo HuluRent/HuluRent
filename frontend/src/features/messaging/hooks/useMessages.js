@@ -1,40 +1,22 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  getMessages,
-  sendMessage,
-} from '../../../api/messaging.api';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getMessages, sendMessage } from '../../../api/messaging.api';
 
-export function useMessages(conversationId) {
+export function useMessages(bookingId, params = {}) {
+  return useQuery({
+    queryKey: ['messages', bookingId, params],
+    queryFn: () => getMessages(bookingId, params),
+    enabled: !!bookingId,
+  });
+}
+
+export function useSendMessage() {
   const queryClient = useQueryClient();
 
-  const messagesQuery = useQuery({
-    queryKey: ['messages', conversationId],
-    queryFn: () => getMessages(conversationId),
-    enabled: Boolean(conversationId),
-  });
-
-  const sendMutation = useMutation({
-    mutationFn: (content) => sendMessage(conversationId, content),
-    onSuccess: (newMessage) => {
-      queryClient.setQueryData(
-        ['messages', conversationId],
-        (currentMessages) => {
-          if (!currentMessages) return [newMessage];
-
-          return [...currentMessages, newMessage];
-        }
-      );
-
-      queryClient.invalidateQueries({
-        queryKey: ['conversations'],
-      });
+  return useMutation({
+    mutationFn: ({ bookingId, content }) => sendMessage(bookingId, content),
+    onSuccess: (_, { bookingId }) => {
+      queryClient.invalidateQueries({ queryKey: ['messages', bookingId] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
     },
   });
-
-  return {
-    ...messagesQuery,
-    sendMessage: sendMutation.mutateAsync,
-    isSending: sendMutation.isPending,
-    sendError: sendMutation.error,
-  };
 }

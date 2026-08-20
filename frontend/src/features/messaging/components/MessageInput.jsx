@@ -1,65 +1,44 @@
 import { useState } from 'react';
 
-export default function MessageInput({
-  onSend,
-  isSending = false,
-}) {
-  const [content, setContent] = useState('');
+export function MessageInput({ onSend, disabled = false, placeholder = 'Type a message…' }) {
+  const [text, setText] = useState('');
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    const trimmed = content.trim();
-
-    if (!trimmed || isSending) return;
-
-    await onSend(trimmed);
-    setContent('');
+  const handleSend = () => {
+    const trimmed = text.trim();
+    if (!trimmed || disabled) return;
+    onSend(trimmed);
+    setText('');
   };
 
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
-      event.preventDefault();
-      event.currentTarget.form?.requestSubmit();
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
     }
   };
 
   return (
-    <form className="message-input" onSubmit={handleSubmit}>
+    <div className="border-t border-outline-variant p-3 flex items-center gap-2">
+      <input
+        type="text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder={placeholder}
+        disabled={disabled}
+        className="flex-1 px-4 py-2.5 border border-outline-variant rounded-xl bg-surface font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+      />
       <button
         type="button"
-        className="messaging-icon-button"
-        aria-label="Attach file"
-        disabled
-        title="Attachments coming later"
-      >
-        <span className="material-symbols-outlined">
-          attach_file
-        </span>
-      </button>
-
-      <div className="message-textarea-wrapper">
-        <textarea
-          value={content}
-          onChange={(event) => setContent(event.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Write a message..."
-          rows={1}
-          disabled={isSending}
-          aria-label="Message"
-        />
-      </div>
-
-      <button
-        type="submit"
-        className="message-send-button"
-        disabled={!content.trim() || isSending}
+        onClick={handleSend}
+        disabled={disabled || !text.trim()}
+        className="p-2.5 bg-primary text-on-primary rounded-xl hover:shadow-hover transition-all disabled:opacity-40"
         aria-label="Send message"
       >
-        <span className="material-symbols-outlined">
-          send
-        </span>
+        <span className="material-symbols-outlined text-xl">send</span>
       </button>
-    </form>
+    </div>
   );
 }
+
+export default MessageInput;
