@@ -1,214 +1,203 @@
+// View/edit for the current user's own profile.
+//
+// AC requires only sending changed fields on PATCH, not the whole form —
+// EDITABLE_FIELDS below is the single source of truth for the diff, so a
+// future field addition only needs updating in one place.
+//
+// avatarUrl is a plain URL text input, not a file upload — there's no
+// avatar upload endpoint in api-reference.md (unlike listing images,
+// which do have one). Same honest limitation as ListingForm.jsx's
+// lat/lng inputs: no geocoding, manual numeric entry.
 
-import { useState, useEffect, useCallback } from 'react';
-import { getMyProfile, updateMyProfile } from '../../../api/users.api';
-import { getPhoneError, isRequired } from '../../../utils/validators';
+import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../../../hooks/useAuth';
+import { getUserProfile, updateMyProfile } from '../../../api/users.api';
+import { LoadingSpinner } from '../../../components/LoadingSpinner';
+import { EmptyState } from '../../../components/EmptyState';
 import './ProfilePage.css';
 
-const EDITABLE_FIELDS = ['fullName', 'phone', 'bio', 'location'];
+const EDITABLE_FIELDS = ['displayName', 'bio', 'avatarUrl', 'city', 'latitude', 'longitude'];
 
-export default function ProfilePage() {
-  const [profile, setProfile] = useState(null);
+function buildPatch(original, current) {
+  const patch = {};
+  for (const field of EDITABLE_FIELDS) {
+    if ((current[field] ?? '') !== (original[field] ?? '')) {
+      patch[field] = current[field];
+    }
+  }
+  return patch;
+}
+
+export function ProfilePage() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  const { data: profile, isLoading, isError } = useQuery({
+    queryKey: ['user-profile', user?.id],
+    queryFn: () => getUserProfile(user.id),
+    enabled: !!user?.id,
+  });
+
+  const [isEditing, setIsEditing] = useState(false);
   const [form, setForm] = useState(null);
-  const [errors, setErrors] = useState({});
-  const [mode, setMode] = useState('view'); // 'view' | 'edit'
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [loadError, setLoadError] = useState('');
-  const [saveError, setSaveError] = useState('');
-  const [saved, setSaved] = useState(false);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setLoadError('');
-    try {
-      const data = await getMyProfile();
-      setProfile(data);
-      setForm(data);
-    } catch {
-      setLoadError('Could not load your profile. Please refresh and try again.');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
+  // Snapshot the fetched profile into editable form state whenever it
+  // loads (or reloads after a save) — keeps the diff base in sync.
   useEffect(() => {
-    load();
-  }, [load]);
+    if (profile) {
+      setForm({
+        displayName: profile.displayName ?? '',
+        bio: profile.bio ?? '',
+        avatarUrl: profile.avatarUrl ?? '',
+        city: profile.city ?? '',
+        latitude: profile.latitude ?? '',
+        longitude: profile.longitude ?? '',
+      });
+    }
+  }, [profile]);
 
-  const handleChange = (field, value) => {
+  const { mutate, isPending, error } = useMutation({
+    mutationFn: updateMyProfile,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-profile', user.id] });
+      setIsEditing(false);
+    },
+  });
+
+  function handleChange(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }));
-  };
+  }
 
-  const validate = () => {
-    const next = {};
-    if (!isRequired(form.fullName)) next.fullName = 'Full name is required.';
-    if (form.phone) {
-      const phoneErr = getPhoneError(form.phone);
-      if (phoneErr) next.phone = phoneErr;
-    }
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  };
-
-  // Only the fields that actually differ from the last-saved profile
-  const getChangedFields = () => {
-    const changed = {};
-    for (const field of EDITABLE_FIELDS) {
-      if (form[field] !== profile[field]) {
-        changed[field] = form[field];
-      }
-    }
-    return changed;
-  };
-
-  const handleSave = async (e) => {
-    e.preventDefault();
-    setSaveError('');
-    setSaved(false);
-    if (!validate() || saving) return;
-
-    const changed = getChangedFields();
-    if (Object.keys(changed).length === 0) {
-      setMode('view');
+  function handleSave() {
+    const patch = buildPatch(profile, form);
+    if (Object.keys(patch).length === 0) {
+      setIsEditing(false); // nothing changed, just exit edit mode
       return;
     }
-
-    setSaving(true);
-    try {
-      const updated = await updateMyProfile(changed);
-      setProfile(updated);
-      setForm(updated);
-      setMode('view');
-      setSaved(true);
-    } catch (err) {
-      setSaveError(
-        err.response?.status === 409
-          ? 'That phone number is already in use.'
-          : 'Could not save your changes. Please try again.'
-      );
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setForm(profile);
-    setErrors({});
-    setSaveError('');
-    setMode('view');
-  };
-
-  if (loading) {
-    return <div className="hr-profile hr-profile--state">Loading your profile…</div>;
+    mutate(patch);
   }
 
-  if (loadError) {
-    return (
-      <div className="hr-profile hr-profile--state">
-        <p>{loadError}</p>
-        <button className="hr-btn-secondary" onClick={load}>Try again</button>
-      </div>
-    );
-  }
+  if (isLoading || !form) return <LoadingSpinner label="Loading profile…" />;
+  if (isError || !profile) return <EmptyState icon="error" title="Couldn't load your profile" />;
 
   return (
-    <div className="hr-profile">
-      <div className="hr-profile__header">
-        <div className="hr-profile__avatar">
-          {profile.avatarUrl
-            ? <img src={profile.avatarUrl} alt="" />
-            : <span>{(profile.fullName || '?').charAt(0).toUpperCase()}</span>}
-        </div>
-        <div>
-          <h1 className="hr-profile__name">{profile.fullName}</h1>
-          <p className="hr-profile__email">{profile.email}</p>
-        </div>
-        {mode === 'view' && (
-          <button className="hr-btn-secondary hr-profile__edit-btn" onClick={() => setMode('edit')}>
-            Edit profile
+    <div className="max-w-lg mx-auto">
+      <div className="flex justify-between items-center mb-stack-lg">
+        <h1 className="font-headline-lg text-headline-lg text-on-surface">My Profile</h1>
+        {!isEditing && (
+          <button
+            onClick={() => setIsEditing(true)}
+            className="font-label-sm text-label-sm border border-primary text-primary px-4 py-2 rounded-lg hover:bg-surface-container-low transition-colors"
+          >
+            Edit
           </button>
         )}
       </div>
 
-      {saved && <div className="hr-toast" role="status">Profile updated.</div>}
-      {saveError && <div className="hr-alert" role="alert">{saveError}</div>}
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-subtle">
+        <div className="flex items-center gap-4 mb-stack-md">
+          {profile.avatarUrl ? (
+            <img src={profile.avatarUrl} alt={profile.displayName} className="w-16 h-16 rounded-full object-cover border border-outline-variant" />
+          ) : (
+            <div className="w-16 h-16 rounded-full bg-surface-variant border border-outline-variant" />
+          )}
+          {!isEditing && (
+            <div>
+              <p className="font-headline-md text-headline-md text-on-surface">{profile.displayName}</p>
+              {profile.city && <p className="font-body-sm text-body-sm text-on-surface-variant">{profile.city}</p>}
+            </div>
+          )}
+        </div>
 
-      {mode === 'view' ? (
-        <dl className="hr-profile__details">
-          <div className="hr-profile__row">
-            <dt>Phone</dt>
-            <dd>{profile.phone || '—'}</dd>
-          </div>
-          <div className="hr-profile__row">
-            <dt>Location</dt>
-            <dd>{profile.location || '—'}</dd>
-          </div>
-          <div className="hr-profile__row">
-            <dt>Bio</dt>
-            <dd>{profile.bio || '—'}</dd>
-          </div>
-        </dl>
-      ) : (
-        <form className="hr-form" onSubmit={handleSave} noValidate>
-          <div className="hr-field">
-            <label htmlFor="fullName" className="hr-field__label">Full name</label>
-            <input
-              id="fullName"
-              type="text"
-              value={form.fullName || ''}
-              onChange={(e) => handleChange('fullName', e.target.value)}
-              className={`hr-input ${errors.fullName ? 'hr-input--error' : ''}`}
-            />
-            {errors.fullName && <p className="hr-field__error">{errors.fullName}</p>}
-          </div>
+        {isEditing ? (
+          <>
+            {error && (
+              <p className="mb-stack-md font-body-sm text-body-sm text-error">
+                Couldn't save changes. Try again in a moment.
+              </p>
+            )}
 
-          <div className="hr-field">
-            <label htmlFor="phone" className="hr-field__label">Phone number</label>
-            <input
-              id="phone"
-              type="tel"
-              value={form.phone || ''}
-              onChange={(e) => handleChange('phone', e.target.value)}
-              placeholder="09xxxxxxxx"
-              className={`hr-input ${errors.phone ? 'hr-input--error' : ''}`}
-            />
-            {errors.phone && <p className="hr-field__error">{errors.phone}</p>}
-          </div>
+            <div className="mb-stack-md">
+              <label className="block font-label-sm text-label-sm text-on-surface-variant mb-1">Display name</label>
+              <input
+                type="text"
+                value={form.displayName}
+                onChange={(e) => handleChange('displayName', e.target.value)}
+                className="w-full px-3 py-2 border border-outline-variant rounded-lg font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+              />
+            </div>
 
-          <div className="hr-field">
-            <label htmlFor="location" className="hr-field__label">Location</label>
-            <input
-              id="location"
-              type="text"
-              value={form.location || ''}
-              onChange={(e) => handleChange('location', e.target.value)}
-              placeholder="e.g. Bole, Addis Ababa"
-              className="hr-input"
-            />
-          </div>
+            <div className="mb-stack-md">
+              <label className="block font-label-sm text-label-sm text-on-surface-variant mb-1">Bio</label>
+              <textarea
+                value={form.bio}
+                onChange={(e) => handleChange('bio', e.target.value)}
+                rows={3}
+                className="w-full px-3 py-2 border border-outline-variant rounded-lg font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none resize-none"
+              />
+            </div>
 
-          <div className="hr-field">
-            <label htmlFor="bio" className="hr-field__label">Bio</label>
-            <textarea
-              id="bio"
-              rows={4}
-              value={form.bio || ''}
-              onChange={(e) => handleChange('bio', e.target.value)}
-              placeholder="Tell renters a bit about yourself"
-              className="hr-input hr-input--textarea"
-            />
-          </div>
+            <div className="mb-stack-md">
+              <label className="block font-label-sm text-label-sm text-on-surface-variant mb-1">Avatar URL</label>
+              <input
+                type="text"
+                value={form.avatarUrl}
+                onChange={(e) => handleChange('avatarUrl', e.target.value)}
+                placeholder="https://…"
+                className="w-full px-3 py-2 border border-outline-variant rounded-lg font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+              />
+            </div>
 
-          <div className="hr-profile__actions">
-            <button type="button" className="hr-btn-secondary" onClick={handleCancel} disabled={saving}>
-              Cancel
-            </button>
-            <button type="submit" className="hr-btn-primary hr-btn-primary--auto" disabled={saving}>
-              {saving ? <><span className="hr-spinner" aria-hidden="true" />Saving...</> : 'Save changes'}
-            </button>
-          </div>
-        </form>
-      )}
+            <div className="mb-stack-md">
+              <label className="block font-label-sm text-label-sm text-on-surface-variant mb-1">City</label>
+              <input
+                type="text"
+                value={form.city}
+                onChange={(e) => handleChange('city', e.target.value)}
+                placeholder="e.g. Addis Ababa"
+                className="w-full px-3 py-2 border border-outline-variant rounded-lg font-body-md focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+              />
+            </div>
+
+            <div className="flex gap-2 mt-stack-lg">
+              <button
+                onClick={handleSave}
+                disabled={isPending}
+                className="flex-1 bg-primary-container text-on-primary font-headline-md text-headline-md px-4 py-2 rounded-lg shadow-subtle hover:shadow-hover transition-all disabled:opacity-60"
+              >
+                {isPending ? 'Saving…' : 'Save Changes'}
+              </button>
+              <button
+                onClick={() => {
+                  setIsEditing(false);
+                  setForm({
+                    displayName: profile.displayName ?? '',
+                    bio: profile.bio ?? '',
+                    avatarUrl: profile.avatarUrl ?? '',
+                    city: profile.city ?? '',
+                    latitude: profile.latitude ?? '',
+                    longitude: profile.longitude ?? '',
+                  });
+                }}
+                className="px-4 py-2 rounded-lg border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-low transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </>
+        ) : (
+          profile.bio && <p className="font-body-md text-on-surface whitespace-pre-wrap">{profile.bio}</p>
+        )}
+      </div>
+
+      <Link
+        to="/verify-identity"
+        className="block mt-stack-md text-center font-label-sm text-label-sm text-primary hover:underline"
+      >
+        Manage identity verification →
+      </Link>
     </div>
   );
 }
