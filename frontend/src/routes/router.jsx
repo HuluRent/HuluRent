@@ -8,6 +8,7 @@ import { ListingDetailPage } from '../features/listings/pages/ListingDetailPage'
 import { BookingRequestPage } from '../features/bookings/pages/BookingRequestPage';
 import MyBookingsPage from '../features/bookings/pages/MyBookingsPage';
 import BookingDetailPage from '../features/bookings/pages/BookingDetailPage';
+import { ProfilePage } from '../features/profile/pages/ProfilePage';
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
         path: '/listings/:listingId/book',
         element: <BookingRequestPage />,
       },
+      {
+         path: '/profile',
+         element: <ProfilePage />,
+       },
     ],
   },
 ]);
