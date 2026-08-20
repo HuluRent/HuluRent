@@ -1,107 +1,51 @@
 import { useEffect, useRef } from 'react';
 
-function getMessages(data) {
-  if (Array.isArray(data)) return data;
-  return data?.messages || [];
-}
-
-function formatTime(value) {
-  if (!value) return '';
-
-  return new Date(value).toLocaleTimeString([], {
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-}
-
-function getSenderName(message) {
-  return (
-    message.sender?.profile?.displayName ||
-    message.sender?.displayName ||
-    'User'
-  );
-}
-
-function getSenderAvatar(message) {
-  return (
-    message.sender?.profile?.avatarUrl ||
-    message.sender?.avatarUrl ||
-    ''
-  );
-}
-
-export default function MessageThread({
-  messages: data,
-  currentUserId,
-}) {
+export function MessageThread({ messages = [], currentUserId, isLoading }) {
   const bottomRef = useRef(null);
-  const messages = getMessages(data);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({
-      behavior: 'smooth',
-    });
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages.length]);
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <p className="font-body-md text-on-surface-variant">Loading messages…</p>
+      </div>
+    );
+  }
 
   if (messages.length === 0) {
     return (
-      <div className="message-thread message-thread-empty">
-        <p>No messages yet. Start the conversation.</p>
+      <div className="flex-1 flex items-center justify-center">
+        <p className="font-body-md text-on-surface-variant">No messages yet. Start the conversation!</p>
       </div>
     );
   }
 
   return (
-    <div className="message-thread">
-      {messages.map((message) => {
-        const isOwnMessage =
-          message.senderId === currentUserId;
-
-        const senderName = getSenderName(message);
-        const avatar = getSenderAvatar(message);
-
+    <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
+      {messages.map((msg) => {
+        const isSent = msg.senderId === currentUserId;
         return (
           <div
-            key={message.id}
-            className={`message-row ${
-              isOwnMessage ? 'message-row-own' : ''
+            key={msg.id}
+            className={`max-w-[75%] px-4 py-2.5 rounded-2xl font-body-md ${
+              isSent
+                ? 'self-end bg-primary text-on-primary rounded-br-md'
+                : 'self-start bg-surface-container text-on-surface rounded-bl-md'
             }`}
           >
-            {!isOwnMessage && (
-              <div className="message-avatar">
-                {avatar ? (
-                  <img src={avatar} alt={senderName} />
-                ) : (
-                  <span>
-                    {senderName.charAt(0).toUpperCase()}
-                  </span>
-                )}
-              </div>
-            )}
-
-            <div className="message-body">
-              <div className="message-bubble">
-                {message.content}
-              </div>
-
-              <div className="message-meta">
-                <time>{formatTime(message.createdAt)}</time>
-
-                {isOwnMessage && (
-                  <span
-                    className="material-symbols-outlined message-read-icon"
-                    aria-label="Sent"
-                  >
-                    done_all
-                  </span>
-                )}
-              </div>
-            </div>
+            <p>{msg.content}</p>
+            <p className={`font-label-sm text-[10px] mt-1 ${isSent ? 'text-on-primary/70' : 'text-on-surface-variant'}`}>
+              {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </p>
           </div>
         );
       })}
-
       <div ref={bottomRef} />
     </div>
   );
 }
+
+export default MessageThread;

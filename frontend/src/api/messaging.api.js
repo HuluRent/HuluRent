@@ -1,30 +1,16 @@
 import client from './client';
 
-/**
- * Fetch conversations belonging to the current user.
- */
-export async function getConversations() {
-  const response = await client.get('/messaging/conversations');
-  return response.data;
+export async function getConversations(params = {}) {
+  const { data } = await client.get('/messages/conversations', { params });
+  return data;
 }
 
-/**
- * Fetch messages for a conversation.
- */
-export async function getMessages(conversationId) {
-  const response = await client.get(
-    `/messaging/conversations/${conversationId}/messages`
-  );
-  return response.data;
+export async function getMessages(bookingId, params = {}) {
+  const { data } = await client.get(`/messages/${bookingId}`, { params });
+  return data;
 }
 
-/**
- * Send a message to a conversation.
- */
-export async function sendMessage(conversationId, content) {
-  const response = await client.post(
-    `/messaging/conversations/${conversationId}/messages`,
-    { content }
-  );
-  return response.data;
+export async function sendMessage(bookingId, content) {
+  const { data } = await client.post(`/messages/${bookingId}`, { content });
+  return data;
 }

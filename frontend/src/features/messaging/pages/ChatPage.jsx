@@ -1,206 +1,112 @@
-import { useContext, useMemo, useState } from 'react';
-import { AuthContext } from '../../../context/AuthContext';
+import { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useConversations } from '../hooks/useConversations';
-import { useMessages } from '../hooks/useMessages';
-import ConversationList from '../components/ConversationList';
-import MessageThread from '../components/MessageThread';
-import MessageInput from '../components/MessageInput';
-import { useParams } from 'react-router-dom';
-
-const { conversationId } = useParams();
-
-function getConversations(data) {
-  if (Array.isArray(data)) return data;
-  return data?.conversations || [];
-}
-
-function getOtherUser(conversation) {
-  return (
-    conversation?.otherUser ||
-    conversation?.participant ||
-    conversation?.participants?.find(
-      (participant) =>
-        participant.userId !== conversation.currentUserId
-    )?.user ||
-    null
-  );
-}
-
-function getDisplayName(user) {
-  return (
-    user?.profile?.displayName ||
-    user?.displayName ||
-    'Conversation'
-  );
-}
-
-function getAvatar(user) {
-  return user?.profile?.avatarUrl || user?.avatarUrl || '';
-}
-
-function getListing(conversation) {
-  return (
-    conversation?.booking?.item ||
-    conversation?.item ||
-    conversation?.listing ||
-    null
-  );
-}
-
-function getListingName(conversation) {
-  const listing = getListing(conversation);
-
-  return (
-    listing?.title ||
-    listing?.name ||
-    'Rental conversation'
-  );
-}
-
-function getListingImage(conversation) {
-  const listing = getListing(conversation);
-
-  return (
-    listing?.imageUrl ||
-    listing?.coverImage ||
-    listing?.images?.[0]?.url ||
-    listing?.images?.[0] ||
-    ''
-  );
-}
-
-function getListingPrice(conversation) {
-  const listing = getListing(conversation);
-
-  return (
-    listing?.pricePerDay ||
-    listing?.dailyPrice ||
-    listing?.price ||
-    null
-  );
-}
+import { useMessages, useSendMessage } from '../hooks/useMessages';
+import { useSocket } from '../hooks/useSocket';
+import { useAuth } from '../../../hooks/useAuth';
+import { useQueryClient } from '@tanstack/react-query';
+import { ConversationList } from '../components/ConversationList';
+import { MessageThread } from '../components/MessageThread';
+import { MessageInput } from '../components/MessageInput';
+import { LoadingSpinner } from '../../../components/LoadingSpinner';
 
 export default function ChatPage() {
-  const { user } = useContext(AuthContext);
-  const { data: conversationsData } = useConversations();
+  const { bookingId: urlBookingId } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const { socket, joinConversation, leaveConversation } = useSocket();
 
-  const conversations = useMemo(
-    () => getConversations(conversationsData),
-    [conversationsData]
-  );
+  const [activeBookingId, setActiveBookingId] = useState(urlBookingId || null);
+  const [mobileShowThread, setMobileShowThread] = useState(!!urlBookingId);
 
-const [selectedConversationId, setSelectedConversationId] =
-  useState(null);
+  const { data: convData, isLoading: convLoading } = useConversations();
+  const conversations = Array.isArray(convData) ? convData : convData?.items || [];
 
-const activeConversationId =
-  selectedConversationId ||
-  conversationId ||
-  conversations[0]?.id ||
-  null;
-  const activeConversation = conversations.find(
-    (conversation) =>
-      conversation.id === activeConversationId
-  );
+  const { data: msgData, isLoading: msgLoading } = useMessages(activeBookingId);
+  const messages = Array.isArray(msgData) ? msgData : msgData?.items || [];
 
-  const { data: messagesData, sendMessage, isSending } =
-    useMessages(activeConversationId);
+  const sendMutation = useSendMessage();
 
-  const otherUser = getOtherUser(activeConversation);
-  const displayName = getDisplayName(otherUser);
-  const avatar = getAvatar(otherUser);
-  const listingName = getListingName(activeConversation);
-  const listingImage = getListingImage(activeConversation);
-  const listingPrice = getListingPrice(activeConversation);
+  // Join/leave socket room
+  useEffect(() => {
+    if (activeBookingId && socket) {
+      joinConversation(activeBookingId);
+      return () => leaveConversation(activeBookingId);
+    }
+  }, [activeBookingId, socket, joinConversation, leaveConversation]);
 
-  const handleSend = async (content) => {
-    await sendMessage(content);
-  };
+  // Listen for real-time messages
+  useEffect(() => {
+    if (!socket) return;
+    const handler = () => {
+      queryClient.invalidateQueries({ queryKey: ['messages', activeBookingId] });
+      queryClient.invalidateQueries({ queryKey: ['conversations'] });
+    };
+    socket.on('message:receive', handler);
+    return () => socket.off('message:receive', handler);
+  }, [socket, activeBookingId, queryClient]);
+
+  const handleSelect = useCallback((bookingId) => {
+    setActiveBookingId(bookingId);
+    setMobileShowThread(true);
+    navigate(`/messages/${bookingId}`, { replace: true });
+  }, [navigate]);
+
+  const handleSend = useCallback((content) => {
+    if (activeBookingId) {
+      sendMutation.mutate({ bookingId: activeBookingId, content });
+    }
+  }, [activeBookingId, sendMutation]);
+
+  if (convLoading) return <LoadingSpinner label="Loading conversations…" />;
 
   return (
-    <main className="messaging-page">
-      <div className="messaging-layout">
+    <div className="flex h-[calc(100vh-140px)] bg-surface-container-lowest border border-outline-variant rounded-2xl overflow-hidden">
+      {/* Sidebar */}
+      <div className={`w-full sm:w-80 border-r border-outline-variant flex-shrink-0 overflow-y-auto ${mobileShowThread ? 'hidden sm:block' : 'block'}`}>
+        <div className="p-4 border-b border-outline-variant">
+          <h2 className="font-headline-sm text-on-surface">Messages</h2>
+        </div>
         <ConversationList
-          activeConversationId={activeConversationId}
-          onSelectConversation={setSelectedConversationId}
+          conversations={conversations}
+          activeBookingId={activeBookingId}
+          onSelect={handleSelect}
         />
-
-        <section className="chat-panel">
-          {!activeConversationId ? (
-            <div className="chat-empty">
-              <span className="material-symbols-outlined">
-                forum
-              </span>
-              <h2>Your messages</h2>
-              <p>
-                Select a conversation to start chatting.
-              </p>
-            </div>
-          ) : (
-            <>
-              <header className="chat-header">
-                <div className="chat-context">
-                  <div className="chat-listing-image">
-                    {listingImage ? (
-                      <img
-                        src={listingImage}
-                        alt={listingName}
-                      />
-                    ) : (
-                      <span className="material-symbols-outlined">
-                        photo_camera
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="chat-header-info">
-                    <div className="chat-user-heading">
-                      <h2>{displayName}</h2>
-                      <span className="chat-role">
-                        Participant
-                      </span>
-                    </div>
-
-                    <div className="chat-listing-info">
-                      <span>{listingName}</span>
-
-                      {listingPrice !== null && (
-                        <>
-                          <span className="chat-dot" />
-                          <strong>
-                            {Number(listingPrice).toLocaleString()}{' '}
-                            ETB
-                            <small> / day</small>
-                          </strong>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  type="button"
-                  className="chat-more-button"
-                  aria-label="More options"
-                >
-                  <span className="material-symbols-outlined">
-                    more_vert
-                  </span>
-                </button>
-              </header>
-
-              <MessageThread
-                messages={messagesData}
-                currentUserId={user?.id}
-              />
-
-              <MessageInput
-                onSend={handleSend}
-                isSending={isSending}
-              />
-            </>
-          )}
-        </section>
       </div>
-    </main>
+
+      {/* Thread */}
+      <div className={`flex-1 flex flex-col ${!mobileShowThread ? 'hidden sm:flex' : 'flex'}`}>
+        {activeBookingId ? (
+          <>
+            <div className="p-3 border-b border-outline-variant flex items-center gap-2">
+              <button
+                onClick={() => setMobileShowThread(false)}
+                className="sm:hidden p-1"
+                aria-label="Back to conversations"
+              >
+                <span className="material-symbols-outlined">arrow_back</span>
+              </button>
+              <h3 className="font-label-md text-on-surface">
+                {conversations.find((c) => c.bookingId === activeBookingId)?.booking?.item?.name || 'Conversation'}
+              </h3>
+            </div>
+            <MessageThread
+              messages={messages}
+              currentUserId={user?.id}
+              isLoading={msgLoading}
+            />
+            <MessageInput
+              onSend={handleSend}
+              disabled={sendMutation.isPending}
+            />
+          </>
+        ) : (
+          <div className="flex-1 flex items-center justify-center">
+            <p className="font-body-md text-on-surface-variant">Select a conversation</p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
