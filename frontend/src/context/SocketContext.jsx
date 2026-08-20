@@ -1,30 +1,68 @@
-import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { io } from 'socket.io-client';
+import { useAuth } from '../hooks/useAuth';
 
 const SocketContext = createContext(null);
 
 const SOCKET_URL =
   import.meta.env.VITE_SOCKET_URL ||
   import.meta.env.VITE_API_URL ||
-  'http://localhost:5000';
+  'http://localhost:3000';
 
 export function SocketProvider({ children }) {
+  const { user } = useAuth();
   const socketRef = useRef(null);
   const [socket, setSocket] = useState(null);
+  // 'disconnected' | 'connecting' | 'connected' | 'error'
+  const [connectionStatus, setConnectionStatus] = useState('disconnected');
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken');
+    // Retrieve token from localStorage using the key AuthContext uses
+    const token = localStorage.getItem('token');
 
-    if (!token) {
+    if (!user || !token) {
+      // User logged out — make sure we disconnect any existing socket
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+        socketRef.current = null;
+        setSocket(null);
+        setConnectionStatus('disconnected');
+      }
       return undefined;
     }
 
+    // Already connected for this session — nothing to do
+    if (socketRef.current?.connected) return undefined;
+
+    setConnectionStatus('connecting');
+
     const connection = io(SOCKET_URL, {
       transports: ['websocket'],
-      auth: {
-        token,
-      },
+      auth: { token },
       autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+
+    connection.on('connect', () => {
+      setConnectionStatus('connected');
+    });
+
+    connection.on('disconnect', () => {
+      setConnectionStatus('disconnected');
+    });
+
+    connection.on('connect_error', (err) => {
+      console.warn('[Socket] Connection error:', err.message);
+      setConnectionStatus('error');
     });
 
     socketRef.current = connection;
@@ -34,27 +72,24 @@ export function SocketProvider({ children }) {
       connection.disconnect();
       socketRef.current = null;
       setSocket(null);
+      setConnectionStatus('disconnected');
     };
+    // Re-run whenever the authenticated user changes (login / logout)
+  }, [user]);
+
+  const joinConversation = useCallback((conversationId) => {
+    if (!socketRef.current || !conversationId) return;
+    socketRef.current.emit('conversation:join', { conversationId });
   }, []);
 
-  const joinConversation = (bookingId) => {
-    if (!socketRef.current || !bookingId) return;
-
-    socketRef.current.emit('conversation:join', {
-      bookingId,
-    });
-  };
-
-  const leaveConversation = (bookingId) => {
-    if (!socketRef.current || !bookingId) return;
-
-    socketRef.current.emit('conversation:leave', {
-      bookingId,
-    });
-  };
+  const leaveConversation = useCallback((conversationId) => {
+    if (!socketRef.current || !conversationId) return;
+    socketRef.current.emit('conversation:leave', { conversationId });
+  }, []);
 
   const value = {
     socket,
+    connectionStatus,
     joinConversation,
     leaveConversation,
   };
