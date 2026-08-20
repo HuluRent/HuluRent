@@ -1,7 +1,7 @@
 // Prisma queries for Booking
 // Handles direct database interactions for the bookings module
 // Note: Replace `db` with your actual database client import (e.g., Prisma, Sequelize, or pg)
-const db = require('../../config/db'); 
+const db = require('../../config/database'); 
 
 const createBooking = async (bookingData) => {
   return await db.booking.create({

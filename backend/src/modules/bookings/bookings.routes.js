@@ -38,4 +38,4 @@ router.patch(
   bookingsController.updateBookingStatus
 );
 
-module.exports = router;
+module.exports = { bookingsRouter: router };

@@ -24,4 +24,4 @@ router.post(
   agreementsController.signAgreement
 );
 
-module.exports = router;
+module.exports = { agreementsRouter: router };

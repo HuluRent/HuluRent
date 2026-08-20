@@ -24,4 +24,4 @@ router.get(
   evidenceController.getBookingEvidence
 );
 
-module.exports = router;
+module.exports = { evidenceRouter: router };
