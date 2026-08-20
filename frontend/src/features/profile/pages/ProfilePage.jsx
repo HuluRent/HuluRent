@@ -48,12 +48,12 @@ export function ProfilePage() {
   useEffect(() => {
     if (profile) {
       setForm({
-        displayName: profile.displayName ?? '',
-        bio: profile.bio ?? '',
-        avatarUrl: profile.avatarUrl ?? '',
-        city: profile.city ?? '',
-        latitude: profile.latitude ?? '',
-        longitude: profile.longitude ?? '',
+        displayName: profile.profile?.displayName ?? '',
+        bio: profile.profile?.bio ?? '',
+        avatarUrl: profile.profile?.avatarUrl ?? '',
+        city: profile.profile?.city ?? '',
+        latitude: profile.profile?.latitude ?? '',
+        longitude: profile.profile?.longitude ?? '',
       });
     }
   }, [profile]);
@@ -98,15 +98,15 @@ export function ProfilePage() {
 
       <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-subtle">
         <div className="flex items-center gap-4 mb-stack-md">
-          {profile.avatarUrl ? (
-            <img src={profile.avatarUrl} alt={profile.displayName} className="w-16 h-16 rounded-full object-cover border border-outline-variant" />
+          {profile.profile?.avatarUrl ? (
+            <img src={profile.profile?.avatarUrl} alt={profile.profile?.displayName} className="w-16 h-16 rounded-full object-cover border border-outline-variant" />
           ) : (
             <div className="w-16 h-16 rounded-full bg-surface-variant border border-outline-variant" />
           )}
           {!isEditing && (
             <div>
-              <p className="font-headline-md text-headline-md text-on-surface">{profile.displayName}</p>
-              {profile.city && <p className="font-body-sm text-body-sm text-on-surface-variant">{profile.city}</p>}
+              <p className="font-headline-md text-headline-md text-on-surface">{profile.profile?.displayName}</p>
+              {profile.profile?.city && <p className="font-body-sm text-body-sm text-on-surface-variant">{profile.profile?.city}</p>}
             </div>
           )}
         </div>
@@ -173,12 +173,12 @@ export function ProfilePage() {
                 onClick={() => {
                   setIsEditing(false);
                   setForm({
-                    displayName: profile.displayName ?? '',
-                    bio: profile.bio ?? '',
-                    avatarUrl: profile.avatarUrl ?? '',
-                    city: profile.city ?? '',
-                    latitude: profile.latitude ?? '',
-                    longitude: profile.longitude ?? '',
+                    displayName: profile.profile?.displayName ?? '',
+                    bio: profile.profile?.bio ?? '',
+                    avatarUrl: profile.profile?.avatarUrl ?? '',
+                    city: profile.profile?.city ?? '',
+                    latitude: profile.profile?.latitude ?? '',
+                    longitude: profile.profile?.longitude ?? '',
                   });
                 }}
                 className="px-4 py-2 rounded-lg border border-outline-variant text-on-surface-variant font-label-sm text-label-sm hover:bg-surface-container-low transition-colors"
@@ -188,7 +188,7 @@ export function ProfilePage() {
             </div>
           </>
         ) : (
-          profile.bio && <p className="font-body-md text-on-surface whitespace-pre-wrap">{profile.bio}</p>
+          profile.profile?.bio && <p className="font-body-md text-on-surface whitespace-pre-wrap">{profile.profile?.bio}</p>
         )}
       </div>
 
