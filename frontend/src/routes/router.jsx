@@ -9,6 +9,7 @@ import { BookingRequestPage } from '../features/bookings/pages/BookingRequestPag
 import MyBookingsPage from '../features/bookings/pages/MyBookingsPage';
 import BookingDetailPage from '../features/bookings/pages/BookingDetailPage';
 import { ProfilePage } from '../features/profile/pages/ProfilePage';
+import ChatPage from '../features/messaging/pages/ChatPage';
 
 const router = createBrowserRouter([
   {
@@ -46,7 +47,16 @@ const router = createBrowserRouter([
          path: '/profile',
          element: <ProfilePage />,
        },
+       {
+         path: '/messages',
+         element: <ChatPage />,
+       },
+       {
+         path: '/messages/:conversationId',
+         element: <ChatPage />,
+       },
     ],
+
   },
 ]);
 
