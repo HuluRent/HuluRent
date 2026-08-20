@@ -1,8 +1,3 @@
-// Thin wrapper around client.js for the admin backend module.
-// See docs/technical/api-reference.md "Admin" section — every one of
-// these requires role: "ADMIN" server-side (authorize.js), not just
-// hidden behind RoleGuard client-side.
-
 import client from './client';
 
 export function getReports(params = {}) {
@@ -18,5 +13,11 @@ export function getUsers(params = {}) {
 }
 
 export function restrictUser(id, { restricted, reason }) {
-  return client.patch(`/admin/users/${id}/restrict`, { restricted, reason }).then((res) => res.data);
+  return client
+    .patch(`/admin/users/${id}/restrict`, { restricted, reason })
+    .then((res) => res.data);
+}
+
+export function getAdminUsers(params = {}) {
+  return getUsers(params);
 }
