@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
   });
 
   const register = async (fullName, email, password) => {
-    const data = await registerRequest(email, password);
+    const data = await registerRequest(fullName, email, password);
 
     localStorage.setItem('token', data.accessToken);
     localStorage.setItem('user', JSON.stringify(data.user));
