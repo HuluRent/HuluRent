@@ -6,7 +6,7 @@ const { UnauthorizedError } = require('../../shared/errors/UnauthorizedError');
 const { env } = require('../../config/env');
 
 
-const register = async ({email, password, role}) => {
+const register = async ({displayName, email, password, role}) => {
 
     const existingUser = await authRepo.findByEmail(email);
     if (existingUser) {
@@ -14,7 +14,7 @@ const register = async ({email, password, role}) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await authRepo.register({email, password: hashedPassword, role});
+    const user = await authRepo.register({displayName, email, password: hashedPassword, role});
     return buildAuthResponse(user);
 }
 
