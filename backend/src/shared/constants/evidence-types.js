@@ -1,2 +1,7 @@
-// PICKUP, RETURN — mirrors Prisma's EvidenceType enum
-// TODO: implement
+const EVIDENCE_TYPES = {
+  PRE_HANDOFF: 'PRE_HANDOFF',
+  POST_RETURN: 'POST_RETURN',
+  DAMAGE_REPORT: 'DAMAGE_REPORT'
+};
+
+module.exports = { EVIDENCE_TYPES };

@@ -1,15 +1,24 @@
-const Joi = require('joi');
+const { z } = require('zod');
 
-const createBookingSchema = Joi.object({
-  propertyId: Joi.string().required(),
-  startDate: Joi.date().required(),
-  endDate: Joi.date().greater(Joi.ref('startDate')).required()
+const createBookingSchema = z.object({
+  itemId: z.string().uuid(),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date()
 });
 
-const updateStatusSchema = Joi.object({
-  status: Joi.string()
-    .valid('pending', 'confirmed', 'cancelled', 'completed')
-    .required()
+const updateStatusSchema = z.object({
+  newState: z.enum([
+    'REQUESTED',
+    'ACCEPTED',
+    'CONFIRMED',
+    'ACTIVE',
+    'RETURN_PENDING',
+    'COMPLETED',
+    'REJECTED',
+    'CANCELLED',
+    'EXPIRED',
+    'DISPUTED'
+  ])
 });
 
 module.exports = {

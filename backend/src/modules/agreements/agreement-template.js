@@ -1,5 +1,4 @@
 // Builds agreement terms JSON from booking data, includes the off-platform-handoff clause (hulurent-docs product/trust-and-liability.md §1)
-// Builds agreement terms JSON from booking data, includes the off-platform-handoff clause (hulurent-docs product/tr...)
 
 const buildAgreementTemplate = (bookingData, itemData, ownerData, renterData) => {
   return {

@@ -1,13 +1,15 @@
 const identityRepo = require('./identity.repository');
 const usersRepo = require('../users/users.repository');
 const { env } = require('../../config/env');
+const { BadRequestError } = require('../../shared/errors/BadRequestError');
+const { NotFoundError } = require('../../shared/errors/NotFoundError');
 
 const MOCK_FAYDA_URL = env.mockFaydaUrl;
 
 async function initiateVerification(userId, idNumber) {
   const user = await usersRepo.findById(userId);
   if (!user) {
-    throw new Error('User not found');
+    throw new NotFoundError('User not found');
   }
 
   // Call Mock Fayda to initiate OTP
@@ -24,7 +26,7 @@ async function initiateVerification(userId, idNumber) {
 
   const responseData = await response.json();
   if (!response.ok) {
-    throw new Error(responseData.error || 'Failed to initiate verification with Mock Fayda');
+    throw new BadRequestError(responseData.error || 'Failed to initiate verification with Mock Fayda');
   }
 
   // Upsert the identity verification record to PENDING
@@ -41,11 +43,11 @@ async function verifyIdentity(userId, idNumber, otp) {
   // Check if there is a pending verification
   const verification = await identityRepo.findVerificationByUserId(userId);
   if (!verification || verification.status !== 'PENDING') {
-    throw new Error('No pending verification found');
+    throw new BadRequestError('No pending verification found');
   }
 
   if (verification.reference !== idNumber) {
-    throw new Error('ID number does not match the pending verification');
+    throw new BadRequestError('ID number does not match the pending verification');
   }
 
   // Call Mock Fayda to verify OTP
@@ -62,7 +64,7 @@ async function verifyIdentity(userId, idNumber, otp) {
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to verify OTP with Mock Fayda');
+    throw new BadRequestError(errorData.error || 'Failed to verify OTP with Mock Fayda');
   }
 
   // Successfully verified, update the verification record

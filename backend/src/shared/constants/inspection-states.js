@@ -1,2 +1,8 @@
-// REQUESTED, CONFIRMED, COMPLETED, CANCELLED — mirrors Prisma's InspectionStatus enum
-// TODO: implement
+const INSPECTION_STATES = {
+  REQUESTED: 'REQUESTED',
+  SCHEDULED: 'SCHEDULED',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+};
+
+module.exports = { INSPECTION_STATES };

@@ -9,8 +9,9 @@ const { createListingSchema, updateListingSchema } = require('./listings.validat
 
 const listingsRouter = Router();
 
-listingsRouter.get('/', asyncHandler(controller.list));
-listingsRouter.get('/:id', asyncHandler(controller.getById));
+listingsRouter.get('/', controller.list);
+listingsRouter.get('/me', authenticate, controller.getMyListings);
+listingsRouter.get('/:id', controller.getById);
 
 listingsRouter.post(
   '/',

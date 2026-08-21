@@ -6,6 +6,16 @@ async function getById(req, res) {
   return res.json(listing);
 }
 
+async function getMyListings(req, res) {
+  const filters = {
+    categoryId: req.query.categoryId,
+    ownerId: req.user.userId,
+    status: req.query.status
+  };
+  const listings = await service.findAll(filters);
+  return res.json(listings);
+}
+
 async function list(req, res) {
   const filters = {
     categoryId: req.query.categoryId,
@@ -28,6 +38,8 @@ async function create(req, res) {
     pricingUnit: req.body.pricingUnit,
     depositAmount: req.body.depositAmount,
     approxLocation: req.body.approxLocation,
+    latitude: req.body.latitude ? parseFloat(req.body.latitude) : 0,
+    longitude: req.body.longitude ? parseFloat(req.body.longitude) : 0,
     ownerId: req.user.userId,
     status: 'PUBLISHED'
   };
@@ -51,5 +63,6 @@ module.exports = {
   list,
   create,
   update,
-  remove
+  remove,
+  getMyListings
 };

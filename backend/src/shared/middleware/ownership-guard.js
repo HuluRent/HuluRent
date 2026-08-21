@@ -13,7 +13,11 @@ const ownershipGuard = (getOwnerIdFn) => {
         throw new NotFoundError('Resource not found');
       }
 
-      if (ownerId !== userId && req.user.role !== 'ADMIN') {
+      const isAuthorized = Array.isArray(ownerId) 
+        ? ownerId.includes(userId) 
+        : ownerId === userId;
+
+      if (!isAuthorized && req.user.role !== 'ADMIN') {
         throw new ForbiddenError('You are not authorized to modify this resource');
       }
 

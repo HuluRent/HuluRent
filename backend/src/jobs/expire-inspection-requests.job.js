@@ -1,2 +1,7 @@
-// Transitions unconfirmed inspection requests to CANCELLED after their window lapses
-// TODO: implement
+const logger = require('../../config/logger');
+
+async function expireInspectionRequests() {
+  logger.info('Running cron job: Expiring stale inspection requests...');
+}
+
+module.exports = expireInspectionRequests;

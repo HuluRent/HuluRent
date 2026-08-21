@@ -1,2 +1,8 @@
-// DRAFT, PUBLISHED, UNAVAILABLE, SUSPENDED, ARCHIVED — mirrors Prisma's ListingStatus enum
-// TODO: implement
+const LISTING_STATES = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  UNAVAILABLE: 'UNAVAILABLE',
+  ARCHIVED: 'ARCHIVED'
+};
+
+module.exports = { LISTING_STATES };

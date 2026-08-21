@@ -1,13 +1,17 @@
-// Express routes for filing a report.
-// TODO: add real route handlers — wire middleware (authenticate, authorize,
-// ownershipGuard, validateRequest) in order, then delegate to the controller.
-
 const { Router } = require('express');
+const controller = require('./reports.controller');
+const authenticate = require('../../shared/middleware/authenticate');
+const authorize = require('../../shared/middleware/authorize');
+const validateRequest = require('../../shared/middleware/validate-request');
+const { createReportSchema, updateReportStatusSchema } = require('./reports.validation');
 
 const reportsRouter = Router();
 
-// Example shape once implemented:
-// router.get('/', asyncHandler(controller.list));
-// router.post('/', authenticate, validateRequest(schema), asyncHandler(controller.create));
+// Any authenticated user can file a report
+reportsRouter.post('/', authenticate, validateRequest(createReportSchema), controller.create);
+
+// Only admins can list all reports or update status
+reportsRouter.get('/', authenticate, authorize('ADMIN'), controller.list);
+reportsRouter.put('/:id/status', authenticate, authorize('ADMIN'), validateRequest(updateReportStatusSchema), controller.updateStatus);
 
 module.exports = { reportsRouter };
