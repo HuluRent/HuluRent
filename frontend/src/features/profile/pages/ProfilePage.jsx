@@ -1,20 +1,31 @@
-import { useParams, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
 import { usePublicProfile } from '../hooks/useProfile';
 import { useUserReviews } from '../../reviews/hooks/useSubmitReview';
 import { LoadingSpinner } from '../../../components/LoadingSpinner';
 import { EmptyState } from '../../../components/EmptyState';
+import { LogoutModal } from '../../../components/LogoutModal';
 import './ProfilePage.css';
 
 export default function ProfilePage() {
   const { userId } = useParams();
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, logout } = useAuth();
+  const navigate = useNavigate();
   const profileUserId = userId || currentUser?.id;
   const isOwnProfile = !userId || userId === currentUser?.id;
+
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const { data: profile, isLoading, isError } = usePublicProfile(profileUserId);
   const { data: reviewsData } = useUserReviews(profileUserId);
   const reviews = reviewsData?.items || reviewsData || [];
+
+  function handleLogoutConfirm() {
+    logout();
+    setShowLogoutModal(false);
+    navigate('/login');
+  }
 
   if (isLoading) return <LoadingSpinner label="Loading profile…" />;
 
@@ -67,10 +78,20 @@ export default function ProfilePage() {
         </div>
 
         {isOwnProfile && (
-          <Link to="/profile/edit" className="hr-profile__edit-btn">
-            <span className="material-symbols-outlined">edit</span>
-            Edit Profile
-          </Link>
+          <div className="hr-profile__own-actions">
+            <Link to="/profile/edit" className="hr-profile__edit-btn">
+              <span className="material-symbols-outlined">edit</span>
+              Edit Profile
+            </Link>
+            <button
+              type="button"
+              onClick={() => setShowLogoutModal(true)}
+              className="hr-profile__logout-btn"
+            >
+              <span className="material-symbols-outlined">logout</span>
+              Log out
+            </button>
+          </div>
         )}
       </div>
 
@@ -115,6 +136,12 @@ export default function ProfilePage() {
           </div>
         )}
       </div>
+      {/* ── Logout confirmation modal ──────────────────── */}
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onConfirm={handleLogoutConfirm}
+        onCancel={() => setShowLogoutModal(false)}
+      />
     </div>
   );
 }
