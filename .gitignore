@@ -15,4 +15,8 @@ uploads/
 
 # OS generated files
 .DS_Store
-Thumbs.dbfrontend/dist/
+Thumbs.db
+
+# Frontend build output
+frontend/dist/
+
