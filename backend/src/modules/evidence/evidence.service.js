@@ -10,19 +10,16 @@ class EvidenceService {
    */
   async submitEvidence({ bookingId, uploaderId, role, photoUrl, stage }) {
     
-    // 1. Validate the stage type
     const validStages = ['PICKUP', 'RETURN'];
     if (!validStages.includes(stage)) {
       throw new ValidationError('Invalid evidence stage. Must be PICKUP or RETURN.');
     }
 
-    // 2. Pass the clean data to the repository
     const newEvidence = await evidenceRepository.createEvidence({
       bookingId,
-      uploaderId,
-      role,       // 'OWNER' or 'RENTER'
-      stage,      // 'PICKUP' or 'RETURN'
-      photoUrl,   // e.g., '/uploads/camera-front.jpg'
+      submittedById: uploaderId,
+      type: stage,
+      photoUrls: [photoUrl],
     });
 
     return newEvidence;
