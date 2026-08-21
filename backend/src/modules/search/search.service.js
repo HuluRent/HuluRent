@@ -6,7 +6,6 @@ async function searchItems(queryFilters) {
     categoryId,
     minPrice,
     maxPrice,
-    status = 'PUBLISHED', // Default to only showing published items to public
     minLat,
     maxLat,
     minLng,
@@ -15,7 +14,7 @@ async function searchItems(queryFilters) {
     limit
   } = queryFilters;
 
-  const where = { status };
+  const where = { status: 'PUBLISHED' };
 
   if (categoryId) {
     where.categoryId = categoryId;
