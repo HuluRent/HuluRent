@@ -43,8 +43,23 @@ const createMessage = asyncHandler(async (req, res) => {
   });
 });
 
+const startConversation = asyncHandler(async (req, res) => {
+  const { listingId } = req.body;
+
+  const conversation = await service.startConversation(
+    req.user.userId,
+    listingId
+  );
+
+  return res.status(200).json({
+    success: true,
+    data: conversation,
+  });
+});
+
 module.exports = {
   listConversations,
   listMessages,
   createMessage,
+  startConversation,
 };

@@ -6,7 +6,7 @@
 // so that home-page category cards and the hero search bar can deep-link
 // directly into a pre-filtered browse page.
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 const DEFAULT_FILTERS = {
@@ -23,14 +23,17 @@ const DEFAULT_FILTERS = {
 
 export function useFilters() {
   const [searchParams] = useSearchParams();
+  const [filters, setFilters] = useState(() => {
+    const q = searchParams.get('q');
+    const categoryId = searchParams.get('categoryId');
+    const initialCategoryIds = categoryId ? [categoryId] : [];
 
-  // Seed initial state from URL query params (set by category cards / hero search)
-  const [filters, setFilters] = useState(() => ({
-    ...DEFAULT_FILTERS,
-    query: searchParams.get('query') || '',
-    location: searchParams.get('location') || '',
-    categorySlug: searchParams.get('category') || '',
-  }));
+    return {
+      ...DEFAULT_FILTERS,
+      query: q || '',
+      categoryIds: initialCategoryIds,
+    };
+  });
 
   const updateFilter = useCallback((key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value, page: key === 'page' ? value : 1 }));

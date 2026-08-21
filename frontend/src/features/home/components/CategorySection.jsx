@@ -1,230 +1,119 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './CategorySection.css';
+import { useCategories } from '../../../hooks/useCategories';
 
-const categories = [
-  {
-    name: 'Electronics',
-    slug: 'electronics',
-    icon: 'devices',
-    subcategories: [
-      { name: 'Phones & Tablets', slug: 'phones-tablets' },
-      { name: 'Laptops & Computers', slug: 'laptops-computers' },
-      { name: 'Cameras & Photography', slug: 'cameras-photography' },
-      { name: 'Audio & Music', slug: 'audio-music' },
-      { name: 'TVs & Video', slug: 'tvs-video' },
-      { name: 'Gaming', slug: 'gaming' },
-      { name: 'Other Electronics', slug: 'other-electronics' },
-    ],
-  },
-{
-  name: 'Books & Education',
-  slug: 'books-education',
-  icon: 'menu_book',
-  subcategories: [
-    { name: 'Textbooks', slug: 'textbooks' },
-    { name: 'Academic Books', slug: 'academic-books' },
-    { name: 'Professional Books', slug: 'professional-books' },
-    { name: 'Exam Preparation', slug: 'exam-preparation' },
-    { name: 'Novels & Literature', slug: 'novels-literature' },
-    { name: 'Children’s Books', slug: 'childrens-books' },
-    { name: 'Other Books', slug: 'other-books' },
-  ],
-},
-{
-  name: 'Musical Instruments',
-  slug: 'musical-instruments',
-  icon: 'music_note',
-  subcategories: [
-    { name: 'Guitars', slug: 'guitars' },
-    { name: 'Keyboards & Pianos', slug: 'keyboards-pianos' },
-    { name: 'Drums & Percussion', slug: 'drums-percussion' },
-    { name: 'String Instruments', slug: 'string-instruments' },
-    { name: 'Wind Instruments', slug: 'wind-instruments' },
-    { name: 'DJ Equipment', slug: 'dj-equipment' },
-    { name: 'Other Instruments', slug: 'other-instruments' },
-  ],
-},
-  {
-    name: 'Furniture',
-    slug: 'furniture',
-    icon: 'chair',
-    subcategories: [
-      { name: 'Sofas & Couches', slug: 'sofas-couches' },
-      { name: 'Tables & Chairs', slug: 'tables-chairs' },
-      { name: 'Beds & Mattresses', slug: 'beds-mattresses' },
-      { name: 'Office Furniture', slug: 'office-furniture' },
-      { name: 'Event Furniture', slug: 'event-furniture' },
-      { name: 'Other Furniture', slug: 'other-furniture' },
-    ],
-  },
+// Fallback icons for known categories
+const ICON_MAP = {
+  'Electronics': 'devices',
+  'Tools': 'handyman',
+  'Events': 'celebration',
+  'Vehicles': 'directions_car',
+  'Sports': 'sports_soccer',
+  'Furniture': 'chair',
+  'Fashion': 'checkroom',
+  'Instruments': 'music_note',
+  'Baby & Kids': 'child_care',
+};
 
-  {
-    name: 'Fashion',
-    slug: 'fashion',
-    icon: 'checkroom',
-    subcategories: [
-      { name: 'Dresses & Gowns', slug: 'dresses-gowns' },
-      { name: 'Suits & Formal Wear', slug: 'suits-formal-wear' },
-      { name: 'Traditional Clothing', slug: 'traditional-clothing' },
-      { name: 'Shoes', slug: 'shoes' },
-      { name: 'Bags & Accessories', slug: 'bags-accessories' },
-      { name: 'Costumes', slug: 'costumes' },
-      { name: 'Wedding Wear', slug: 'wedding-wear' },
-    ],
-  },
-
-  {
-    name: 'Tools & Equipment',
-    slug: 'tools-equipment',
-    icon: 'handyman',
-    subcategories: [
-      { name: 'Power Tools', slug: 'power-tools' },
-      { name: 'Hand Tools', slug: 'hand-tools' },
-      { name: 'Generators', slug: 'generators' },
-      { name: 'Welding Equipment', slug: 'welding-equipment' },
-      { name: 'Ladders & Scaffolding', slug: 'ladders-scaffolding' },
-      { name: 'Construction Equipment', slug: 'construction-equipment' },
-      { name: 'Gardening Equipment', slug: 'gardening-equipment' },
-    ],
-  },
-
-  {
-    name: 'Events & Party',
-    slug: 'events-party',
-    icon: 'celebration',
-    subcategories: [
-      { name: 'Event Furniture', slug: 'event-furniture' },
-      { name: 'Tents & Canopies', slug: 'tents-canopies' },
-      { name: 'Catering Equipment', slug: 'catering-equipment' },
-      { name: 'Sound & DJ Equipment', slug: 'sound-dj-equipment' },
-      { name: 'Lighting Equipment', slug: 'lighting-equipment' },
-      { name: 'Decoration', slug: 'decoration' },
-      { name: 'Party Equipment', slug: 'party-equipment' },
-    ],
-  },
-
-  {
-    name: 'Sports & Outdoors',
-    slug: 'sports-outdoors',
-    icon: 'sports_soccer',
-    subcategories: [
-      { name: 'Sports Equipment', slug: 'sports-equipment' },
-      { name: 'Camping Equipment', slug: 'camping-equipment' },
-      { name: 'Bicycles', slug: 'bicycles' },
-      { name: 'Outdoor Equipment', slug: 'outdoor-equipment' },
-      { name: 'Fitness Equipment', slug: 'fitness-equipment' },
-   
-      { name: 'Other Outdoor Gear', slug: 'other-outdoor-gear' },
-    ],
-  },
-
-  {
-    name: 'Baby & Kids',
-    slug: 'baby-kids',
-    icon: 'child_care',
-    subcategories: [
-      { name: 'Baby Strollers', slug: 'baby-strollers' },
-      { name: 'Car Seats', slug: 'car-seats' },
-      { name: 'Cribs & Cots', slug: 'cribs-cots' },
-      { name: 'Baby Equipment', slug: 'baby-equipment' },
-      { name: 'Toys & Games', slug: 'toys-games' },
-      { name: 'Kids Party Equipment', slug: 'kids-party-equipment' },
-    ],
-  },
-
-  {
-    name: 'Agriculture',
-    slug: 'agriculture',
-    icon: 'agriculture',
-    subcategories: [
-      { name: 'Farming Tools', slug: 'farming-tools' },
-      { name: 'Agricultural Equipment', slug: 'agricultural-equipment' },
-      { name: 'Irrigation Equipment', slug: 'irrigation-equipment' },
-      { name: 'Harvesting Equipment', slug: 'harvesting-equipment' },
-      { name: 'Livestock Equipment', slug: 'livestock-equipment' },
-      { name: 'Food Processing Equipment', slug: 'food-processing-equipment' },
-    ],
-  },
-
-  {
-    name: 'Other',
-    slug: 'other',
-    icon: 'category',
-    subcategories: [
-      { name: 'Other Items', slug: 'other-items' },
-    ],
-  },
-];
-
-function CategorySection({ onCategorySelect }) {
+function CategorySection() {
   const navigate = useNavigate();
-  const [openCategory, setOpenCategory] = useState(null);
+  const { data: categoriesData, isLoading } = useCategories();
+  const [expandedCategory, setExpandedCategory] = useState(null);
 
-  // Clicking the top-level card navigates immediately to /listings?category=<slug>
-  // (which SearchPage reads from the URL to pre-fill the filter).
-  const handleCategoryClick = (category) => {
-    if (onCategorySelect) {
-      onCategorySelect({ category });
-    }
-    navigate(`/listings?category=${category.slug}`);
-  };
+  const categories = categoriesData?.items || categoriesData || [];
 
-  // Subcategory click navigates with both category and subcategory slugs
-  const handleSubcategoryClick = (category, subcategory) => {
-    if (onCategorySelect) {
-      onCategorySelect({ category, subcategory });
-    }
-    navigate(`/listings?category=${category.slug}&subcategory=${subcategory.slug}`);
-  };
+  // Build parent-child tree
+  const parents = categories.filter(c => !c.parentId);
+  const getChildren = (parentId) => categories.filter(c => c.parentId === parentId);
+
+  if (isLoading) {
+    return (
+      <section className="py-16 bg-surface-muted">
+        <div className="hr-container animate-pulse">
+          <div className="h-8 bg-surface-border rounded w-48 mb-8"></div>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {[1,2,3,4,5,6].map(i => (
+              <div key={i} className="h-32 bg-surface-border rounded-xl"></div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
-    <section className="categories">
-      <h2>Explore Categories</h2>
-
-      <div className="categories__grid">
-        {categories.map((category) => (
-          <div
-            className={`category-wrapper ${
-              openCategory === category.slug
-                ? 'category-wrapper--open'
-                : ''
-            }`}
-            key={category.slug}
+    <section className="py-16 bg-surface-muted">
+      <div className="hr-container">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-text">Popular Categories</h2>
+          <button
+            onClick={() => navigate('/search')}
+            className="text-primary font-medium hover:text-primary-hover flex items-center gap-1 transition-colors"
           >
-            <button
-              type="button"
-              className="category-card"
-              onClick={() => handleCategoryClick(category)}
-            >
-              <div className="category-card__icon">
-                <span className="material-symbols-outlined">
-                  {category.icon}
-                </span>
-              </div>
+            View all <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+          </button>
+        </div>
 
-              <span>{category.name}</span>
-            </button>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {parents.map((category) => {
+            const children = getChildren(category.id);
+            const isExpanded = expandedCategory === category.id;
+            const icon = ICON_MAP[category.name] || 'category';
 
-            <div className="subcategory-menu">
-              {category.subcategories.map((subcategory) => (
+            return (
+              <div
+                key={category.id}
+                className="relative flex flex-col"
+                onMouseEnter={() => setExpandedCategory(category.id)}
+                onMouseLeave={() => setExpandedCategory(null)}
+              >
                 <button
-                  type="button"
-                  className="subcategory-card"
-                  key={subcategory.slug}
-                  onClick={() =>
-                    handleSubcategoryClick(
-                      category,
-                      subcategory
-                    )
-                  }
+                  onClick={() => navigate(`/search?categoryId=${category.id}`)}
+                  className={`flex flex-col items-center justify-center p-6 bg-white rounded-xl border transition-all h-full text-center ${isExpanded ? 'border-primary shadow-md' : 'border-surface-border hover:border-primary/30 hover:shadow-card'}`}
                 >
-                  {subcategory.name}
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 transition-colors ${isExpanded ? 'bg-primary/10 text-primary' : 'bg-surface-muted text-text-muted'}`}>
+                    <span className="material-symbols-outlined text-3xl">
+                      {icon}
+                    </span>
+                  </div>
+                  <h3 className={`font-semibold text-sm mb-1 transition-colors ${isExpanded ? 'text-primary' : 'text-text'}`}>
+                    {category.name}
+                  </h3>
                 </button>
-              ))}
-            </div>
-          </div>
-        ))}
+
+                {/* Subcategories Dropdown for Desktop */}
+                {isExpanded && children.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-surface-border rounded-xl shadow-elevated z-20 py-2 hidden md:block">
+                    {children.map(child => (
+                      <button
+                        key={child.id}
+                        onClick={() => navigate(`/search?categoryId=${child.id}`)}
+                        className="w-full text-left px-4 py-2 text-sm text-text hover:bg-surface-muted hover:text-primary transition-colors"
+                      >
+                        {child.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Inline Subcategories for Mobile */}
+                {isExpanded && children.length > 0 && (
+                  <div className="mt-2 flex flex-col gap-1 md:hidden">
+                    {children.map(child => (
+                      <button
+                        key={child.id}
+                        onClick={() => navigate(`/search?categoryId=${child.id}`)}
+                        className="text-left px-3 py-2 text-sm text-text-muted bg-white border border-surface-border rounded-lg hover:text-primary hover:border-primary/30"
+                      >
+                        {child.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Material Symbols base rule — required for <span class="material-symbols-outlined">
-   to render as an icon glyph instead of literal text. Google's font link (in
-   index.html) only loads the font file; this rule was implicit in Stitch's
-   preview environment but needs to be added explicitly here. */
 .material-symbols-outlined {
   font-family: 'Material Symbols Outlined';
   font-weight: normal;
@@ -23,7 +19,7 @@
 }
 
 body {
-  @apply bg-background text-on-background;
+  @apply bg-surface-muted text-text font-sans antialiased;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -33,56 +29,49 @@ body {
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: theme('colors.outline-variant');
-  border-radius: 20px;
+  @apply bg-slate-300 rounded-full;
 }
-/* Legacy CSS variable compatibility
- * Used by recovered components such as Navbar.css.
- * Values intentionally mirror the Tailwind design tokens.
- */
 
-:root {
-  --color-primary: #004349;
-  --color-primary-container: #0d5c63;
-  --color-primary-light: #8fd1d9;
+/* Base utility classes for typography */
+@layer components {
+  .hr-container {
+    @apply w-full max-w-container mx-auto px-4 md:px-8 xl:px-12;
+  }
 
-  --color-background: #f8f9fa;
-  --color-surface: #ffffff;
-  --color-surface-low: #f3f4f5;
-  --color-surface-container: #edeeef;
-  --color-surface-variant: #e1e3e4;
+  .hr-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-white font-medium rounded-lg transition-all duration-200 hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed shadow-sm;
+  }
 
-  --color-text: #191c1d;
-  --color-text-secondary: #3f484a;
-  --color-text-muted: #6f797a;
+  .hr-btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-3 bg-white text-text font-medium rounded-lg border border-surface-border transition-all duration-200 hover:bg-surface-muted hover:border-slate-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm;
+  }
 
-  --color-border: #bfc8c9;
-  --color-accent: #d4a373;
+  .hr-input {
+    @apply w-full px-4 py-3 bg-white border border-surface-border rounded-lg text-text placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200;
+  }
 
-  --color-error: #ba1a1a;
-  --color-error-light: #ffdad6;
+  .hr-input-error {
+    @apply border-red-500 focus:ring-red-500/20 focus:border-red-500;
+  }
 
-  --font-sans: 'Inter', sans-serif;
+  .hr-card {
+    @apply bg-white rounded-xl shadow-card overflow-hidden transition-all duration-300 hover:shadow-card-hover border border-surface-border;
+  }
 
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 12px;
-  --space-lg: 24px;
-  --space-xl: 40px;
-
-  --page-padding-mobile: 16px;
-  --page-padding-tablet: 24px;
-  --page-padding-desktop: 40px;
-
-  --content-gutter: 24px;
-  --container-max: 1280px;
-
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-full: 9999px;
-
-  --shadow-subtle: 0 2px 12px rgba(45, 49, 66, 0.06);
-  --shadow-hover: 0 8px 24px rgba(45, 49, 66, 0.12);
+  /* Text Styles */
+  .text-h1 {
+    @apply text-4xl md:text-5xl font-bold tracking-tight text-text;
+  }
+  .text-h2 {
+    @apply text-2xl md:text-3xl font-semibold tracking-tight text-text;
+  }
+  .text-h3 {
+    @apply text-xl md:text-2xl font-semibold text-text;
+  }
+  .text-body {
+    @apply text-base text-text-muted leading-relaxed;
+  }
+  .text-label {
+    @apply text-sm font-medium text-text-muted tracking-wide uppercase;
+  }
 }

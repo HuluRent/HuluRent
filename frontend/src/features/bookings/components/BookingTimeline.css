@@ -17,7 +17,7 @@
 .hr-booking-timeline__node {
   width: 24px;
   height: 24px;
-  border-radius: 50%;
+  border-radius: var(--radius-full);
   background-color: var(--hr-border, #E7E0D2);
   display: flex;
   align-items: center;

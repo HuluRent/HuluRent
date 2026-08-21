@@ -1,112 +1,98 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { ListingCard } from '../../listings/components/ListingCard';
 import { searchListings } from '../../../api/search.api';
-import './FeaturedListings.css';
 
-const BACKEND = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3140';
-
-function getImageUrl(url) {
-  if (!url) return null;
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  return `${BACKEND}${url}`;
-}
-
-function RealListingCard({ item }) {
-  const thumbUrl = getImageUrl(item.images?.[0]?.url);
-
-  return (
-    <Link to={`/listings/${item.id}`} className="listing-card" style={{ textDecoration: 'none' }}>
-      <div className="listing-card__image-wrapper">
-        {thumbUrl ? (
-          <img src={thumbUrl} alt={item.name} className="listing-card__image" />
-        ) : (
-          <div className="listing-card__image listing-card__image--placeholder">
-            <span className="material-symbols-outlined">image</span>
-          </div>
-        )}
-        <span className="listing-card__category">{item.category?.name ?? '—'}</span>
-      </div>
-
-      <div className="listing-card__content">
-        <div className="listing-card__header">
-          <h3>{item.name}</h3>
-        </div>
-
-        <p className="listing-card__location">
-          <span className="material-symbols-outlined">location_on</span>
-          {item.approxLocation ?? '—'}
-        </p>
-
-        <div className="listing-card__footer">
-          <span className="listing-card__price">
-            {Number(item.pricePerUnit).toLocaleString()} ETB
-            <small> / {item.pricingUnit}</small>
-          </span>
-          <span className="listing-card__view-hint">View →</span>
-        </div>
-      </div>
-    </Link>
-  );
-}
+const API_ORIGIN = 'http://localhost:3000';
 
 function FeaturedListings() {
   const navigate = useNavigate();
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ['home-featured'],
-    queryFn: () => searchListings({ sort: 'newest', limit: 6, page: 1 }),
+  const {
+    data,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['featured-listings'],
+    queryFn: () => searchListings({ page: 1, limit: 3 }),
   });
 
-  // Backend returns { data: [...], meta: { total, page, limit } }
-  const items = data?.data ?? [];
+  const listings = Array.isArray(data?.data) ? data.data : [];
+
+  const featuredListings = listings.map((listing) => ({
+    id: listing.id,
+    name: listing.name,
+    thumbnailUrl: listing.images?.[0]?.url ? `${API_ORIGIN}${listing.images[0].url}` : null,
+    category: listing.category || { name: 'Other' },
+    approxLocation: listing.approxLocation || 'Addis Ababa',
+    pricePerUnit: Number(listing.pricePerUnit ?? 0),
+    pricingUnit: listing.pricingUnit || 'day',
+    owner: {
+      rating: listing.averageRating ?? listing.rating ?? null,
+      reviewCount: 0,
+      displayName: listing.owner?.profile?.displayName || 'Owner',
+      avatarUrl: listing.owner?.profile?.avatarUrl || null,
+      isVerified: true
+    }
+  }));
 
   return (
-    <section className="featured-listings">
-      <div className="featured-listings__container">
-        <div className="featured-listings__heading">
+    <section className="py-20 bg-white">
+      <div className="hr-container">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-4">
           <div>
-            <h2>Featured in Addis Ababa</h2>
-            <p>High-quality gear available near you.</p>
+            <h2 className="text-3xl font-bold text-text mb-2 tracking-tight">Featured in Addis Ababa</h2>
+            <p className="text-text-muted text-lg">Discover high-quality gear available near you.</p>
           </div>
+          <button
+            type="button"
+            className="hidden md:flex items-center gap-2 text-primary font-medium hover:text-primary-hover transition-colors"
+            onClick={() => navigate('/search')}
+          >
+            Discover All <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
+          </button>
         </div>
 
         {isLoading && (
-          <p style={{ textAlign: 'center', padding: '2rem', color: 'var(--md-sys-color-on-surface-variant)' }}>
-            Loading listings…
-          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="animate-pulse bg-surface-muted rounded-xl h-[400px] border border-surface-border"></div>
+            ))}
+          </div>
         )}
 
         {isError && (
-          <p style={{ textAlign: 'center', padding: '2rem', color: 'var(--md-sys-color-error)' }}>
-            Could not load listings.
-          </p>
+          <div className="bg-red-50 text-red-600 p-6 rounded-xl border border-red-100 text-center">
+            <span className="material-symbols-outlined text-4xl mb-2">error</span>
+            <p className="font-medium">Unable to load featured listings.</p>
+          </div>
         )}
 
-        {!isLoading && !isError && items.length === 0 && (
-          <p style={{ textAlign: 'center', padding: '2rem', color: 'var(--md-sys-color-on-surface-variant)' }}>
-            No listings yet. Be the first to{' '}
-            <Link to="/listings/create" style={{ color: 'var(--md-sys-color-primary)' }}>
-              list an item
-            </Link>
-            !
-          </p>
-        )}
-
-        {items.length > 0 && (
-          <div className="featured-listings__grid">
-            {items.map((item) => (
-              <RealListingCard key={item.id} item={item} />
+        {!isLoading && !isError && featuredListings.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredListings.map((listing) => (
+              <ListingCard
+                key={listing.id}
+                item={listing}
+              />
             ))}
+          </div>
+        )}
+
+        {!isLoading && !isError && featuredListings.length === 0 && (
+          <div className="bg-surface-muted border border-surface-border p-12 rounded-xl text-center">
+            <span className="material-symbols-outlined text-4xl text-text-muted mb-3">inventory_2</span>
+            <p className="text-text font-medium text-lg mb-1">No listings available</p>
+            <p className="text-text-muted">Check back later for new gear in your area.</p>
           </div>
         )}
 
         <button
           type="button"
-          className="discover-listings-button"
-          onClick={() => navigate('/listings')}
+          className="w-full mt-8 md:hidden hr-btn-secondary"
+          onClick={() => navigate('/search')}
         >
           Discover All Listings
-          <span className="material-symbols-outlined">arrow_forward</span>
         </button>
       </div>
     </section>

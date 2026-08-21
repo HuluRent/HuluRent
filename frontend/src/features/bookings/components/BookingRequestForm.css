@@ -1,7 +1,7 @@
 .hr-booking-form {
-  background: var(--hr-card, #FFFFFF);
+  background: var(--hr-card, var(--color-surface));
   border: 1px solid var(--hr-border, #E7E0D2);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
@@ -30,7 +30,7 @@
 .hr-booking-form__summary {
   background: var(--hr-bg, #FAF6EF);
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   margin-bottom: 1.5rem;
 }
 
@@ -62,27 +62,11 @@
   font-size: 1rem;
 }
 
-.hr-btn-primary {
-  width: 100%;
-  padding: 0.875rem 1.5rem;
-  background-color: var(--hr-primary, #0F3D31);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
 
-.hr-btn-primary:hover {
-  background-color: var(--hr-primary-hover, #123F32);
-}
 
-.hr-btn-primary:disabled {
-  background-color: var(--hr-muted, #6B655A);
-  cursor: not-allowed;
-  opacity: 0.7;
-}
+
+
+
 
 .hr-field {
   margin-bottom: 1.25rem;
@@ -94,25 +78,4 @@
   font-weight: 500;
   margin-bottom: 0.5rem;
   color: var(--hr-text, #1C1C1A);
-}
-
-.hr-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--hr-border, #E7E0D2);
-  border-radius: 6px;
-  background-color: #fff;
-  font-family: inherit;
-  font-size: 0.95rem;
-  color: var(--hr-text, #1C1C1A);
-}
-
-.hr-input:focus {
-  outline: none;
-  border-color: var(--hr-primary, #0F3D31);
-  box-shadow: 0 0 0 1px var(--hr-primary, #0F3D31);
-}
-
-.hr-input--textarea {
-  resize: vertical;
 }

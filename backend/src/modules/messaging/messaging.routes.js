@@ -4,6 +4,7 @@ const controller = require('./messaging.controller');
 const {
   sendMessageSchema,
   messagePaginationSchema,
+  startConversationSchema,
 } = require('./messaging.validation');
 
 const authenticate = require('../../shared/middleware/authenticate');
@@ -30,6 +31,13 @@ messagingRouter.post(
   authenticate,
   validateRequest(sendMessageSchema),
   controller.createMessage
+);
+
+messagingRouter.post(
+  '/conversations',
+  authenticate,
+  validateRequest(startConversationSchema),
+  controller.startConversation
 );
 
 module.exports = { messagingRouter };

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useConversations } from '../hooks/useConversations';
 import { useMessages, useSendMessage } from '../hooks/useMessages';
@@ -9,50 +9,42 @@ import { ConversationList } from '../components/ConversationList';
 import { MessageThread } from '../components/MessageThread';
 import { MessageInput } from '../components/MessageInput';
 
-// ─── connection badge ─────────────────────────────────────────────────────────
-
 function ConnectionBadge({ status }) {
-  if (status === 'connected') return null; // No badge when all is well
+  if (status === 'connected') return null;
 
   const config = {
-    connecting: { label: 'Connecting…', dot: 'bg-tertiary' },
-    disconnected: { label: 'Offline', dot: 'bg-error' },
-    error: { label: 'Connection error', dot: 'bg-error' },
+    connecting: { label: 'Connecting…', dot: 'bg-amber-400' },
+    disconnected: { label: 'Offline', dot: 'bg-red-500' },
+    error: { label: 'Connection error', dot: 'bg-red-500' },
   };
   const { label, dot } = config[status] ?? config.disconnected;
 
   return (
-    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-xs">
-      <span className={`w-1.5 h-1.5 rounded-full ${dot} animate-pulse`} />
+    <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white shadow-sm border border-surface-border text-text-muted font-medium text-xs">
+      <span className={`w-2 h-2 rounded-full ${dot} animate-pulse`} />
       {label}
     </span>
   );
 }
 
-// ─── page ─────────────────────────────────────────────────────────────────────
-
 export default function ChatPage() {
-  // Router uses `:conversationId` — must match the param name in router.jsx
   const { conversationId: urlConversationId } = useParams();
+  const [searchParams] = useSearchParams();
+  const queryConversationId = searchParams.get('conversationId');
   const navigate = useNavigate();
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { socket, connectionStatus, joinConversation, leaveConversation } = useSocket();
 
   const [activeConversationId, setActiveConversationId] = useState(
-    urlConversationId || null
+    urlConversationId || queryConversationId || null
   );
-  // On mobile, show the thread panel once a conversation is selected
-  const [mobileShowThread, setMobileShowThread] = useState(!!urlConversationId);
-
-  // ── data fetching ──────────────────────────────────────────────────────────
+  const [mobileShowThread, setMobileShowThread] = useState(!!(urlConversationId || queryConversationId));
 
   const { data: convResponse, isLoading: convLoading } = useConversations();
-  // Backend wraps with { success, data: [...] }
   const conversations = convResponse?.data ?? convResponse ?? [];
 
   const { data: msgResponse, isLoading: msgLoading } = useMessages(activeConversationId);
-  // Backend wraps with { success, data: { messages, pagination } }
   const messages =
     msgResponse?.data?.messages ??
     msgResponse?.messages ??
@@ -60,15 +52,11 @@ export default function ChatPage() {
 
   const sendMutation = useSendMessage();
 
-  // ── socket room management ─────────────────────────────────────────────────
-
   useEffect(() => {
     if (!activeConversationId || !socket) return undefined;
     joinConversation(activeConversationId);
     return () => leaveConversation(activeConversationId);
   }, [activeConversationId, socket, joinConversation, leaveConversation]);
-
-  // ── real-time: invalidate cache when a new message arrives ────────────────
 
   useEffect(() => {
     if (!socket) return undefined;
@@ -82,8 +70,6 @@ export default function ChatPage() {
     socket.on('message:receive', handleNewMessage);
     return () => socket.off('message:receive', handleNewMessage);
   }, [socket, activeConversationId, queryClient]);
-
-  // ── handlers ──────────────────────────────────────────────────────────────
 
   const handleSelect = useCallback(
     (conversationId) => {
@@ -106,100 +92,95 @@ export default function ChatPage() {
     setMobileShowThread(false);
   }, []);
 
-  // ── active conversation metadata ──────────────────────────────────────────
-
   const activeConversation = conversations.find(
     (c) => c.id === activeConversationId
   );
-  const activeTitle =
-    activeConversation?.booking?.item?.name || 'Conversation';
-
-  // ── loading state ─────────────────────────────────────────────────────────
+  const activeTitle = activeConversation?.item?.name || 'Conversation';
 
   if (convLoading) {
     return (
-      <div className="flex h-[calc(100vh-140px)] items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <span className="material-symbols-outlined text-4xl text-on-surface-variant animate-spin">
+      <div className="hr-container flex h-[calc(100vh-140px)] items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <span className="material-symbols-outlined text-4xl text-primary animate-spin">
             progress_activity
           </span>
-          <p className="font-body-md text-on-surface-variant">Loading conversations…</p>
+          <p className="font-medium text-text-muted">Loading messages…</p>
         </div>
       </div>
     );
   }
 
-  // ── render ────────────────────────────────────────────────────────────────
-
   return (
-    <div className="flex h-[calc(100vh-140px)] bg-surface-container-lowest border border-outline-variant rounded-2xl overflow-hidden">
-      {/* ── Sidebar: conversation list ──────────────────────────────────── */}
-      <div
-        className={`w-full sm:w-80 border-r border-outline-variant flex-shrink-0 flex flex-col ${
-          mobileShowThread ? 'hidden sm:flex' : 'flex'
-        }`}
-      >
-        <div className="p-4 border-b border-outline-variant flex items-center justify-between gap-2">
-          <h2 className="font-headline-sm text-on-surface">Messages</h2>
-          <ConnectionBadge status={connectionStatus} />
-        </div>
-        <div className="flex-1 overflow-y-auto">
-          <ConversationList
-            conversations={conversations}
-            activeConversationId={activeConversationId}
-            onSelect={handleSelect}
-          />
-        </div>
-      </div>
+    <div className="hr-container h-[calc(100vh-120px)] py-4">
+      <div className="flex h-full bg-white border border-surface-border rounded-2xl overflow-hidden shadow-sm">
 
-      {/* ── Main panel: message thread ──────────────────────────────────── */}
-      <div
-        className={`flex-1 flex flex-col ${
-          !mobileShowThread ? 'hidden sm:flex' : 'flex'
-        }`}
-      >
-        {activeConversationId ? (
-          <>
-            {/* Thread header */}
-            <div className="p-3 border-b border-outline-variant flex items-center gap-2 flex-shrink-0">
-              <button
-                onClick={handleBack}
-                className="sm:hidden p-1 rounded-full hover:bg-surface-container transition-colors"
-                aria-label="Back to conversations"
-              >
-                <span className="material-symbols-outlined">arrow_back</span>
-              </button>
-              <span className="material-symbols-outlined text-on-surface-variant">
-                home_work
-              </span>
-              <h3 className="font-label-md text-on-surface flex-1 truncate">
-                {activeTitle}
-              </h3>
-            </div>
-
-            {/* Messages */}
-            <MessageThread
-              messages={messages}
-              currentUserId={user?.id}
-              isLoading={msgLoading}
-            />
-
-            {/* Input */}
-            <MessageInput
-              onSend={handleSend}
-              disabled={sendMutation.isPending}
-            />
-          </>
-        ) : (
-          <div className="flex-1 flex flex-col items-center justify-center gap-3">
-            <span className="material-symbols-outlined text-5xl text-on-surface-variant">
-              forum
-            </span>
-            <p className="font-body-md text-on-surface-variant">
-              Select a conversation to start messaging
-            </p>
+        {/* Sidebar */}
+        <div className={`w-full sm:w-80 md:w-96 border-r border-surface-border flex-shrink-0 flex flex-col bg-surface-muted/30 ${mobileShowThread ? 'hidden sm:flex' : 'flex'}`}>
+          <div className="p-5 border-b border-surface-border flex items-center justify-between gap-2 bg-white">
+            <h2 className="text-xl font-bold text-text">Messages</h2>
+            <ConnectionBadge status={connectionStatus} />
           </div>
-        )}
+          <div className="flex-1 overflow-y-auto custom-scrollbar">
+            <ConversationList
+              conversations={conversations}
+              activeConversationId={activeConversationId}
+              onSelect={handleSelect}
+            />
+          </div>
+        </div>
+
+        {/* Main panel */}
+        <div className={`flex-1 flex flex-col bg-surface-muted/10 ${!mobileShowThread ? 'hidden sm:flex' : 'flex'}`}>
+          {activeConversationId ? (
+            <>
+              {/* Thread header */}
+              <div className="p-4 border-b border-surface-border flex items-center gap-4 flex-shrink-0 bg-white shadow-sm z-10">
+                <button
+                  onClick={handleBack}
+                  className="sm:hidden w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-muted transition-colors border border-surface-border"
+                  aria-label="Back to conversations"
+                >
+                  <span className="material-symbols-outlined">arrow_back</span>
+                </button>
+                <div className="w-10 h-10 bg-primary/10 text-primary rounded-xl flex items-center justify-center">
+                  <span className="material-symbols-outlined text-[20px]">inventory_2</span>
+                </div>
+                <h3 className="font-bold text-text text-lg flex-1 truncate">
+                  {activeTitle}
+                </h3>
+              </div>
+
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+                <MessageThread
+                  messages={messages}
+                  currentUserId={user?.id}
+                  isLoading={msgLoading}
+                />
+              </div>
+
+              {/* Input */}
+              <div className="p-4 border-t border-surface-border bg-white">
+                <MessageInput
+                  onSend={handleSend}
+                  disabled={sendMutation.isPending}
+                />
+              </div>
+            </>
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center gap-4 bg-white/50">
+              <div className="w-20 h-20 bg-primary/5 text-primary rounded-full flex items-center justify-center mb-2">
+                <span className="material-symbols-outlined text-4xl">
+                  forum
+                </span>
+              </div>
+              <p className="text-lg font-medium text-text">Your Messages</p>
+              <p className="text-text-muted text-sm max-w-xs text-center">
+                Select a conversation from the sidebar to view details and send messages.
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

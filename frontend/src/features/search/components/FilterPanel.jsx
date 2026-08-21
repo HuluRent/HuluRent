@@ -1,30 +1,16 @@
-// Converted from the Stitch AI design's sidebar. Two deliberate deviations
-// from the original static markup, both noted inline below:
-//   1. Categories are fetched live (useCategories), not hardcoded.
-//   2. Location changed from independent checkboxes to single-select quick
-//      chips, since the backend's `location` param (api-reference.md) is a
-//      single free-text match, not a multi-value filter.
-
 import { useState, useEffect } from 'react';
 import { useCategories } from '../../../hooks/useCategories';
 
-// Frontend-only convenience list for the quick-select chips — not fetched
-// from the backend, since approxLocation is free text per listing with no
-// canonical neighborhood list in the schema. Fine for an Addis-only MVP;
-// revisit if this needs to be data-driven later.
-const QUICK_AREAS = ['Bole', 'Kazanchis', 'Piassa', 'CMC'];
+const QUICK_AREAS = ['Bole', 'Kazanchis', 'Piassa', 'CMC', 'Lideta'];
 
 export function FilterPanel({ filters, onUpdateFilter, onToggleCategory, onClearAll }) {
   const { data: categories, isLoading: categoriesLoading } = useCategories();
-
-  // Price inputs are local until blur/Apply — typing a digit shouldn't
-  // trigger a refetch on every keystroke.
-  const [minPrice, setMinPrice] = useState(filters.minPrice);
-  const [maxPrice, setMaxPrice] = useState(filters.maxPrice);
+  const [minPrice, setMinPrice] = useState(filters.minPrice || '');
+  const [maxPrice, setMaxPrice] = useState(filters.maxPrice || '');
 
   useEffect(() => {
-    setMinPrice(filters.minPrice);
-    setMaxPrice(filters.maxPrice);
+    setMinPrice(filters.minPrice || '');
+    setMaxPrice(filters.maxPrice || '');
   }, [filters.minPrice, filters.maxPrice]);
 
   function handleApply() {
@@ -33,50 +19,70 @@ export function FilterPanel({ filters, onUpdateFilter, onToggleCategory, onClear
   }
 
   return (
-    <div className="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant sticky top-[96px] max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar">
-      <div className="flex justify-between items-center mb-stack-md">
-        <h2 className="font-headline-md text-headline-md text-on-surface">Filters</h2>
-        <button onClick={onClearAll} className="font-label-sm text-label-sm text-primary hover:underline">
+    <div className="bg-white p-5 rounded-2xl border border-surface-border sticky top-[100px] max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar shadow-sm">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-lg font-bold text-text">Filters</h2>
+        <button onClick={onClearAll} className="text-sm font-medium text-primary hover:text-primary-hover hover:underline transition-colors">
           Clear all
         </button>
       </div>
 
       {/* Categories */}
-      <div className="mb-stack-lg border-b border-outline-variant pb-stack-lg">
-        <h3 className="font-label-sm text-label-sm text-on-surface-variant mb-stack-sm uppercase tracking-wider">
-          Category
-        </h3>
+      <div className="mb-8">
+        <h3 className="text-sm font-semibold text-text mb-4 tracking-wide">Categories</h3>
         <div className="space-y-2">
-          {categoriesLoading && <p className="font-body-sm text-on-surface-variant">Loading…</p>}
-          {(Array.isArray(categories) ? categories : categories?.items ?? []).map((category) => (
-            <label key={category.id} className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={filters.categoryIds.includes(category.id)}
-                onChange={() => onToggleCategory(category.id)}
-                className="rounded border-outline-variant text-primary focus:ring-primary"
-              />
-              <span className="font-body-md text-on-surface">{category.name}</span>
-            </label>
+          {categoriesLoading && <div className="animate-pulse flex flex-col gap-3">{[1,2,3,4].map(i => <div key={i} className="h-5 bg-surface-muted rounded w-3/4"></div>)}</div>}
+
+          {categories?.items?.filter(c => !c.parentId).map((parent) => (
+            <div key={parent.id} className="mb-2">
+              <label className="flex items-center gap-3 cursor-pointer group py-1">
+                <div className="relative flex items-center justify-center">
+                  <input
+                    type="checkbox"
+                    checked={filters.categoryIds.includes(parent.id)}
+                    onChange={() => onToggleCategory(parent.id)}
+                    className="peer w-5 h-5 border-2 border-slate-300 rounded text-primary focus:ring-primary/20 transition-all cursor-pointer"
+                  />
+                </div>
+                <span className="text-text font-medium group-hover:text-primary transition-colors">{parent.name}</span>
+              </label>
+
+              {/* Children */}
+              {categories.items.filter(c => c.parentId === parent.id).length > 0 && (
+                <div className="ml-8 mt-1 space-y-1 border-l-2 border-surface-border pl-3">
+                  {categories.items.filter(c => c.parentId === parent.id).map(child => (
+                    <label key={child.id} className="flex items-center gap-3 cursor-pointer group py-1">
+                      <div className="relative flex items-center justify-center">
+                        <input
+                          type="checkbox"
+                          checked={filters.categoryIds.includes(child.id)}
+                          onChange={() => onToggleCategory(child.id)}
+                          className="peer w-4 h-4 border-2 border-slate-300 rounded text-primary focus:ring-primary/20 transition-all cursor-pointer"
+                        />
+                      </div>
+                      <span className="text-sm text-text-muted group-hover:text-primary transition-colors">{child.name}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Location — quick-select chips, single value, see file header note */}
-      <div className="mb-stack-lg border-b border-outline-variant pb-stack-lg">
-        <h3 className="font-label-sm text-label-sm text-on-surface-variant mb-stack-sm uppercase tracking-wider">
-          Location
-        </h3>
+      {/* Location */}
+      <div className="mb-8">
+        <h3 className="text-sm font-semibold text-text mb-4 tracking-wide">Popular Areas</h3>
         <div className="flex flex-wrap gap-2">
           {QUICK_AREAS.map((area) => (
             <button
               key={area}
               type="button"
               onClick={() => onUpdateFilter('location', filters.location === area ? '' : area)}
-              className={`px-3 py-1.5 rounded-full border font-label-sm text-label-sm transition-colors ${
+              className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all ${
                 filters.location === area
-                  ? 'bg-primary-container text-on-primary border-primary-container'
-                  : 'border-outline-variant text-on-surface hover:bg-surface-container-low'
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'bg-surface-muted text-text-muted hover:bg-slate-200 hover:text-text'
               }`}
             >
               {area}
@@ -86,56 +92,54 @@ export function FilterPanel({ filters, onUpdateFilter, onToggleCategory, onClear
       </div>
 
       {/* Price Range */}
-      <div className="mb-stack-lg border-b border-outline-variant pb-stack-lg">
-        <h3 className="font-label-sm text-label-sm text-on-surface-variant mb-stack-sm uppercase tracking-wider">
-          Price (ETB/day)
-        </h3>
-        <div className="flex items-center gap-2 mt-4">
+      <div className="mb-8">
+        <h3 className="text-sm font-semibold text-text mb-4 tracking-wide">Price (ETB/day)</h3>
+        <div className="flex items-center gap-2">
           <input
             type="number"
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
             placeholder="Min"
-            className="w-full px-2 py-1 border border-outline-variant rounded text-sm text-center"
+            className="w-full px-3 py-2 bg-surface-muted border border-transparent focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text outline-none transition-all"
           />
-          <span className="text-on-surface-variant">-</span>
+          <span className="text-text-muted">-</span>
           <input
             type="number"
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
             placeholder="Max"
-            className="w-full px-2 py-1 border border-outline-variant rounded text-sm text-center"
+            className="w-full px-3 py-2 bg-surface-muted border border-transparent focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-lg text-sm text-text outline-none transition-all"
           />
         </div>
+        {(minPrice !== filters.minPrice || maxPrice !== filters.maxPrice) && (
+          <button
+            onClick={handleApply}
+            className="w-full mt-3 bg-slate-100 hover:bg-slate-200 text-text font-medium py-2 rounded-lg transition-colors text-sm"
+          >
+            Apply Price Filter
+          </button>
+        )}
       </div>
 
       {/* Verification */}
-      <div className="mb-stack-lg border-b border-outline-variant pb-stack-lg">
-        <label className="flex items-center gap-2 cursor-pointer">
+      <div>
+        <h3 className="text-sm font-semibold text-text mb-4 tracking-wide">Trust</h3>
+        <label className="flex items-center gap-3 cursor-pointer group p-3 bg-surface-muted rounded-xl hover:bg-slate-100 transition-colors border border-transparent hover:border-surface-border">
           <input
             type="checkbox"
             checked={filters.verifiedOnly}
             onChange={(e) => onUpdateFilter('verifiedOnly', e.target.checked)}
-            className="rounded border-outline-variant text-primary focus:ring-primary"
+            className="w-5 h-5 border-2 border-slate-300 rounded text-primary focus:ring-primary/20 transition-all cursor-pointer"
           />
-          <span className="font-body-md text-on-surface flex items-center gap-1">
-            Verified Owners Only{' '}
-            <span
-              className="material-symbols-outlined text-primary text-[16px]"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              verified
+          <div className="flex flex-col">
+            <span className="text-text font-medium flex items-center gap-1.5">
+              Verified Owners
+              <span className="material-symbols-outlined text-primary text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>verified</span>
             </span>
-          </span>
+            <span className="text-xs text-text-muted">ID checked by HuluRent</span>
+          </div>
         </label>
       </div>
-
-      <button
-        onClick={handleApply}
-        className="w-full bg-primary-container text-on-primary font-headline-md text-headline-md px-4 py-2 rounded-lg shadow-subtle hover:shadow-hover transition-all"
-      >
-        Apply Filters
-      </button>
     </div>
   );
 }

@@ -11,7 +11,26 @@ const { BOOKING_STATES } = require('../../shared/constants/booking-states');
  * @param {Date} endDate - The requested end date
  */
 async function checkBookingConflict(tx, itemId, startDate, endDate) {
-  
+
+  // 1. Check if dates fall within owner-defined Availability windows (if any exist)
+  const availabilities = await tx.availability.findMany({
+    where: { itemId }
+  });
+
+  if (availabilities.length > 0) {
+    const isAvailable = availabilities.some(window => {
+      // The entire requested period must fall within a single availability window
+      // Note: A more complex system might allow spanning multiple contiguous windows,
+      // but the simplest robust approach is requiring it to fit in one window.
+      return startDate >= window.startDate && endDate <= window.endDate;
+    });
+
+    if (!isAvailable) {
+      throw new ConflictError('The requested dates are not marked as available by the owner.');
+    }
+  }
+
+  // 2. Check for overlapping confirmed/active bookings
   const conflicts = await tx.$queryRaw`
     SELECT id FROM "Booking"
     WHERE "itemId" = ${itemId}

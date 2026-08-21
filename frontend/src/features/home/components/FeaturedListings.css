@@ -1,6 +1,6 @@
 .featured-listings {
   padding: 64px 40px;
-  background: #f3f4f5;
+  background: var(--color-surface-low);
 }
 
 .featured-listings__container {
@@ -17,7 +17,7 @@
 
 .featured-listings__heading h2 {
   margin: 0;
-  color: #191c1d;
+  color: var(--color-text);
   font-size: 32px;
   line-height: 40px;
   font-weight: 600;
@@ -25,7 +25,7 @@
 
 .featured-listings__heading p {
   margin: 8px 0 0;
-  color: #3f484a;
+  color: var(--color-text-secondary);
   font-size: 16px;
   line-height: 24px;
 }
@@ -33,7 +33,7 @@
 .featured-listings__heading button {
   border: none;
   background: transparent;
-  color: #0d5c63;
+  color: var(--color-primary-container);
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
@@ -42,7 +42,7 @@
 .featured-listings__grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  gap: var(--space-lg);
 }
 
 .featured-listings__mobile-button {
@@ -82,10 +82,10 @@
     width: 100%;
     margin-top: 24px;
     padding: 12px 24px;
-    border: 1px solid #0d5c63;
-    border-radius: 8px;
+    border: 1px solid var(--color-primary-container);
+    border-radius: var(--radius-md);
     background: transparent;
-    color: #0d5c63;
+    color: var(--color-primary-container);
     font-size: 12px;
     font-weight: 500;
   }
@@ -94,13 +94,13 @@
 .discover-listings-button {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
 
   margin-top: 32px;
   padding: 12px 20px;
 
-  border: 1px solid #0d5c63;
-  border-radius: 8px;
+  border: 1px solid var(--color-primary-container);
+  border-radius: var(--radius-md);
 
   background: transparent;
   color: #17191a;
@@ -116,6 +116,6 @@
 }
 
 .discover-listings-button:hover {
-  background: #0d5c63;
+  background: var(--color-primary-container);
   color: #f8f6f6;
 }

@@ -1,99 +1,170 @@
-// Prisma queries for admin views (users, reports, audit events)
-
 const { prisma } = require('../../config/database');
 
-/**
- * Paginated user listing with optional search on email or displayName.
- */
-const findUsers = async ({ search, skip = 0, limit = 20 }) => {
-  const where = search
-    ? {
-        OR: [
-          { email: { contains: search, mode: 'insensitive' } },
-          { profile: { displayName: { contains: search, mode: 'insensitive' } } }
-        ]
+async function findReports({ page = 1, limit = 20, status }) {
+  const skip = (page - 1) * limit;
+  const where = status ? { status } : {};
+
+  const [items, total] = await Promise.all([
+    prisma.report.findMany({
+      where,
+      skip,
+      take: limit,
+      include: {
+        author: { select: { id: true, email: true, profile: { select: { displayName: true } } } },
+        subject: { select: { id: true, email: true, profile: { select: { displayName: true } } } }
+      },
+      orderBy: { createdAt: 'desc' }
+    }),
+    prisma.report.count({ where })
+  ]);
+
+  return {
+    items: items.map(report => ({
+      ...report,
+      author: report.author ? { ...report.author, displayName: report.author.profile?.displayName } : null,
+      subject: report.subject ? { ...report.subject, displayName: report.subject.profile?.displayName } : null
+    })),
+    total
+  };
+}
+
+async function findReportById(id) {
+  return prisma.report.findUnique({ where: { id } });
+}
+
+async function updateReportStatus(id, status, adminId) {
+  return prisma.$transaction(async (tx) => {
+    const report = await tx.report.update({
+      where: { id },
+      data: { status, resolvedAt: status === 'RESOLVED' || status === 'DISMISSED' ? new Date() : null },
+      include: {
+        author: { select: { id: true, email: true, profile: { select: { displayName: true } } } },
+        subject: { select: { id: true, email: true, profile: { select: { displayName: true } } } }
       }
-    : {};
+    });
 
-  return prisma.user.findMany({
-    where,
-    orderBy: { createdAt: 'desc' },
-    skip,
-    take: limit,
-    select: {
-      id: true,
-      email: true,
-      role: true,
-      createdAt: true,
-      profile: { select: { displayName: true } }
-    }
-  });
-};
-
-/**
- * Count users matching the search filter (for pagination).
- */
-const countUsers = async (search) => {
-  const where = search
-    ? {
-        OR: [
-          { email: { contains: search, mode: 'insensitive' } },
-          { profile: { displayName: { contains: search, mode: 'insensitive' } } }
-        ]
+    await tx.auditEvent.create({
+      data: {
+        actorId: adminId,
+        action: 'UPDATE_REPORT_STATUS',
+        entityType: 'Report',
+        entityId: id,
+        metadata: { newStatus: status }
       }
-    : {};
+    });
 
-  return prisma.user.count({ where });
-};
-
-/**
- * Find a single user by ID.
- */
-const findUserById = async (id) => {
-  return prisma.user.findUnique({
-    where: { id },
-    select: { id: true, email: true, role: true, createdAt: true }
+    return {
+      ...report,
+      author: report.author ? { ...report.author, displayName: report.author.profile?.displayName } : null,
+      subject: report.subject ? { ...report.subject, displayName: report.subject.profile?.displayName } : null
+    };
   });
-};
+}
 
-/**
- * Paginated report listing.
- */
-const findReports = async ({ skip = 0, limit = 20 }) => {
-  return prisma.report.findMany({
-    orderBy: { createdAt: 'desc' },
-    skip,
-    take: limit,
-    include: {
-      author: { select: { id: true, email: true, profile: { select: { displayName: true } } } },
-      subject: { select: { id: true, email: true, profile: { select: { displayName: true } } } }
-    }
+async function findUsers({ page = 1, limit = 20, q }) {
+  const skip = (page - 1) * limit;
+  const where = q ? {
+    OR: [
+      { email: { contains: q, mode: 'insensitive' } },
+      { profile: { displayName: { contains: q, mode: 'insensitive' } } }
+    ]
+  } : {};
+
+  const [items, total] = await Promise.all([
+    prisma.user.findMany({
+      where,
+      skip,
+      take: limit,
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        isRestricted: true,
+        restrictionReason: true,
+        createdAt: true,
+        profile: { select: { displayName: true, avatarUrl: true } },
+        _count: { select: { reportsAgainst: true, itemsOwned: true } }
+      },
+      orderBy: { createdAt: 'desc' }
+    }),
+    prisma.user.count({ where })
+  ]);
+
+  return {
+    items: items.map(u => ({
+      ...u,
+      displayName: u.profile?.displayName,
+      restricted: u.isRestricted
+    })),
+    total
+  };
+}
+
+async function findUserById(id) {
+  return prisma.user.findUnique({ where: { id } });
+}
+
+async function updateUserRestriction(userId, restricted, reason, adminId) {
+  return prisma.$transaction(async (tx) => {
+    const user = await tx.user.update({
+      where: { id: userId },
+      data: {
+        isRestricted: restricted,
+        restrictionReason: restricted ? reason : null
+      },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        isRestricted: true,
+        restrictionReason: true,
+        createdAt: true,
+        profile: { select: { displayName: true, avatarUrl: true } }
+      }
+    });
+
+    await tx.auditEvent.create({
+      data: {
+        actorId: adminId,
+        action: restricted ? 'RESTRICT_USER' : 'UNRESTRICT_USER',
+        entityType: 'User',
+        entityId: userId,
+        metadata: { reason }
+      }
+    });
+
+    return {
+      ...user,
+      displayName: user.profile?.displayName,
+      restricted: user.isRestricted
+    };
   });
-};
+}
 
-/**
- * Count total reports (for pagination).
- */
-const countReports = async () => {
-  return prisma.report.count();
-};
+async function findAuditLogs({ page = 1, limit = 50 }) {
+  const skip = (page - 1) * limit;
 
-/**
- * Update a report's status and optionally set resolvedAt.
- */
-const updateReportStatus = async (id, status) => {
-  const data = { status };
-  if (status === 'RESOLVED' || status === 'DISMISSED') {
-    data.resolvedAt = new Date();
-  }
-  return prisma.report.update({ where: { id }, data });
-};
+  const [items, total] = await Promise.all([
+    prisma.auditEvent.findMany({
+      skip,
+      take: limit,
+      include: {
+        actor: { select: { email: true, profile: { select: { displayName: true } } } }
+      },
+      orderBy: { createdAt: 'desc' }
+    }),
+    prisma.auditEvent.count()
+  ]);
+
+  return { items, total };
+}
 
 module.exports = {
-  findUsers,
-  countUsers,
-  findUserById,
   findReports,
-  countReports,
-  updateReportStatus
+  findReportById,
+  updateReportStatus,
+  findUsers,
+  findUserById,
+  updateUserRestriction,
+  findAuditLogs
 };

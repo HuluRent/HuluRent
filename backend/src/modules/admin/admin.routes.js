@@ -1,30 +1,23 @@
-// Express routes for moderation queue, user restriction, audit log view.
-
 const { Router } = require('express');
-const adminController = require('./admin.controller');
+const asyncHandler = require('../../shared/utils/async-handler');
 const authenticate = require('../../shared/middleware/authenticate');
 const authorize = require('../../shared/middleware/authorize');
-const { auditRouter } = require('../audit/audit.routes');
+const validateRequest = require('../../shared/middleware/validate-request');
+const { ROLES } = require('../../shared/constants/roles');
+const controller = require('./admin.controller');
+const { updateReportStatusSchema, restrictUserSchema } = require('./admin.validation');
 
 const adminRouter = Router();
 
-// All admin routes require authentication + ADMIN role
 adminRouter.use(authenticate);
-adminRouter.use(authorize('ADMIN'));
+adminRouter.use(authorize(ROLES.ADMIN));
 
-// GET /admin/users — paginated user listing with search
-adminRouter.get('/users', adminController.getUsers);
+adminRouter.get('/reports', asyncHandler(controller.listReports));
+adminRouter.patch('/reports/:id', validateRequest(updateReportStatusSchema), asyncHandler(controller.updateReportStatus));
 
-// PATCH /admin/users/:id/restrict — restrict/unrestrict a user
-adminRouter.patch('/users/:id/restrict', adminController.restrictUser);
+adminRouter.get('/users', asyncHandler(controller.listUsers));
+adminRouter.patch('/users/:id/restrict', validateRequest(restrictUserSchema), asyncHandler(controller.restrictUser));
 
-// GET /admin/reports — paginated report listing
-adminRouter.get('/reports', adminController.getReports);
-
-// PATCH /admin/reports/:id — update report status
-adminRouter.patch('/reports/:id', adminController.updateReportStatus);
-
-// GET /admin/audit-log — mount the audit sub-router
-adminRouter.use('/audit-log', auditRouter);
+adminRouter.get('/audit-log', asyncHandler(controller.listAuditLogs));
 
 module.exports = { adminRouter };

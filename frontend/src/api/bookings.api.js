@@ -12,25 +12,25 @@ export async function getBookingDetails(bookingId) {
 
 export async function getMyBookings(params) {
   const response = await client.get('/bookings/mine', { params });
-  return response.data;
+  return response.data.data;
 }
 
 export async function acceptBooking(bookingId) {
-  const response = await client.patch(`/bookings/${bookingId}/accept`);
+  const response = await client.patch(`/bookings/${bookingId}/status`, { newState: 'ACCEPTED' });
   return response.data;
 }
 
 export async function rejectBooking(bookingId) {
-  const response = await client.patch(`/bookings/${bookingId}/reject`);
+  const response = await client.patch(`/bookings/${bookingId}/status`, { newState: 'REJECTED' });
   return response.data;
 }
 
 export async function confirmBooking(bookingId) {
-  const response = await client.patch(`/bookings/${bookingId}/confirm`);
+  const response = await client.patch(`/bookings/${bookingId}/status`, { newState: 'CONFIRMED' });
   return response.data;
 }
 
 export async function cancelBooking(bookingId) {
-  const response = await client.patch(`/bookings/${bookingId}/cancel`);
+  const response = await client.patch(`/bookings/${bookingId}/status`, { newState: 'CANCELLED' });
   return response.data;
 }

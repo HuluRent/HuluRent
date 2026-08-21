@@ -1,15 +1,6 @@
 import './ListingGallery.css';
 import { useState } from 'react';
-
-// Convert relative /uploads/... URLs to absolute backend URLs
-function getImageUrl(url) {
-  if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url; // already absolute
-  }
-  const backendUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3140';
-  return `${backendUrl}${url}`;
-}
+import { getImageUrl } from '../../../utils/getImageUrl';
 
 function GalleryImage({ image, alt, index }) {
   const [failed, setFailed] = useState(false);

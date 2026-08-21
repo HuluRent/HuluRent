@@ -6,7 +6,6 @@ const searchSchema = z.object({
   location: z.string().optional(),
   minPrice: z.coerce.number().min(0).optional(),
   maxPrice: z.coerce.number().min(0).optional(),
-  status: z.enum(['DRAFT', 'PUBLISHED', 'UNAVAILABLE', 'SUSPENDED', 'ARCHIVED']).optional(),
   minLat: z.coerce.number().min(-90).max(90).optional(),
   maxLat: z.coerce.number().min(-90).max(90).optional(),
   minLng: z.coerce.number().min(-180).max(180).optional(),

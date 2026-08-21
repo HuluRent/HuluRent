@@ -1,8 +1,8 @@
 .final-cta {
   width: 100%;
   padding: 80px 40px;
-  background: #0d5c63;
-  color: #ffffff;
+  background: var(--color-primary-container);
+  color: var(--color-surface);
 }
 
 .final-cta__content {
@@ -13,7 +13,7 @@
   flex-direction: column;
   align-items: center;
 
-  gap: 24px;
+  gap: var(--space-lg);
 
   text-align: center;
 }
@@ -41,7 +41,7 @@
   padding: 16px 32px;
 
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
 
   background: #d4a373;
   color: #2c1600;
@@ -52,7 +52,7 @@
 
   cursor: pointer;
 
-  box-shadow: 0 8px 24px rgba(45, 49, 66, 0.12);
+  box-shadow: var(--shadow-hover);
 
   transition:
     opacity 0.2s ease,

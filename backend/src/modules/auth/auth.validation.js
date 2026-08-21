@@ -4,7 +4,8 @@ const registerSchema = z.object({
   displayName: z.string().min(1).max(100),
   email: z.string().email(),
   password: z.string().min(6),
-  role: z.enum(['USER', 'ADMIN']).optional(),
+  // Explicitly prevent registering as an ADMIN
+  role: z.literal('USER').optional().default('USER'),
 });
 
 const loginSchema = z.object({

@@ -1,13 +1,25 @@
-// Express routes for item availability.
-// TODO: add real route handlers — wire middleware (authenticate, authorize,
-// ownershipGuard, validateRequest) in order, then delegate to the controller.
-
 const { Router } = require('express');
+const controller = require('./availability.controller');
+const asyncHandler = require('../../shared/utils/async-handler');
+const authenticate = require('../../shared/middleware/authenticate');
 
 const availabilityRouter = Router();
 
-// Example shape once implemented:
-// router.get('/', asyncHandler(controller.list));
-// router.post('/', authenticate, validateRequest(schema), asyncHandler(controller.create));
+availabilityRouter.get(
+  '/:itemId',
+  asyncHandler(controller.getByItemId)
+);
+
+availabilityRouter.post(
+  '/',
+  authenticate,
+  asyncHandler(controller.create)
+);
+
+availabilityRouter.delete(
+  '/:id',
+  authenticate,
+  asyncHandler(controller.remove)
+);
 
 module.exports = { availabilityRouter };

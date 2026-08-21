@@ -1,55 +1,54 @@
-// Parses req, calls admin.service, shapes HTTP response
+const service = require('./admin.service');
 
-const adminService = require('./admin.service');
-const asyncHandler = require('../../shared/utils/async-handler');
-
-const getUsers = asyncHandler(async (req, res) => {
-  const result = await adminService.getUsers(req.query);
-
-  res.status(200).json({
-    success: true,
-    data: result
+async function listReports(req, res) {
+  const result = await service.listReports({
+    page: parseInt(req.query.page) || 1,
+    limit: parseInt(req.query.limit) || 20,
+    status: req.query.status
   });
-});
+  res.json(result);
+}
 
-const restrictUser = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const { restricted, reason } = req.body;
-  const adminId = req.user.userId;
+async function updateReportStatus(req, res) {
+  const result = await service.updateReportStatus(
+    req.params.id,
+    req.body.status,
+    req.user.userId
+  );
+  res.json(result);
+}
 
-  const result = await adminService.restrictUser(id, { restricted, reason }, adminId);
-
-  res.status(200).json({
-    success: true,
-    data: result
+async function listUsers(req, res) {
+  const result = await service.listUsers({
+    page: parseInt(req.query.page) || 1,
+    limit: parseInt(req.query.limit) || 20,
+    q: req.query.q
   });
-});
+  res.json(result);
+}
 
-const getReports = asyncHandler(async (req, res) => {
-  const result = await adminService.getReports(req.query);
+async function restrictUser(req, res) {
+  const result = await service.restrictUser(
+    req.params.id,
+    req.body.restricted,
+    req.body.reason,
+    req.user.userId
+  );
+  res.json(result);
+}
 
-  res.status(200).json({
-    success: true,
-    data: result
+async function listAuditLogs(req, res) {
+  const result = await service.listAuditLogs({
+    page: parseInt(req.query.page) || 1,
+    limit: parseInt(req.query.limit) || 50
   });
-});
-
-const updateReportStatus = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-  const adminId = req.user.userId;
-
-  const result = await adminService.updateReportStatus(id, status, adminId);
-
-  res.status(200).json({
-    success: true,
-    data: result
-  });
-});
+  res.json(result);
+}
 
 module.exports = {
-  getUsers,
+  listReports,
+  updateReportStatus,
+  listUsers,
   restrictUser,
-  getReports,
-  updateReportStatus
+  listAuditLogs
 };

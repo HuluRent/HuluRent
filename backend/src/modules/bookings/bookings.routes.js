@@ -5,9 +5,11 @@ const bookingsController = require('./bookings.controller');
 const authenticate = require('../../shared/middleware/authenticate');
 const ownershipGuard = require('../../shared/middleware/ownership-guard');
 const validateRequest = require('../../shared/middleware/validate-request');
-const { createBookingSchema, updateStatusSchema } = require('./bookings.schemas');
+const {
+  createBookingSchema,
+  updateStatusSchema
+} = require('./bookings.schemas');
 const { getBookingOwnerId } = require('./bookings.repository');
-
 
 router.post(
   '/',
@@ -16,6 +18,18 @@ router.post(
   bookingsController.createBooking
 );
 
+// IMPORTANT: /mine must come before /:id
+router.get(
+  '/mine',
+  authenticate,
+  bookingsController.getMyBookings
+);
+
+router.get(
+  '/:id',
+  authenticate,
+  bookingsController.getBookingDetails
+);
 
 router.patch(
   '/:id/status',

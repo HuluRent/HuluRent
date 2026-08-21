@@ -10,10 +10,12 @@ const { notFound } = require('./shared/middleware/not-found');
 const { errorHandler } = require('./shared/middleware/error-handler');
 
 const app = express();
+const path = require('path');
 
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Serve uploaded images as static files.
 // The uploads/ folder lives at the backend root (one level up from src/).

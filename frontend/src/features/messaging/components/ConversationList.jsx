@@ -5,13 +5,15 @@ export function ConversationList({
 }) {
   if (conversations.length === 0) {
     return (
-      <div className="p-6 text-center">
-        <span className="material-symbols-outlined text-3xl text-on-surface-variant mb-2 block">
-          forum
-        </span>
-        <p className="font-body-md text-on-surface-variant">No conversations yet</p>
-        <p className="font-body-sm text-on-surface-variant/70 mt-1 text-sm">
-          Conversations are created automatically when a booking is confirmed.
+      <div className="p-8 text-center">
+        <div className="w-16 h-16 bg-surface-muted rounded-full flex items-center justify-center mx-auto mb-4">
+          <span className="material-symbols-outlined text-3xl text-text-muted block">
+            forum
+          </span>
+        </div>
+        <p className="font-semibold text-text mb-2">No conversations yet</p>
+        <p className="text-sm text-text-muted">
+          Message an owner from a listing to start a conversation.
         </p>
       </div>
     );
@@ -23,7 +25,7 @@ export function ConversationList({
         const isActive = conv.id === activeConversationId;
         // Backend returns messages ordered desc, take 1 — index 0 is the latest
         const lastMessage = conv.messages?.[0];
-        const itemName = conv.booking?.item?.name || 'Conversation';
+        const itemName = conv.item?.name || 'Conversation';
 
         return (
           <button

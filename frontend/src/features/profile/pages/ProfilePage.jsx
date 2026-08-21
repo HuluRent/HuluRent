@@ -6,9 +6,8 @@ import { useUserReviews } from '../../reviews/hooks/useSubmitReview';
 import { LoadingSpinner } from '../../../components/LoadingSpinner';
 import { EmptyState } from '../../../components/EmptyState';
 import { LogoutModal } from '../../../components/LogoutModal';
-import './ProfilePage.css';
 
-export default function ProfilePage() {
+export function ProfilePage() {
   const { userId } = useParams();
   const { user: currentUser, logout } = useAuth();
   const navigate = useNavigate();
@@ -27,68 +26,77 @@ export default function ProfilePage() {
     navigate('/login');
   }
 
-  if (isLoading) return <LoadingSpinner label="Loading profile…" />;
+  if (isLoading) return (
+    <div className="py-20 flex justify-center">
+      <LoadingSpinner label="Loading profile…" />
+    </div>
+  );
 
   if (isError || !profile) {
     return (
-      <EmptyState
-        icon="person_off"
-        title="Profile not found"
-        description="This user profile could not be loaded."
-      />
+      <div className="py-20">
+        <EmptyState
+          icon="person_off"
+          title="Profile not found"
+          description="This user profile could not be loaded."
+        />
+      </div>
     );
   }
 
   return (
-    <div className="hr-profile">
+    <div className="hr-container max-w-4xl mx-auto py-8">
       {/* ── Profile Header ─────────────────────────────── */}
-      <div className="hr-profile__header">
-        <div className="hr-profile__avatar">
+      <div className="bg-white border border-surface-border rounded-3xl p-8 shadow-sm mb-10 flex flex-col md:flex-row gap-8 items-center md:items-start relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
+
+        <div className="w-32 h-32 rounded-full overflow-hidden flex-shrink-0 border-4 border-white shadow-md z-10 bg-surface-muted">
           {profile.avatarUrl ? (
             <img
               src={profile.avatarUrl}
-              alt={`${profile.displayName}'s profile photo`}
+              alt={`${profile.displayName}'s profile`}
+              className="w-full h-full object-cover"
             />
           ) : (
-            <span className="material-symbols-outlined">account_circle</span>
+            <div className="w-full h-full flex items-center justify-center text-text-muted bg-surface-muted">
+              <span className="material-symbols-outlined text-[64px]">person</span>
+            </div>
           )}
         </div>
 
-        <div className="hr-profile__info">
-          <h1 className="hr-profile__name">{profile.displayName}</h1>
+        <div className="flex-1 text-center md:text-left z-10">
+          <h1 className="text-3xl font-bold text-text mb-3">{profile.displayName}</h1>
 
-          {profile.city && (
-            <p className="hr-profile__location">
-              <span className="material-symbols-outlined">location_on</span>
-              {profile.city}
-            </p>
-          )}
+          <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-6 text-sm text-text-muted mb-4 justify-center md:justify-start">
+            {profile.city && (
+              <span className="flex items-center gap-1.5 justify-center md:justify-start">
+                <span className="material-symbols-outlined text-[18px]">location_on</span>
+                {profile.city}
+              </span>
+            )}
+            <span className="flex items-center gap-1.5 justify-center md:justify-start">
+              <span className="material-symbols-outlined text-[18px]">calendar_today</span>
+              Joined {new Date(profile.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+            </span>
+          </div>
 
           {profile.bio && (
-            <p className="hr-profile__bio">{profile.bio}</p>
+            <p className="text-text leading-relaxed max-w-2xl">{profile.bio}</p>
           )}
-
-          <p className="hr-profile__meta">
-            Member since{' '}
-            {new Date(profile.createdAt).toLocaleDateString('en-US', {
-              month: 'long',
-              year: 'numeric',
-            })}
-          </p>
         </div>
 
         {isOwnProfile && (
-          <div className="hr-profile__own-actions">
-            <Link to="/profile/edit" className="hr-profile__edit-btn">
-              <span className="material-symbols-outlined">edit</span>
+          <div className="flex flex-col gap-3 w-full md:w-auto mt-4 md:mt-0 z-10">
+            <Link to="/profile/edit" className="hr-btn-primary !py-2.5 flex items-center justify-center gap-2">
+              <span className="material-symbols-outlined text-[20px]">edit</span>
               Edit Profile
             </Link>
             <button
               type="button"
               onClick={() => setShowLogoutModal(true)}
-              className="hr-profile__logout-btn"
+              className="px-4 py-2.5 rounded-xl border border-surface-border text-sm font-medium text-text hover:bg-surface-muted transition-colors flex items-center justify-center gap-2"
             >
-              <span className="material-symbols-outlined">logout</span>
+              <span className="material-symbols-outlined text-[20px]">logout</span>
               Log out
             </button>
           </div>
@@ -96,47 +104,52 @@ export default function ProfilePage() {
       </div>
 
       {/* ── Reviews Section ────────────────────────────── */}
-      <div className="hr-profile__reviews">
-        <h2 className="hr-profile__reviews-heading">
-          <span className="material-symbols-outlined">rate_review</span>
-          Reviews
-          <span className="hr-profile__reviews-count">
-            ({Array.isArray(reviews) ? reviews.length : 0})
-          </span>
+      <div className="mb-10">
+        <h2 className="text-2xl font-bold text-text mb-6 flex items-center gap-2">
+          <span className="material-symbols-outlined text-primary text-[28px]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+          Reviews ({Array.isArray(reviews) ? reviews.length : 0})
         </h2>
 
         {!Array.isArray(reviews) || reviews.length === 0 ? (
-          <div className="hr-profile__reviews-empty">
-            <span className="material-symbols-outlined">star_border</span>
-            <p>No reviews yet.</p>
+          <div className="py-12 border border-dashed border-surface-border rounded-2xl bg-surface-muted text-center">
+            <span className="material-symbols-outlined text-4xl text-text-muted mb-2">star_border</span>
+            <p className="text-text-muted font-medium">No reviews yet.</p>
           </div>
         ) : (
-          <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {reviews.map((review) => (
-              <div key={review.id} className="hr-profile__review">
-                <div className="hr-profile__review-top">
-                  <span className="hr-profile__review-stars">
-                    {'★'.repeat(review.rating)}
-                    {'☆'.repeat(5 - review.rating)}
-                  </span>
-                  <span className="hr-profile__review-date">
+              <div key={review.id} className="bg-white p-6 rounded-2xl border border-surface-border shadow-sm flex flex-col">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-1 text-accent-500" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    {[...Array(5)].map((_, i) => (
+                      <span key={i} className="material-symbols-outlined text-[18px]">
+                        {i < review.rating ? 'star' : 'star_border'}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-xs text-text-muted font-medium">
                     {new Date(review.createdAt).toLocaleDateString()}
                   </span>
                 </div>
 
-                {review.comment && (
-                  <p className="hr-profile__review-comment">{review.comment}</p>
-                )}
-
-                <p className="hr-profile__review-author">
-                  — {review.author?.displayName || 'Anonymous'}
+                <p className="text-text leading-relaxed flex-1 mb-4 italic">
+                  "{review.comment}"
                 </p>
+
+                <div className="flex items-center gap-3 pt-4 border-t border-surface-border mt-auto">
+                  <div className="w-8 h-8 rounded-full bg-surface-muted flex items-center justify-center text-text-muted">
+                    <span className="material-symbols-outlined text-[16px]">person</span>
+                  </div>
+                  <span className="text-sm font-semibold text-text">
+                    {review.author?.displayName || 'Anonymous'}
+                  </span>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
-      {/* ── Logout confirmation modal ──────────────────── */}
+
       <LogoutModal
         isOpen={showLogoutModal}
         onConfirm={handleLogoutConfirm}
@@ -146,4 +159,4 @@ export default function ProfilePage() {
   );
 }
 
-export { ProfilePage };
+export default ProfilePage;

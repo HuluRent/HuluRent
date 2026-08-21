@@ -25,7 +25,7 @@
   display: inline-flex;
   background: var(--hr-bg, #FAF6EF);
   border: 1px solid var(--hr-border, #E7E0D2);
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   padding: 0.25rem;
 }
 
@@ -46,7 +46,7 @@
 }
 
 .hr-my-bookings__toggle-btn--active {
-  background: var(--hr-card, #FFFFFF);
+  background: var(--hr-card, var(--color-surface));
   color: var(--hr-text, #1C1C1A);
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
@@ -55,9 +55,9 @@
   text-align: center;
   padding: 4rem 1rem;
   color: var(--hr-muted, #6B655A);
-  background: var(--hr-card, #FFFFFF);
+  background: var(--hr-card, var(--color-surface));
   border: 1px dashed var(--hr-border, #E7E0D2);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
 }
 
 .hr-my-bookings__state--error {
@@ -77,9 +77,9 @@
 }
 
 .hr-my-bookings__card {
-  background: var(--hr-card, #FFFFFF);
+  background: var(--hr-card, var(--color-surface));
   border: 1px solid var(--hr-border, #E7E0D2);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
   cursor: pointer;
   transition: border-color 0.2s, box-shadow 0.2s;

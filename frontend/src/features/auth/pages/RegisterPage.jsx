@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../hooks/useAuth';
 import { getEmailError, isValidPassword } from '../../../utils/validators';
-import './Auth.css';
 
 export default function Register() {
   const { register } = useAuth();
@@ -21,17 +20,13 @@ export default function Register() {
   const validate = () => {
     const next = {};
     if (!fullName.trim()) next.fullName = 'Please enter your full name.';
-
     const emailErr = getEmailError(email);
     if (emailErr) next.email = 'Please enter a valid email address.';
-
     if (!password) next.password = 'Password is required.';
     else if (!isValidPassword(password)) next.password = 'Password must be at least 8 characters.';
-
     if (!confirmPassword) next.confirmPassword = 'Please confirm your password.';
     else if (password && confirmPassword !== password) next.confirmPassword = 'Passwords do not match.';
-
-    if (!agreed) next.agreed = 'You must agree to the Terms and Privacy Policy.';
+    if (!agreed) next.agreed = 'You must agree to the terms.';
 
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -58,206 +53,117 @@ export default function Register() {
   };
 
   return (
-    <div className="hr-login">
-      {/* LEFT — brand panel (hidden on mobile via CSS) */}
-      <aside className="hr-login__brand">
-        <div className="hr-login__brand-inner">
-          <div className="hr-login__logo">HuluRent</div>
-
-          <h1 className="hr-login__headline">Join HuluRent</h1>
-          <p className="hr-login__sub">
-            List what you own. Rent what you need. All in Addis Ababa.
-          </p>
-
+    <div className="min-h-screen flex items-center justify-center bg-surface-muted p-4 py-12">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-card border border-surface-border overflow-hidden">
+        <div className="p-8 pb-6 border-b border-surface-border flex flex-col items-center text-center">
+          <Link to="/" className="w-12 h-12 bg-primary text-white rounded-xl flex items-center justify-center mb-4">
+            <span className="material-symbols-outlined text-3xl">home_work</span>
+          </Link>
+          <h1 className="text-2xl font-bold text-text mb-2">Create an account</h1>
+          <p className="text-text-muted">Join HuluRent to start renting and listing.</p>
         </div>
-      </aside>
 
-      {/* RIGHT — auth card */}
-      <main className="hr-login__main">
-         <div className="hr-login__logo">HuluRent</div>
-
-        <div className="hr-card">
-          <h2 className="hr-card__title">Create your account</h2>
-          <p className="hr-card__sub">Sign up to start renting and listing on HuluRent.</p>
-
+        <div className="p-8 pt-6">
           {serverError && (
-            <div className="hr-alert" role="alert">
+            <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3 text-red-700 text-sm font-medium">
+              <span className="material-symbols-outlined text-red-500">error</span>
               {serverError}
             </div>
           )}
 
-          <form className="hr-form" onSubmit={handleSubmit} noValidate>
-            <div className="hr-field">
-              <label htmlFor="fullName" className="hr-field__label">
-                Full name
-              </label>
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
+            <div>
+              <label htmlFor="fullName" className="block text-sm font-medium text-text mb-1.5">Full name</label>
               <input
                 id="fullName"
                 type="text"
-                autoComplete="name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Enter your full name"
-                className={`hr-input ${errors.fullName ? 'hr-input--error' : ''}`}
-                aria-invalid={!!errors.fullName}
-                aria-describedby={errors.fullName ? 'fullName-error' : undefined}
+                className={`hr-input ${errors.fullName ? 'border-red-500 focus:ring-red-500/20' : ''}`}
               />
-              {errors.fullName && (
-                <p className="hr-field__error" id="fullName-error">
-                  {errors.fullName}
-                </p>
-              )}
+              {errors.fullName && <p className="mt-1.5 text-sm text-red-500">{errors.fullName}</p>}
             </div>
 
-            <div className="hr-field">
-              <label htmlFor="email" className="hr-field__label">
-                Email address
-              </label>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-text mb-1.5">Email address</label>
               <input
                 id="email"
-                type="text"
-                inputMode="email"
-                autoComplete="email"
+                type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email address"
-                className={`hr-input ${errors.email ? 'hr-input--error' : ''}`}
-                aria-invalid={!!errors.email}
-                aria-describedby={errors.email ? 'email-error' : undefined}
+                placeholder="Enter your email"
+                className={`hr-input ${errors.email ? 'border-red-500 focus:ring-red-500/20' : ''}`}
               />
-              {errors.email && (
-                <p className="hr-field__error" id="email-error">
-                  {errors.email}
-                </p>
-              )}
+              {errors.email && <p className="mt-1.5 text-sm text-red-500">{errors.email}</p>}
             </div>
 
-            <div className="hr-field">
-              <label htmlFor="password" className="hr-field__label">
-                Password
-              </label>
-              <div className="hr-input-wrap">
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-text mb-1.5">Password</label>
+              <div className="relative">
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Create a password"
-                  className={`hr-input ${errors.password ? 'hr-input--error' : ''}`}
-                  aria-invalid={!!errors.password}
-                  aria-describedby={errors.password ? 'password-error' : undefined}
+                  className={`hr-input pr-12 ${errors.password ? 'border-red-500 focus:ring-red-500/20' : ''}`}
                 />
                 <button
                   type="button"
-                  className="hr-input-wrap__toggle"
-                  onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  aria-pressed={showPassword}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text p-1"
+                  onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword ? (
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
-                      <path d="M3 3l18 18M10.6 10.6a2 2 0 002.8 2.8M9.4 5.5A10.4 10.4 0 0112 5c5.5 0 9 5 9 7-.4.7-1.2 1.9-2.4 3.1M6.6 6.6C4.5 8 3 10.3 3 12c0 2 3.5 7 9 7 1.3 0 2.5-.3 3.6-.7" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                  ) : (
-                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
-                      <path d="M3 12s3.5-7 9-7 9 7 9 7-3.5 7-9 7-9-7-9-7z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round"/>
-                      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.7"/>
-                    </svg>
-                  )}
+                  <span className="material-symbols-outlined text-[20px]">{showPassword ? 'visibility_off' : 'visibility'}</span>
                 </button>
               </div>
-              {errors.password && (
-                <p className="hr-field__error" id="password-error">
-                  {errors.password}
-                </p>
-              )}
+              {errors.password && <p className="mt-1.5 text-sm text-red-500">{errors.password}</p>}
             </div>
 
-            <div className="hr-field">
-              <label htmlFor="confirmPassword" className="hr-field__label">
-                Confirm password
-              </label>
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-text mb-1.5">Confirm password</label>
               <input
                 id="confirmPassword"
                 type={showPassword ? 'text' : 'password'}
-                autoComplete="new-password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Re-enter your password"
-                className={`hr-input ${errors.confirmPassword ? 'hr-input--error' : ''}`}
-                aria-invalid={!!errors.confirmPassword}
-                aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
+                className={`hr-input ${errors.confirmPassword ? 'border-red-500 focus:ring-red-500/20' : ''}`}
               />
-              {errors.confirmPassword && (
-                <p className="hr-field__error" id="confirmPassword-error">
-                  {errors.confirmPassword}
-                </p>
-              )}
+              {errors.confirmPassword && <p className="mt-1.5 text-sm text-red-500">{errors.confirmPassword}</p>}
             </div>
 
-            <div className="hr-field hr-field--checkbox">
-              <label className="hr-checkbox">
-                <input
-                  type="checkbox"
-                  checked={agreed}
-                  onChange={(e) => setAgreed(e.target.checked)}
-                  aria-invalid={!!errors.agreed}
-                  aria-describedby={errors.agreed ? 'agreed-error' : undefined}
-                />
-                <span>
-                  I agree to HuluRent's{' '}
-                  <Link to="/terms" className="hr-link">Terms of Service</Link> and{' '}
-                  <Link to="/privacy" className="hr-link">Privacy Policy</Link>.
+            <div className="pt-2">
+              <label className="flex items-start gap-3 cursor-pointer group">
+                <div className="relative flex items-center justify-center pt-0.5">
+                  <input
+                    type="checkbox"
+                    checked={agreed}
+                    onChange={(e) => setAgreed(e.target.checked)}
+                    className="w-5 h-5 border-2 border-slate-300 rounded text-primary focus:ring-primary/20 transition-all cursor-pointer"
+                  />
+                </div>
+                <span className="text-sm text-text-muted leading-relaxed">
+                  I agree to HuluRent's <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link> and <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>.
                 </span>
               </label>
-              {errors.agreed && (
-                <p className="hr-field__error" id="agreed-error">
-                  {errors.agreed}
-                </p>
-              )}
+              {errors.agreed && <p className="mt-1.5 text-sm text-red-500 ml-8">{errors.agreed}</p>}
             </div>
 
-            <button type="submit" className="hr-btn-primary" disabled={loading}>
+            <button type="submit" className="hr-btn-primary w-full !py-3.5 mt-2" disabled={loading}>
               {loading ? (
-                <>
-                  <span className="hr-spinner" aria-hidden="true" />
-                  Creating account...
-                </>
+                <span className="material-symbols-outlined animate-spin">progress_activity</span>
               ) : (
                 'Create account'
               )}
             </button>
           </form>
 
-          <div className="hr-divider">
-            <span>OR</span>
-          </div>
-
-          <button type="button" className="hr-btn-google">
-            <svg viewBox="0 0 18 18" width="18" height="18">
-              <path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 01-1.8 2.71v2.26h2.9c1.7-1.57 2.7-3.88 2.7-6.61z"/>
-              <path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.19l-2.9-2.26c-.8.54-1.84.86-3.06.86-2.35 0-4.34-1.59-5.05-3.72H.98v2.33A9 9 0 009 18z"/>
-              <path fill="#FBBC05" d="M3.95 10.69A5.4 5.4 0 013.68 9c0-.59.1-1.16.27-1.69V4.98H.98A9 9 0 000 9c0 1.45.35 2.83.98 4.02l2.97-2.33z"/>
-              <path fill="#EA4335" d="M9 3.58c1.32 0 2.51.46 3.44 1.35l2.58-2.58C13.46.89 11.43 0 9 0A9 9 0 00.98 4.98l2.97 2.33C4.66 5.17 6.65 3.58 9 3.58z"/>
-            </svg>
-            Continue with Google
-          </button>
-               <button type="button" className="hr-btn-apple">
-           <svg viewBox="0 0 18 18" width="18" height="18" fill="currentColor">
-             <path d="M13.15 9.53c-.02-1.9 1.55-2.82 1.62-2.86-.88-1.29-2.26-1.47-2.75-1.49-1.17-.12-2.28.69-2.87.69-.6 0-1.5-.67-2.47-.65-1.27.02-2.44.74-3.09 1.87-1.32 2.28-.34 5.66.95 7.51.63.9 1.38 1.92 2.36 1.88.95-.04 1.31-.61 2.46-.61 1.14 0 1.47.61 2.47.59 1.02-.02 1.67-.92 2.29-1.83.72-1.05 1.02-2.07 1.03-2.12-.02-.01-1.98-.76-2-3zM11.4 3.83c.52-.63.87-1.5.77-2.38-.75.03-1.66.5-2.2 1.13-.48.55-.9 1.44-.79 2.29.83.06 1.68-.42 2.22-1.04z"/>
-           </svg>
-           Continue with Apple
-         </button>
-          <p className="hr-signup">
-            Already have an account? <Link to="/login" className="hr-link hr-link--strong">Log in</Link>
-          </p>
-
-          <p className="hr-trust">
-            Your information is protected and kept private.
+          <p className="mt-8 text-center text-sm text-text-muted">
+            Already have an account? <Link to="/login" className="font-semibold text-primary hover:underline">Log in</Link>
           </p>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

@@ -11,8 +11,8 @@
 }
 
 .hr-badge--default {
-  background-color: #E1E3E4;
-  color: #3F484A;
+  background-color: var(--color-surface-variant);
+  color: var(--color-text-secondary);
 }
 
 .hr-badge--requested {
