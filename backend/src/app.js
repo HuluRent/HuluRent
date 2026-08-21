@@ -3,6 +3,7 @@
 
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { corsOptions } = require('./config/cors');
 const apiRoutes = require('./routes/index');
 const { notFound } = require('./shared/middleware/not-found');
@@ -13,6 +14,10 @@ const app = express();
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve uploaded images as static files.
+// The uploads/ folder lives at the backend root (one level up from src/).
+app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
 app.use('/api', apiRoutes);
 
