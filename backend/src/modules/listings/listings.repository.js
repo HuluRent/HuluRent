@@ -20,6 +20,9 @@ async function findById(id) {
       images: {
         orderBy: { position: 'asc' },
       },
+      availabilities: {
+        orderBy: { startDate: 'asc' },
+      },
     },
   });
 }
@@ -56,19 +59,31 @@ async function findAll(filters = {}) {
 }
 
 async function create(data, imageUrls = []) {
+  const { availableFrom, availableTo, ...itemData } = data;
+
   return prisma.item.create({
     data: {
-      ...data,
+      ...itemData,
       images: {
         create: imageUrls.map((url, index) => ({
           url,
           position: index
         }))
-      }
+      },
+      // Create the availability window if both dates are provided
+      ...(availableFrom && availableTo ? {
+        availabilities: {
+          create: [{
+            startDate: new Date(availableFrom),
+            endDate: new Date(availableTo),
+          }]
+        }
+      } : {}),
     },
     include: {
       category: true,
       images: true,
+      availabilities: { orderBy: { startDate: 'asc' } },
     }
   });
 }
