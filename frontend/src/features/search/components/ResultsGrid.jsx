@@ -13,7 +13,18 @@ const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest' },
 ];
 
-export function ResultsGrid({ data, isLoading, isError, sort, onSortChange, onMobileFilterToggle }) {
+export function ResultsGrid({
+  data,
+  isLoading,
+  isError,
+  sort,
+  onSortChange,
+  onMobileFilterToggle,
+  savedIds,
+  onSave,
+  onUnsave,
+  savePendingId,
+}) {
   return (
     <div>
       <div className="flex justify-between items-center mb-stack-md">
@@ -63,7 +74,14 @@ export function ResultsGrid({ data, isLoading, isError, sort, onSortChange, onMo
       {!isLoading && !isError && data?.items?.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-gutter">
           {data.items.map((item) => (
-            <ListingCard key={item.id} item={item} />
+            <ListingCard
+              key={item.id}
+              item={item}
+              isSaved={savedIds ? savedIds.has(item.id) : false}
+              onSave={onSave}
+              onUnsave={onUnsave}
+              isSavePending={savePendingId === item.id}
+            />
           ))}
         </div>
       )}

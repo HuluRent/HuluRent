@@ -29,6 +29,7 @@ model User {
   reportsAgainst       Report[]                  @relation("ReportSubject")
   reviewsWritten       Review[]                  @relation("ReviewAuthor")
   reviewsReceived      Review[]                  @relation("ReviewSubject")
+  savedListings        SavedListing[]
 
   @@index([email])
 }
@@ -89,6 +90,7 @@ model Item {
   category       Category       @relation(fields: [categoryId], references: [id])
   owner          User           @relation("ItemOwner", fields: [ownerId], references: [id])
   images         ItemImage[]
+  savedListings  SavedListing[]
 
   @@index([categoryId])
   @@index([ownerId])
@@ -102,6 +104,19 @@ model ItemImage {
   position  Int      @default(0)
   createdAt DateTime @default(now())
   item      Item     @relation(fields: [itemId], references: [id])
+}
+
+model SavedListing {
+  id        String   @id @default(uuid())
+  userId    String
+  listingId String
+  createdAt DateTime @default(now())
+
+  user    User @relation(fields: [userId], references: [id])
+  listing Item @relation(fields: [listingId], references: [id])
+
+  @@unique([userId, listingId])
+  @@index([userId])
 }
 
 model Availability {
