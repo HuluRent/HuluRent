@@ -48,7 +48,7 @@ export function FilterPanel({ filters, onUpdateFilter, onToggleCategory, onClear
         </h3>
         <div className="space-y-2">
           {categoriesLoading && <p className="font-body-sm text-on-surface-variant">Loading…</p>}
-          {categories?.items?.map((category) => (
+          {(Array.isArray(categories) ? categories : categories?.items ?? []).map((category) => (
             <label key={category.id} className="flex items-center gap-2 cursor-pointer">
               <input
                 type="checkbox"

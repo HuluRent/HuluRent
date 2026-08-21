@@ -54,9 +54,9 @@ export function ListingCard({ item, isSaved = false, onSave, onUnsave, isSavePen
       )}
 
       <Link to={`/listings/${item.id}`} className="h-48 w-full bg-surface-variant relative block overflow-hidden">
-        {item.thumbnailUrl ? (
+        {(item.thumbnailUrl || item.images?.[0]?.url) ? (
           <img
-            src={getImageUrl(item.thumbnailUrl)}
+            src={getImageUrl(item.thumbnailUrl || item.images?.[0]?.url)}
             alt={item.name}
             className="w-full h-full object-cover rounded-t-xl group-hover:scale-105 transition-transform duration-300"
           />

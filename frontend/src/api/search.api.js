@@ -1,14 +1,12 @@
 // Thin wrapper around client.js for the search backend module.
-// Response shape is documented in hulurent-docs' technical/api-reference.md
-// "Search" section (including the owner rating/category fields added
-// specifically for the browse-listings page).
 
 import client from './client';
 
 export function searchListings(filters = {}) {
   const params = {};
   if (filters.query) params.q = filters.query;
-  if (filters.categoryIds?.length) params.categoryId = filters.categoryIds.join(',');
+  // Backend accepts a single UUID for categoryId
+  if (filters.categoryIds?.length) params.categoryId = filters.categoryIds[0];
   if (filters.minPrice) params.minPrice = filters.minPrice;
   if (filters.maxPrice) params.maxPrice = filters.maxPrice;
   if (filters.location) params.location = filters.location;
