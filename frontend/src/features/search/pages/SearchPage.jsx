@@ -1,16 +1,12 @@
-// Browse/search page — converted from the Stitch AI design. This is the
-// app's homepage ("/search" in router.jsx).
+// Browse/search page — converted from the Stitch AI design.
 //
-// Two things worth knowing if you're picking this up:
+// Two things worth knowing:
 //  1. The Saved List (bookmark icon on each card) is a real persisted feature
-//     backed by /saved-list API endpoints. The saved list is fetched once here
-//     and threaded down to cards — no per-card fetches.
-//  2. Search filter contracts (location, verifiedOnly, sort, multi-category)
-//     were added to api-reference.md's Search section specifically to
-//     support this page — read that note if backend search.service.js
-//     doesn't match what this page sends.
+//     backed by /saved-list API endpoints.
+//  2. URL params ?query=, ?location=, ?category= are read on mount so home-page
+//     category cards and the hero search bar deep-link into pre-filtered results.
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSearchListings } from '../hooks/useSearchListings';
 import { useFilters } from '../hooks/useFilters';
 import { SearchBar } from '../components/SearchBar';
@@ -18,6 +14,7 @@ import { FilterPanel } from '../components/FilterPanel';
 import { ResultsGrid } from '../components/ResultsGrid';
 import { Pagination } from '../../../components/Pagination';
 import { useAuth } from '../../../hooks/useAuth';
+import { useCategories } from '../../../hooks/useCategories';
 import {
   useSavedList,
   useAddToSavedList,
@@ -28,7 +25,26 @@ export function SearchPage() {
   const { filters, updateFilter, toggleCategory, clearAll } = useFilters();
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
-  const { data, isLoading, isError } = useSearchListings(filters);
+  // Resolve categorySlug → categoryId once categories are loaded
+  const { data: categories = [] } = useCategories();
+  useEffect(() => {
+    if (!filters.categorySlug || !categories.length) return;
+    const match = categories.find((c) => c.slug === filters.categorySlug);
+    if (match && !filters.categoryIds.includes(match.id)) {
+      toggleCategory(match.id);
+    }
+  // Only run when categories load or the slug changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters.categorySlug, categories]);
+
+  // Build the query — only send categoryId when we have resolved IDs
+  const activeFilters = useMemo(() => {
+    const f = { ...filters };
+    delete f.categorySlug; // not a real API param
+    return f;
+  }, [filters]);
+
+  const { data, isLoading, isError } = useSearchListings(activeFilters);
 
   // Saved list — only fetch when authenticated
   const { isAuthenticated } = useAuth();
@@ -36,10 +52,8 @@ export function SearchPage() {
   const addMutation = useAddToSavedList();
   const removeMutation = useRemoveFromSavedList();
 
-  // Track which listing is currently being toggled (for spinner feedback)
   const [pendingId, setPendingId] = useState(null);
 
-  // Build a Set of saved listing IDs for O(1) lookup
   const savedIds = useMemo(() => {
     if (!savedListData) return null;
     return new Set(savedListData.map((entry) => entry.listingId));
