@@ -2,8 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ListingCard } from '../../listings/components/ListingCard';
 import { searchListings } from '../../../api/search.api';
+import { getImageUrl } from '../../../utils/getImageUrl';
 
-const API_ORIGIN = 'http://localhost:3000';
+
 
 function FeaturedListings() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ function FeaturedListings() {
   const featuredListings = listings.map((listing) => ({
     id: listing.id,
     name: listing.name,
-    thumbnailUrl: listing.images?.[0]?.url ? `${API_ORIGIN}${listing.images[0].url}` : null,
+    thumbnailUrl: listing.images?.[0]?.url ? getImageUrl(listing.images[0].url) : null,
     category: listing.category || { name: 'Other' },
     approxLocation: listing.approxLocation || 'Addis Ababa',
     pricePerUnit: Number(listing.pricePerUnit ?? 0),
@@ -100,3 +101,6 @@ function FeaturedListings() {
 }
 
 export default FeaturedListings;
+
+
+

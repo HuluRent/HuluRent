@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const controller = require('./search.controller');
 const validateQuery = require('../../shared/middleware/validate-request');
+const asyncHandler = require('../../shared/utils/async-handler');
 const { searchSchema } = require('./search.validation');
 
 const searchRouter = Router();
@@ -17,6 +18,6 @@ const validateQueryRequest = (schema) => (req, res, next) => {
 };
 
 
-searchRouter.get('/', validateQueryRequest(searchSchema), controller.list);
+searchRouter.get('/', validateQueryRequest(searchSchema), asyncHandler(controller.list));
 
 module.exports = { searchRouter };

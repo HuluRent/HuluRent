@@ -18,11 +18,6 @@ adminRouter.patch('/reports/:id', validateRequest(updateReportStatusSchema), asy
 adminRouter.get('/users', asyncHandler(controller.listUsers));
 adminRouter.patch('/users/:id/restrict', validateRequest(restrictUserSchema), asyncHandler(controller.restrictUser));
 
-<<<<<<< Updated upstream
 adminRouter.get('/audit-log', asyncHandler(controller.listAuditLogs));
-=======
-// GET /admin/audit-log — mount the audit sub-router
-adminRouter.use('/audit-log', auditRouter);
->>>>>>> Stashed changes
 
 module.exports = { adminRouter };
