@@ -51,9 +51,9 @@
 }
 
 .hr-booking-detail__timeline-container {
-  background: var(--hr-card, #FFFFFF);
+  background: var(--hr-card, var(--color-surface));
   border: 1px solid var(--hr-border, #E7E0D2);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 1rem 2rem;
   margin-bottom: 2rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
@@ -73,9 +73,9 @@
 }
 
 .hr-booking-detail__card {
-  background: var(--hr-card, #FFFFFF);
+  background: var(--hr-card, var(--color-surface));
   border: 1px solid var(--hr-border, #E7E0D2);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
@@ -120,7 +120,7 @@
 .hr-booking-detail__actions {
   background: var(--hr-bg, #FAF6EF);
   border: 1px solid var(--hr-border, #E7E0D2);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
 }
 
@@ -130,10 +130,7 @@
   gap: 1rem;
 }
 
-.hr-btn-danger {
-  color: var(--hr-error, #B3261E);
-  border-color: #F1C9C6;
-}
+
 
 .hr-btn-danger:hover {
   background: var(--hr-error-bg, #FBEBEA);

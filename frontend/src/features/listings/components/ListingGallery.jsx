@@ -1,5 +1,7 @@
 import './ListingGallery.css';
 import { useState } from 'react';
+import { getImageUrl } from '../../../utils/getImageUrl';
+
 function GalleryImage({ image, alt, index }) {
   const [failed, setFailed] = useState(false);
 
@@ -13,7 +15,7 @@ function GalleryImage({ image, alt, index }) {
 
   return (
     <img
-      src={image.url}
+      src={getImageUrl(image.url)}
       alt={`${alt} ${index + 1}`}
       onError={() => setFailed(true)}
     />

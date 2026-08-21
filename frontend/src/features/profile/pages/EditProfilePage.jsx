@@ -47,7 +47,7 @@ export default function EditProfilePage() {
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder="Your display name"
-              className="px-4 py-3 border border-outline-variant rounded-xl bg-surface font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+              className="hr-input"
               required
             />
           </div>
@@ -62,7 +62,7 @@ export default function EditProfilePage() {
               onChange={(e) => setBio(e.target.value)}
               placeholder="Tell others about yourself"
               rows={4}
-              className="px-4 py-3 border border-outline-variant rounded-xl bg-surface font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+              className="hr-input hr-input--textarea resize-none"
             />
           </div>
 
@@ -76,7 +76,7 @@ export default function EditProfilePage() {
               value={city}
               onChange={(e) => setCity(e.target.value)}
               placeholder="e.g. Addis Ababa"
-              className="px-4 py-3 border border-outline-variant rounded-xl bg-surface font-body-md text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+              className="hr-input"
             />
           </div>
 
@@ -84,14 +84,14 @@ export default function EditProfilePage() {
             <button
               type="submit"
               disabled={updateMutation.isPending}
-              className="px-6 py-2.5 bg-primary text-on-primary font-label-md rounded-xl hover:shadow-hover transition-all disabled:opacity-60"
+              className="hr-btn-primary flex-1"
             >
               {updateMutation.isPending ? 'Saving…' : 'Save Changes'}
             </button>
             <button
               type="button"
               onClick={() => navigate('/profile')}
-              className="px-6 py-2.5 border border-outline-variant text-on-surface font-label-md rounded-xl hover:bg-surface-container transition-all"
+              className="hr-btn-secondary flex-1"
             >
               Cancel
             </button>

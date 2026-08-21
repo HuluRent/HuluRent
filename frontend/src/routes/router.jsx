@@ -26,6 +26,12 @@ import ChatPage from '../features/messaging/pages/ChatPage';
 import NotificationsPage from '../features/notifications/pages/NotificationsPage';
 import SavedListPage from '../features/savedList/pages/SavedListPage';
 
+import HowItWorksPage from '../features/info/pages/HowItWorksPage';
+import TrustSafetyPage from '../features/info/pages/TrustSafetyPage';
+import HelpCenterPage from '../features/info/pages/HelpCenterPage';
+import TermsOfUsePage from '../features/info/pages/TermsOfUsePage';
+import PrivacyPolicyPage from '../features/info/pages/PrivacyPolicyPage';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -101,6 +107,26 @@ const router = createBrowserRouter([
       {
         path: '/saved-list',
         element: <SavedListPage />,
+      },
+      {
+        path: '/how-it-works',
+        element: <HowItWorksPage />,
+      },
+      {
+        path: '/trust-safety',
+        element: <TrustSafetyPage />,
+      },
+      {
+        path: '/help',
+        element: <HelpCenterPage />,
+      },
+      {
+        path: '/terms',
+        element: <TermsOfUsePage />,
+      },
+      {
+        path: '/privacy',
+        element: <PrivacyPolicyPage />,
       },
     ],
   },

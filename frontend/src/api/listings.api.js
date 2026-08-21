@@ -36,14 +36,10 @@ export function deleteListing(id) {
   return client.delete(`/listings/${id}`).then((res) => res.data);
 }
 
-export function getMyListings({ ownerId, page = 1, limit = 20 } = {}) {
+export function getMyListings({ categoryId, status } = {}) {
   return client
-    .get('/listings', {
-      params: {
-        ownerId,
-        page,
-        limit,
-      },
+    .get('/listings/me', {
+      params: { categoryId, status },
     })
-    .then((res) => res.data);
+    .then((res) => ({ items: res.data, page: 1, limit: res.data.length, total: res.data.length }));
 }

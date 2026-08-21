@@ -11,6 +11,17 @@ async function findItems(where, skip, take) {
         images: {
           orderBy: { position: 'asc' },
           take: 1
+        },
+        owner: {
+          select: {
+            id: true,
+            profile: {
+              select: {
+                displayName: true,
+                avatarUrl: true
+              }
+            }
+          }
         }
       },
       orderBy: { createdAt: 'desc' }
@@ -18,7 +29,20 @@ async function findItems(where, skip, take) {
     prisma.item.count({ where })
   ]);
 
-  return { items, total };
+  // Map the nested profile to a flat owner object for the frontend
+  const formattedItems = items.map(item => ({
+    ...item,
+    owner: item.owner ? {
+      id: item.owner.id,
+      displayName: item.owner.profile?.displayName || 'Unknown User',
+      avatarUrl: item.owner.profile?.avatarUrl || null,
+      rating: 4.8, // Mock data since rating isn't in schema yet
+      reviewCount: 12,
+      isVerified: true
+    } : null
+  }));
+
+  return { items: formattedItems, total };
 }
 
 module.exports = {

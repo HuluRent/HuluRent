@@ -2,7 +2,7 @@ import client from './client';
 
 export async function getNotifications(params = {}) {
   const { data } = await client.get('/notifications', { params });
-  return data;
+  return { items: data };
 }
 
 export async function markNotificationRead(id) {

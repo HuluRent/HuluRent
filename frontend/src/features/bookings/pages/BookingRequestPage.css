@@ -55,9 +55,9 @@
 }
 
 .hr-booking-page__listing-preview {
-  background: var(--hr-card, #FFFFFF);
+  background: var(--hr-card, var(--color-surface));
   border: 1px solid var(--hr-border, #E7E0D2);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
@@ -70,7 +70,7 @@
 .hr-booking-page__listing-image-placeholder {
   width: 100%;
   aspect-ratio: 4/3;
-  background: #E1E3E4;
+  background: var(--color-surface-variant);
   display: flex;
   align-items: center;
   justify-content: center;

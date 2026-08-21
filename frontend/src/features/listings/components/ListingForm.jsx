@@ -181,7 +181,7 @@ export default function ListingForm({
           </label>
 
           <input
-            className="listing-form__input"
+            className="hr-input"
             id="listing-name"
             name="name"
             type="text"
@@ -205,7 +205,7 @@ export default function ListingForm({
           </label>
 
           <textarea
-            className="listing-form__textarea"
+            className="hr-input hr-input--textarea"
             id="listing-description"
             name="description"
             value={formData.description}
@@ -272,7 +272,7 @@ export default function ListingForm({
           </label>
 
           <input
-            className="listing-form__input"
+            className="hr-input"
             id="listing-location"
             name="approxLocation"
             type="text"
@@ -299,7 +299,7 @@ export default function ListingForm({
           </label>
 
           <input
-            className="listing-form__input"
+            className="hr-input"
             id="listing-price"
             name="pricePerUnit"
             type="number"
@@ -324,7 +324,7 @@ export default function ListingForm({
           </label>
 
           <select
-            className="listing-form__select"
+            className="hr-input"
             id="listing-pricing-unit"
             name="pricingUnit"
             value={formData.pricingUnit}
@@ -347,7 +347,7 @@ export default function ListingForm({
           </label>
 
           <input
-            className="listing-form__input"
+            className="hr-input"
             id="listing-deposit"
             name="depositAmount"
             type="number"
@@ -413,7 +413,7 @@ export default function ListingForm({
                   />
 
                   <button
-                    className="listing-form__remove"
+                    className="hr-btn-secondary hr-btn-danger mt-2"
                     type="button"
                     onClick={() => removeImage(index)}
                     disabled={isSubmitting}
@@ -440,7 +440,7 @@ export default function ListingForm({
 
         <div className="listing-form__actions">
           <button
-            className="listing-form__submit"
+            className="hr-btn-primary w-full"
             type="submit"
             disabled={isSubmitting}
           >

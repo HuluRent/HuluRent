@@ -3,7 +3,8 @@
 // not global app state (see ARCHITECTURE.md §4.1 on what belongs in Context
 // vs. component state).
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 const DEFAULT_FILTERS = {
   query: '',
@@ -17,7 +18,18 @@ const DEFAULT_FILTERS = {
 };
 
 export function useFilters() {
-  const [filters, setFilters] = useState(DEFAULT_FILTERS);
+  const [searchParams] = useSearchParams();
+  const [filters, setFilters] = useState(() => {
+    const q = searchParams.get('q');
+    const categoryId = searchParams.get('categoryId');
+    const initialCategoryIds = categoryId ? [categoryId] : [];
+
+    return {
+      ...DEFAULT_FILTERS,
+      query: q || '',
+      categoryIds: initialCategoryIds,
+    };
+  });
 
   const updateFilter = useCallback((key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value, page: key === 'page' ? value : 1 }));

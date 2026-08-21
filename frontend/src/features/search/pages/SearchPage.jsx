@@ -1,15 +1,3 @@
-// Browse/search page — converted from the Stitch AI design. This is the
-// app's homepage ("/search" in router.jsx).
-//
-// Two things worth knowing if you're picking this up:
-//  1. The Saved List (bookmark icon on each card) is a real persisted feature
-//     backed by /saved-list API endpoints. The saved list is fetched once here
-//     and threaded down to cards — no per-card fetches.
-//  2. Search filter contracts (location, verifiedOnly, sort, multi-category)
-//     were added to api-reference.md's Search section specifically to
-//     support this page — read that note if backend search.service.js
-//     doesn't match what this page sends.
-
 import { useState, useMemo } from 'react';
 import { useSearchListings } from '../hooks/useSearchListings';
 import { useFilters } from '../hooks/useFilters';
@@ -36,10 +24,8 @@ export function SearchPage() {
   const addMutation = useAddToSavedList();
   const removeMutation = useRemoveFromSavedList();
 
-  // Track which listing is currently being toggled (for spinner feedback)
   const [pendingId, setPendingId] = useState(null);
 
-  // Build a Set of saved listing IDs for O(1) lookup
   const savedIds = useMemo(() => {
     if (!savedListData) return null;
     return new Set(savedListData.map((entry) => entry.listingId));
@@ -63,16 +49,22 @@ export function SearchPage() {
   return (
     <>
       {/* Hero / Search Section */}
-      <section className="mb-stack-lg">
-        <h1 className="font-display-lg-mobile md:font-display-lg text-display-lg-mobile md:text-display-lg text-on-surface mb-stack-md">
-          Find what you need
-        </h1>
-        <SearchBar filters={filters} onSearch={handleHeroSearch} />
+      <section className="mb-8">
+        <div className="bg-primary rounded-3xl p-8 md:p-12 mb-8 text-center md:text-left relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
+
+          <div className="relative z-10">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 tracking-tight">
+              Find what you need
+            </h1>
+            <SearchBar filters={filters} onSearch={handleHeroSearch} />
+          </div>
+        </div>
       </section>
 
       {/* Two-Column Grid */}
-      <div className="flex flex-col lg:flex-row gap-gutter">
-        <aside className="w-full lg:w-64 flex-shrink-0 lg:block hidden">
+      <div className="flex flex-col lg:flex-row gap-8 items-start">
+        <aside className="w-full lg:w-72 flex-shrink-0 lg:block hidden">
           <FilterPanel
             filters={filters}
             onUpdateFilter={updateFilter}
@@ -81,9 +73,9 @@ export function SearchPage() {
           />
         </aside>
 
-        <div className="flex-1">
+        <div className="flex-1 w-full">
           {isMobileFilterOpen && (
-            <div className="lg:hidden mb-stack-lg p-4 bg-surface-container-lowest border border-outline-variant rounded-xl">
+            <div className="lg:hidden mb-6 relative z-20">
               <FilterPanel
                 filters={filters}
                 onUpdateFilter={updateFilter}
@@ -106,17 +98,20 @@ export function SearchPage() {
             savePendingId={pendingId}
           />
 
-          {data && (
-            <Pagination
-              page={data.page}
-              limit={data.limit}
-              total={data.total}
-              onPageChange={(page) => updateFilter('page', page)}
-            />
+          {data && data.total > 0 && (
+            <div className="mt-12 flex justify-center border-t border-surface-border pt-8">
+              <Pagination
+                page={data.page}
+                limit={data.limit}
+                total={data.total}
+                onPageChange={(page) => updateFilter('page', page)}
+              />
+            </div>
           )}
         </div>
       </div>
     </>
   );
 }
+
 export default SearchPage;

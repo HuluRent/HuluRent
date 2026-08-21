@@ -90,8 +90,35 @@ async function sendMessage(conversationId, userId, content) {
   });
 }
 
+const listingsRepository = require('../listings/listings.repository');
+
+async function startConversation(userId, listingId) {
+  const listing = await listingsRepository.findById(listingId);
+
+  if (!listing) {
+    throw new NotFoundError('Listing not found');
+  }
+
+  if (listing.ownerId === userId) {
+    throw new ForbiddenError('You cannot message yourself about your own listing');
+  }
+
+  const existingConversation = await repository.findConversationByItemAndParticipants(
+    listingId,
+    userId,
+    listing.ownerId
+  );
+
+  if (existingConversation) {
+    return existingConversation;
+  }
+
+  return repository.createConversation(listingId, [userId, listing.ownerId]);
+}
+
 module.exports = {
   getConversations,
   getMessages,
   sendMessage,
+  startConversation,
 };

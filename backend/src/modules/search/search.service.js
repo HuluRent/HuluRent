@@ -14,33 +14,55 @@ async function searchItems(queryFilters) {
     limit
   } = queryFilters;
 
-  const where = { status: 'PUBLISHED' };
+  const where = { status: 'PUBLISHED', AND: [] };
 
   if (categoryId) {
-    where.categoryId = categoryId;
+    const ids = categoryId.split(',').map(id => id.trim()).filter(Boolean);
+    if (ids.length > 0) {
+      where.AND.push({
+        OR: [
+          { categoryId: { in: ids } },
+          { category: { parentId: { in: ids } } },
+        ]
+      });
+    }
   }
 
   if (q) {
-    where.OR = [
-      { name: { contains: q, mode: 'insensitive' } },
-      { description: { contains: q, mode: 'insensitive' } }
-    ];
+    const tokens = q.trim().split(/\s+/).filter(Boolean);
+    if (tokens.length > 0) {
+      const tokenConditions = tokens.map(token => ({
+        OR: [
+          { name: { contains: token, mode: 'insensitive' } },
+          { description: { contains: token, mode: 'insensitive' } },
+          { category: { name: { contains: token, mode: 'insensitive' } } }
+        ]
+      }));
+      where.AND.push(...tokenConditions);
+    }
   }
 
   if (minPrice !== undefined || maxPrice !== undefined) {
-    where.pricePerUnit = {};
-    if (minPrice !== undefined) where.pricePerUnit.gte = minPrice;
-    if (maxPrice !== undefined) where.pricePerUnit.lte = maxPrice;
+    const priceCondition = {};
+    if (minPrice !== undefined) priceCondition.gte = minPrice;
+    if (maxPrice !== undefined) priceCondition.lte = maxPrice;
+    where.AND.push({ pricePerUnit: priceCondition });
   }
 
   // Simple Bounding Box geospatial filter
   if (minLat !== undefined && maxLat !== undefined && minLng !== undefined && maxLng !== undefined) {
-    where.latitude = { gte: minLat, lte: maxLat };
-    where.longitude = { gte: minLng, lte: maxLng };
+    where.AND.push({
+      latitude: { gte: minLat, lte: maxLat },
+      longitude: { gte: minLng, lte: maxLng }
+    });
+  }
+
+  if (where.AND.length === 0) {
+    delete where.AND;
   }
 
   const skip = (page - 1) * limit;
-  
+
   return searchRepo.findItems(where, skip, limit);
 }
 

@@ -91,6 +91,7 @@ model Item {
   owner          User           @relation("ItemOwner", fields: [ownerId], references: [id])
   images         ItemImage[]
   savedListings  SavedListing[]
+  conversations  Conversation[]
 
   @@index([categoryId])
   @@index([ownerId])
@@ -111,9 +112,8 @@ model SavedListing {
   userId    String
   listingId String
   createdAt DateTime @default(now())
-
-  user    User @relation(fields: [userId], references: [id])
-  listing Item @relation(fields: [listingId], references: [id])
+  listing   Item     @relation(fields: [listingId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, listingId])
   @@index([userId])
@@ -182,11 +182,15 @@ model Inspection {
 
 model Conversation {
   id           String                    @id @default(uuid())
-  bookingId    String                    @unique
+  itemId       String
+  bookingId    String?                   @unique
   createdAt    DateTime                  @default(now())
-  booking      Booking                   @relation(fields: [bookingId], references: [id])
+  item         Item                      @relation(fields: [itemId], references: [id])
+  booking      Booking?                  @relation(fields: [bookingId], references: [id])
   participants ConversationParticipant[]
   messages     Message[]
+
+  @@index([itemId])
 }
 
 model ConversationParticipant {

@@ -25,7 +25,12 @@ const messagePaginationSchema = z.object({
     .default(50),
 });
 
+const startConversationSchema = z.object({
+  listingId: z.string().uuid('Invalid listing ID'),
+});
+
 module.exports = {
   sendMessageSchema,
   messagePaginationSchema,
+  startConversationSchema,
 };

@@ -10,19 +10,16 @@ async function findConversationsByUserId(userId) {
       },
     },
     include: {
-      booking: {
+      item: {
         include: {
-          item: {
-            include: {
-              images: {
-                orderBy: {
-                  position: 'asc',
-                },
-              },
+          images: {
+            orderBy: {
+              position: 'asc',
             },
           },
         },
       },
+      booking: true,
       participants: {
         include: {
           user: {
@@ -104,10 +101,45 @@ async function createMessage({ conversationId, senderId, content }) {
   });
 }
 
+async function findConversationByItemAndParticipants(itemId, user1Id, user2Id) {
+  return prisma.conversation.findFirst({
+    where: {
+      itemId,
+      participants: {
+        some: { userId: user1Id },
+      },
+      AND: {
+        participants: {
+          some: { userId: user2Id },
+        },
+      },
+    },
+    include: {
+      participants: true,
+    }
+  });
+}
+
+async function createConversation(itemId, userIds) {
+  return prisma.conversation.create({
+    data: {
+      itemId,
+      participants: {
+        create: userIds.map((userId) => ({ userId })),
+      },
+    },
+    include: {
+      participants: true,
+    }
+  });
+}
+
 module.exports = {
   findConversationsByUserId,
   findConversationById,
   findMessages,
   countMessages,
   createMessage,
+  findConversationByItemAndParticipants,
+  createConversation,
 };
