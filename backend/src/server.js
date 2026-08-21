@@ -1,16 +1,15 @@
-// Boots the HTTP server (and attaches the Socket.io server once
-// sockets/index.js is implemented). Entry point referenced by
-// package.json's "dev"/"start" scripts.
+// Boots the HTTP server and attaches the Socket.io server.
+// Entry point referenced by package.json's "dev"/"start" scripts.
 
 const http = require('http');
 const app = require('./app');
 const { env } = require('./config/env');
+const { attachSocketServer } = require('./sockets/index');
 
 const server = http.createServer(app);
 
-// TODO: once sockets/index.js is implemented —
-// const { attachSocketServer } = require('./sockets/index');
-// attachSocketServer(server);
+// Attach Socket.io for real-time messaging
+attachSocketServer(server);
 
 // TODO: once jobs/scheduler.js is implemented —
 // const { startScheduler } = require('./jobs/scheduler');
