@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './CategorySection.css';
 
 const categories = [
@@ -157,21 +158,24 @@ const categories = [
 ];
 
 function CategorySection({ onCategorySelect }) {
+  const navigate = useNavigate();
   const [openCategory, setOpenCategory] = useState(null);
 
+  // Clicking the top-level card navigates immediately to /listings?category=<slug>
+  // (which SearchPage reads from the URL to pre-fill the filter).
   const handleCategoryClick = (category) => {
-    setOpenCategory((current) =>
-      current === category.slug ? null : category.slug
-    );
+    if (onCategorySelect) {
+      onCategorySelect({ category });
+    }
+    navigate(`/listings?category=${category.slug}`);
   };
 
+  // Subcategory click navigates with both category and subcategory slugs
   const handleSubcategoryClick = (category, subcategory) => {
     if (onCategorySelect) {
-      onCategorySelect({
-        category,
-        subcategory,
-      });
+      onCategorySelect({ category, subcategory });
     }
+    navigate(`/listings?category=${category.slug}&subcategory=${subcategory.slug}`);
   };
 
   return (
