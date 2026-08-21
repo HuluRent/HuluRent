@@ -2,6 +2,21 @@ import { useEffect, useState } from 'react';
 import { useCategories } from '../../../hooks/useCategories';
 import './ListingForm.css';
 
+// Maps category slug → Material Symbols icon name
+const CATEGORY_ICONS = {
+  'electronics':         'devices',
+  'books-education':     'menu_book',
+  'musical-instruments': 'music_note',
+  'furniture':           'chair',
+  'fashion':             'checkroom',
+  'tools-equipment':     'handyman',
+  'events-party':        'celebration',
+  'sports-outdoors':     'sports_soccer',
+  'baby-kids':           'child_care',
+  'agriculture':         'agriculture',
+  'other':               'category',
+};
+
 const initialValues = {
   name: '',
   description: '',
@@ -205,36 +220,42 @@ export default function ListingForm({
         </div>
 
         <div className="listing-form__field">
-          <label className="listing-form__label" htmlFor="listing-category">
+          <label className="listing-form__label">
             Category
           </label>
 
-          <select
-            className="listing-form__select"
-            id="listing-category"
-            name="categoryId"
-            value={formData.categoryId}
-            onChange={handleChange}
-            disabled={categoriesLoading || categoriesError}
-            required
-          >
-            <option value="">
-              {categoriesLoading
-                ? 'Loading categories...'
-                : 'Select a category'}
-            </option>
-
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
+          {categoriesLoading && (
+            <p className="listing-form__hint">Loading categories…</p>
+          )}
 
           {categoriesError && (
-            <p className="listing-form__error">
-              Unable to load categories.
-            </p>
+            <p className="listing-form__error">Unable to load categories.</p>
+          )}
+
+          {!categoriesLoading && !categoriesError && (
+            <div className="listing-form__category-grid" role="radiogroup" aria-label="Category">
+              {categories.map((category) => {
+                const isSelected = formData.categoryId === category.id;
+                const icon = CATEGORY_ICONS[category.slug] || 'category';
+                return (
+                  <button
+                    key={category.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={isSelected}
+                    onClick={() =>
+                      handleChange({ target: { name: 'categoryId', value: category.id } })
+                    }
+                    className={`listing-form__category-card${isSelected ? ' listing-form__category-card--selected' : ''}`}
+                  >
+                    <span className="material-symbols-outlined listing-form__category-icon">
+                      {icon}
+                    </span>
+                    <span className="listing-form__category-name">{category.name}</span>
+                  </button>
+                );
+              })}
+            </div>
           )}
 
           {errors.categoryId && (
