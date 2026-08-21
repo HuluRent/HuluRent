@@ -38,6 +38,8 @@ async function create(req, res) {
     pricingUnit: req.body.pricingUnit,
     depositAmount: req.body.depositAmount,
     approxLocation: req.body.approxLocation,
+    latitude: req.body.latitude ? parseFloat(req.body.latitude) : 0,
+    longitude: req.body.longitude ? parseFloat(req.body.longitude) : 0,
     ownerId: req.user.userId,
     status: 'PUBLISHED'
   };

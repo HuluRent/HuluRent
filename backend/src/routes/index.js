@@ -28,7 +28,7 @@ router.get('/health', (req, res) => res.json({ status: 'ok' }));
 
 router.use('/auth', authRouter);
 router.use('/users', usersRouter);
-router.use('/identity-verification', identityRouter);
+router.use('/identity', identityRouter);
 router.use('/categories', categoriesRouter);
 router.use('/listings', listingsRouter);
 router.use('/search', searchRouter);

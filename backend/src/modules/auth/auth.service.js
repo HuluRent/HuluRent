@@ -42,7 +42,7 @@ function buildAuthResponse(user) {
   const accessToken = jwt.sign(
     { userId: user.id, role: user.role },
     env.jwtSecret,
-    { expiresIn: '15m' }
+    { expiresIn: '1d' }
   );
   const refreshToken = jwt.sign(
     { userId: user.id },
