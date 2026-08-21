@@ -78,8 +78,8 @@ model Item {
   pricePerUnit   Decimal        @db.Decimal(10, 2)
   pricingUnit    String
   depositAmount  Decimal?       @db.Decimal(10, 2)
-  latitude       Float
-  longitude      Float
+  latitude       Float?
+  longitude      Float?
   approxLocation String
   status         ListingStatus  @default(DRAFT)
   createdAt      DateTime       @default(now())

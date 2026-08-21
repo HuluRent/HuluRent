@@ -3,7 +3,19 @@ const { prisma } = require('../../config/database');
 async function findById(id) {
   return prisma.item.findUnique({
     where: { id },
-    include: {
+    select: {
+      id: true,
+      ownerId: true,
+      categoryId: true,
+      name: true,
+      description: true,
+      pricePerUnit: true,
+      pricingUnit: true,
+      depositAmount: true,
+      approxLocation: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
       category: true,
       images: {
         orderBy: { position: 'asc' },
@@ -20,7 +32,19 @@ async function findAll(filters = {}) {
 
   return prisma.item.findMany({
     where,
-    include: {
+    select: {
+      id: true,
+      ownerId: true,
+      categoryId: true,
+      name: true,
+      description: true,
+      pricePerUnit: true,
+      pricingUnit: true,
+      depositAmount: true,
+      approxLocation: true,
+      status: true,
+      createdAt: true,
+      updatedAt: true,
       category: true,
       images: {
         orderBy: { position: 'asc' },

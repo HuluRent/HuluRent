@@ -4,7 +4,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useCreateListing } from '../hooks/useCreateListing';
 import ListingForm from '../components/ListingForm';
-import './ListingCreatePage.css';
 
 export function ListingCreatePage() {
   const navigate = useNavigate();

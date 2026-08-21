@@ -3,7 +3,7 @@
 // "Search" section (including the owner rating/category fields added
 // specifically for the browse-listings page).
 
-import { client } from './client';
+import client from './client';
 
 export function searchListings(filters = {}) {
   const params = {};

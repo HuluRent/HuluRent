@@ -17,10 +17,17 @@ async function list(req, res) {
 }
 
 async function create(req, res) {
+
   const imageUrls = await imageService.uploadImages(req.files || []);
-  
+
   const listingData = {
-    ...req.body,
+    categoryId: req.body.categoryId,
+    name: req.body.name,
+    description: req.body.description,
+    pricePerUnit: req.body.pricePerUnit,
+    pricingUnit: req.body.pricingUnit,
+    depositAmount: req.body.depositAmount,
+    approxLocation: req.body.approxLocation,
     ownerId: req.user.userId,
     status: 'PUBLISHED'
   };

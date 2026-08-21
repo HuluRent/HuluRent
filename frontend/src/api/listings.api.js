@@ -7,11 +7,15 @@ export function getListing(id) {
 export function createListing(data, onUploadProgress) {
   const formData = new FormData();
 
-  formData.append('title', data.title);
+  formData.append('name', data.name);
   formData.append('description', data.description);
   formData.append('categoryId', data.categoryId);
-  formData.append('price', data.price);
-  formData.append('deposit', data.deposit);
+  formData.append('pricePerUnit', data.pricePerUnit);
+  formData.append('pricingUnit', data.pricingUnit);
+  if (data.depositAmount !== '' && data.depositAmount != null) {
+    formData.append('depositAmount', data.depositAmount);
+  }
+  formData.append('approxLocation', data.approxLocation);
 
   (data.images || []).forEach((image) => {
     formData.append('images', image);
@@ -30,4 +34,16 @@ export function updateListing(id, data) {
 
 export function deleteListing(id) {
   return client.delete(`/listings/${id}`).then((res) => res.data);
+}
+
+export function getMyListings({ ownerId, page = 1, limit = 20 } = {}) {
+  return client
+    .get('/listings', {
+      params: {
+        ownerId,
+        page,
+        limit,
+      },
+    })
+    .then((res) => res.data);
 }

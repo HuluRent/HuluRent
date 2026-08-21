@@ -1,28 +1,35 @@
 import { useEffect, useState } from 'react';
 import { useCategories } from '../../../hooks/useCategories';
+import './ListingForm.css';
 
 const initialValues = {
-  title: '',
+  name: '',
   description: '',
   categoryId: '',
-  price: '',
-  deposit: '',
+  pricePerUnit: '',
+  pricingUnit: 'day',
+  depositAmount: '',
+  approxLocation: '',
 };
 
-function validatePositiveDecimal(value) {
-  if (value === '') return 'This field is required.';
+function validatePositiveDecimal(value, required = true) {
+  if (value === '') {
+    return required ? 'This field is required.' : '';
+  }
 
   const number = Number(value);
 
   if (!Number.isFinite(number) || number <= 0) {
-    return 'Must be a positive decimal.';
+    return 'Must be a positive number.';
   }
 
   return '';
 }
 
+const EMPTY_INITIAL_DATA = {};
+
 export default function ListingForm({
-  initialData = {},
+  initialData = EMPTY_INITIAL_DATA,
   onSubmit,
   submitLabel = 'Save Listing',
   isSubmitting = false,
@@ -31,6 +38,7 @@ export default function ListingForm({
     ...initialValues,
     ...initialData,
   });
+
   const [errors, setErrors] = useState({});
   const [images, setImages] = useState([]);
   const [imageError, setImageError] = useState('');
@@ -108,8 +116,21 @@ export default function ListingForm({
     event.preventDefault();
 
     const nextErrors = {
-      price: validatePositiveDecimal(formData.price),
-      deposit: validatePositiveDecimal(formData.deposit),
+      name:
+        formData.name.trim().length < 3
+          ? 'Name must be at least 3 characters.'
+          : '',
+      description:
+        formData.description.trim().length < 10
+          ? 'Description must be at least 10 characters.'
+          : '',
+      categoryId: !formData.categoryId ? 'Please select a category.' : '',
+      pricePerUnit: validatePositiveDecimal(formData.pricePerUnit),
+      depositAmount: validatePositiveDecimal(formData.depositAmount, false),
+      approxLocation:
+        formData.approxLocation.trim().length < 2
+          ? 'Please provide an approximate location.'
+          : '',
     };
 
     setErrors(nextErrors);
@@ -136,140 +157,277 @@ export default function ListingForm({
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="listing-title">Title</label>
-        <input
-          id="listing-title"
-          name="title"
-          type="text"
-          value={formData.title}
-          onChange={handleChange}
-          required
-        />
-      </div>
+    <form className="listing-form" onSubmit={handleSubmit}>
+      <div className="listing-form__section">
 
-      <div>
-        <label htmlFor="listing-description">Description</label>
-        <textarea
-          id="listing-description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          required
-        />
-      </div>
+        <div className="listing-form__field">
+          <label className="listing-form__label" htmlFor="listing-name">
+            Listing Name
+          </label>
 
-      <div>
-        <label htmlFor="listing-category">Category</label>
-        <select
-          id="listing-category"
-          name="categoryId"
-          value={formData.categoryId}
-          onChange={handleChange}
-          disabled={categoriesLoading || categoriesError}
-          required
-        >
-          <option value="">
-            {categoriesLoading ? 'Loading categories...' : 'Select a category'}
-          </option>
+          <input
+            className="listing-form__input"
+            id="listing-name"
+            name="name"
+            type="text"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="What are you renting?"
+            required
+          />
 
-          {categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
+          {errors.name && (
+            <p className="listing-form__error">{errors.name}</p>
+          )}
+        </div>
+
+        <div className="listing-form__field">
+          <label
+            className="listing-form__label"
+            htmlFor="listing-description"
+          >
+            Description
+          </label>
+
+          <textarea
+            className="listing-form__textarea"
+            id="listing-description"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Describe the item, its condition, and anything renters should know."
+            required
+          />
+
+          {errors.description && (
+            <p className="listing-form__error">{errors.description}</p>
+          )}
+        </div>
+
+        <div className="listing-form__field">
+          <label className="listing-form__label" htmlFor="listing-category">
+            Category
+          </label>
+
+          <select
+            className="listing-form__select"
+            id="listing-category"
+            name="categoryId"
+            value={formData.categoryId}
+            onChange={handleChange}
+            disabled={categoriesLoading || categoriesError}
+            required
+          >
+            <option value="">
+              {categoriesLoading
+                ? 'Loading categories...'
+                : 'Select a category'}
             </option>
-          ))}
-        </select>
 
-        {categoriesError && <p>Unable to load categories.</p>}
-      </div>
-
-      <div>
-        <label htmlFor="listing-images">Images</label>
-
-        <input
-          id="listing-images"
-          name="images"
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={handleImageChange}
-          disabled={isSubmitting || images.length >= 5}
-        />
-
-        <p>
-          Add up to 5 images. Each image must be 5 MB or smaller.
-        </p>
-
-        {imageError && <p role="alert">{imageError}</p>}
-
-        {images.length > 0 && (
-          <div>
-            {images.map((image, index) => (
-              <div key={`${image.name}-${image.lastModified}-${index}`}>
-                <img
-                  src={URL.createObjectURL(image)}
-                  alt={`Selected image ${index + 1}`}
-                  width="120"
-                  height="120"
-                  style={{ objectFit: 'cover' }}
-                />
-
-                <button
-                  type="button"
-                  onClick={() => removeImage(index)}
-                  disabled={isSubmitting}
-                >
-                  Remove
-                </button>
-              </div>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
             ))}
+          </select>
+
+          {categoriesError && (
+            <p className="listing-form__error">
+              Unable to load categories.
+            </p>
+          )}
+
+          {errors.categoryId && (
+            <p className="listing-form__error">{errors.categoryId}</p>
+          )}
+        </div>
+
+        <div className="listing-form__field">
+          <label
+            className="listing-form__label"
+            htmlFor="listing-location"
+          >
+            Approximate Location
+          </label>
+
+          <input
+            className="listing-form__input"
+            id="listing-location"
+            name="approxLocation"
+            type="text"
+            value={formData.approxLocation}
+            onChange={handleChange}
+            placeholder="e.g. Bole, Addis Ababa"
+            required
+          />
+
+          <p className="listing-form__hint">
+            Use an area or neighborhood. Do not enter your exact address.
+          </p>
+
+          {errors.approxLocation && (
+            <p className="listing-form__error">
+              {errors.approxLocation}
+            </p>
+          )}
+        </div>
+
+        <div className="listing-form__field">
+          <label className="listing-form__label" htmlFor="listing-price">
+            Price
+          </label>
+
+          <input
+            className="listing-form__input"
+            id="listing-price"
+            name="pricePerUnit"
+            type="number"
+            min="0"
+            step="0.01"
+            value={formData.pricePerUnit}
+            onChange={handleChange}
+            placeholder="0.00"
+            required
+          />
+
+          {errors.pricePerUnit && (
+            <p className="listing-form__error">
+              {errors.pricePerUnit}
+            </p>
+          )}
+        </div>
+
+        <div className="listing-form__field">
+          <label className="listing-form__label" htmlFor="listing-pricing-unit">
+            Pricing Unit
+          </label>
+
+          <select
+            className="listing-form__select"
+            id="listing-pricing-unit"
+            name="pricingUnit"
+            value={formData.pricingUnit}
+            onChange={handleChange}
+            required
+          >
+            <option value="hour">Per hour</option>
+            <option value="day">Per day</option>
+            <option value="week">Per week</option>
+            <option value="month">Per month</option>
+          </select>
+        </div>
+
+        <div className="listing-form__field">
+          <label
+            className="listing-form__label"
+            htmlFor="listing-deposit"
+          >
+            Deposit
+          </label>
+
+          <input
+            className="listing-form__input"
+            id="listing-deposit"
+            name="depositAmount"
+            type="number"
+            min="0"
+            step="0.01"
+            value={formData.depositAmount}
+            onChange={handleChange}
+            placeholder="0.00"
+          />
+
+          <p className="listing-form__hint">
+            Optional. Leave blank if no deposit is required.
+          </p>
+
+          {errors.depositAmount && (
+            <p className="listing-form__error">
+              {errors.depositAmount}
+            </p>
+          )}
+        </div>
+
+        <div className="listing-form__upload">
+          <div className="listing-form__field">
+            <label
+              className="listing-form__label"
+              htmlFor="listing-images"
+            >
+              Images
+            </label>
+
+            <input
+              className="listing-form__file"
+              id="listing-images"
+              name="images"
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImageChange}
+              disabled={isSubmitting || images.length >= 5}
+            />
+
+            <p className="listing-form__hint">
+              Add up to 5 images. Each image must be 5 MB or smaller.
+            </p>
+
+            {imageError && (
+              <p className="listing-form__error" role="alert">
+                {imageError}
+              </p>
+            )}
+          </div>
+
+          {images.length > 0 && (
+            <div className="listing-form__previews">
+              {images.map((image, index) => (
+                <div
+                  className="listing-form__preview"
+                  key={`${image.name}-${image.lastModified}-${index}`}
+                >
+                  <img
+                    src={URL.createObjectURL(image)}
+                    alt={`Selected image ${index + 1}`}
+                  />
+
+                  <button
+                    className="listing-form__remove"
+                    type="button"
+                    onClick={() => removeImage(index)}
+                    disabled={isSubmitting}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {isSubmitting && images.length > 0 && (
+          <div className="listing-form__progress">
+            <p className="listing-form__hint">
+              Uploading images: {uploadProgress}%
+            </p>
+
+            <progress value={uploadProgress} max="100">
+              {uploadProgress}%
+            </progress>
           </div>
         )}
-      </div>
 
-      {isSubmitting && images.length > 0 && (
-        <div>
-          <p>Uploading images: {uploadProgress}%</p>
-          <progress value={uploadProgress} max="100">
-            {uploadProgress}%
-          </progress>
+        <div className="listing-form__actions">
+          <button
+            className="listing-form__submit"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Saving...' : submitLabel}
+          </button>
         </div>
-      )}
 
-      <div>
-        <label htmlFor="listing-price">Price</label>
-        <input
-          id="listing-price"
-          name="price"
-          type="number"
-          min="0"
-          step="0.01"
-          value={formData.price}
-          onChange={handleChange}
-          required
-        />
-        {errors.price && <p>{errors.price}</p>}
       </div>
-
-      <div>
-        <label htmlFor="listing-deposit">Deposit</label>
-        <input
-          id="listing-deposit"
-          name="deposit"
-          type="number"
-          min="0"
-          step="0.01"
-          value={formData.deposit}
-          onChange={handleChange}
-          required
-        />
-        {errors.deposit && <p>{errors.deposit}</p>}
-      </div>
-
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Saving...' : submitLabel}
-      </button>
     </form>
   );
 }
