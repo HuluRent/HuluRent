@@ -1,5 +1,3 @@
-// Date helpers (e.g. overlap checks used by bookings.conflict-check.js)
-
 // Checks if two date ranges overlap
 function doDatesOverlap(start1, end1, start2, end2) {
   const s1 = new Date(start1).getTime();

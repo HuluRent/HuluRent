@@ -1,2 +1,7 @@
-// Transitions REQUESTED bookings nobody accepted within N hours to EXPIRED
-// TODO: implement
+const logger = require('../../config/logger');
+
+async function expirePendingBookings() {
+  logger.info('Running cron job: Expiring pending bookings...');
+}
+
+module.exports = expirePendingBookings;

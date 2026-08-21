@@ -1,13 +1,12 @@
-// Express routes for review submission/reading.
-// TODO: add real route handlers — wire middleware (authenticate, authorize,
-// ownershipGuard, validateRequest) in order, then delegate to the controller.
-
 const { Router } = require('express');
+const controller = require('./reviews.controller');
+const authenticate = require('../../shared/middleware/authenticate');
+const validateRequest = require('../../shared/middleware/validate-request');
+const { createReviewSchema } = require('./reviews.validation');
 
 const reviewsRouter = Router();
 
-// Example shape once implemented:
-// router.get('/', asyncHandler(controller.list));
-// router.post('/', authenticate, validateRequest(schema), asyncHandler(controller.create));
+reviewsRouter.post('/', authenticate, validateRequest(createReviewSchema), controller.create);
+reviewsRouter.get('/', controller.list);
 
 module.exports = { reviewsRouter };
