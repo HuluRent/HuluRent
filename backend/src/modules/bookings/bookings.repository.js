@@ -1,28 +1,23 @@
-// Prisma queries for Booking
-// Handles direct database interactions for the bookings module
-// Note: Replace `db` with your actual database client import (e.g., Prisma, Sequelize, or pg)
-const db = require('../../config/database'); 
+const { prisma } = require('../../config/database'); 
 
 const createBooking = async (bookingData) => {
-  return await db.booking.create({
+  return await prisma.booking.create({
     data: bookingData
   });
 };
 
 const findBookingById = async (bookingId) => {
-  return await db.booking.findUnique({
+  return await prisma.booking.findUnique({
     where: { id: bookingId }
   });
 };
 
 const findConflictingBookings = async (itemId, startDate, endDate) => {
-  // Queries the database to find if the item is already booked during the requested dates
-  return await db.booking.findMany({
+  return await prisma.booking.findMany({
     where: {
       itemId: itemId,
-      status: { in: ['PENDING', 'CONFIRMED', 'ACTIVE'] }, // Ignores canceled or rejected bookings
+      status: { in: ['PENDING', 'CONFIRMED', 'ACTIVE'] },
       OR: [
-        // Checks for overlapping date ranges
         { startDate: { lte: new Date(endDate) }, endDate: { gte: new Date(startDate) } } 
       ]
     }
@@ -30,15 +25,24 @@ const findConflictingBookings = async (itemId, startDate, endDate) => {
 };
 
 const updateBookingStatus = async (bookingId, newStatus) => {
-  return await db.booking.update({
+  return await prisma.booking.update({
     where: { id: bookingId },
     data: { status: newStatus }
   });
+};
+
+const getBookingOwnerId = async (bookingId) => {
+  const booking = await prisma.booking.findUnique({
+    where: { id: bookingId },
+    select: { ownerId: true, renterId: true }
+  });
+  return booking ? [booking.ownerId, booking.renterId] : null;
 };
 
 module.exports = {
   createBooking,
   findBookingById,
   findConflictingBookings,
-  updateBookingStatus
+  updateBookingStatus,
+  getBookingOwnerId
 };

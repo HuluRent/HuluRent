@@ -1,7 +1,5 @@
-// Request schema validation for agreement acceptance
 const Joi = require('joi'); 
 
-// Request schema validation for agreement acceptance
 const acceptAgreementSchema = Joi.object({
   agreementId: Joi.string().required().messages({
     'string.empty': 'Agreement ID is required.'

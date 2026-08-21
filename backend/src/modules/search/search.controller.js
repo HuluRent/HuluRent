@@ -1,7 +1,7 @@
 const service = require('./search.service');
 
 async function list(req, res) {
-  // query is already validated and coerced by validateRequest(searchSchema)
+
   const results = await service.searchItems(req.query);
   
   return res.json({

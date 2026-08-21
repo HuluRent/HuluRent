@@ -7,7 +7,7 @@ const { ConflictError } = require('../../shared/errors/ConflictError');
 async function createReview(authorId, data) {
   const { bookingId, rating, comment } = data;
 
-  const booking = await bookingsRepo.findById(bookingId);
+  const booking = await bookingsRepo.findBookingById(bookingId);
   if (!booking) {
     throw new NotFoundError('Booking not found');
   }

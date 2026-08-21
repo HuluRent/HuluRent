@@ -1,8 +1,12 @@
 // Business logic — generate agreement from template, record acceptance, versioning
 
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
 const agreementsRepository = require('./agreements.repository');
 const { NotFoundError } = require('../../shared/errors/NotFoundError');
 const { ValidationError } = require('../../shared/errors/ValidationError');
+const { ForbiddenError } = require('../../shared/errors/ForbiddenError');
 
 class AgreementsService {
   
@@ -19,31 +23,33 @@ class AgreementsService {
     return await agreementsRepository.createAgreement({
       bookingId,
       terms: termsText,
-      ownerSignedAt: null,
-      renterSignedAt: null,
     });
   }
 
   /**
    * Handles a user digitally signing the agreement
    */
-  async signAgreement(bookingId, userId, role) {
+  async signAgreement(bookingId, userId) {
     const agreement = await agreementsRepository.findByBookingId(bookingId);
     
     if (!agreement) {
       throw new NotFoundError('Agreement not found');
     }
 
-    // Determine which signature field to update based on the user's role
+    const booking = await prisma.booking.findUnique({ where: { id: bookingId } });
+    if (!booking) {
+      throw new NotFoundError('Booking not found');
+    }
+
     const updateData = {};
-    if (role === 'OWNER') {
-      if (agreement.ownerSignedAt) throw new ValidationError('Owner has already signed');
-      updateData.ownerSignedAt = new Date();
-    } else if (role === 'RENTER') {
-      if (agreement.renterSignedAt) throw new ValidationError('Renter has already signed');
-      updateData.renterSignedAt = new Date();
+    if (booking.ownerId === userId) {
+      if (agreement.ownerAccepted) throw new ValidationError('Owner has already signed');
+      updateData.ownerAccepted = true;
+    } else if (booking.renterId === userId) {
+      if (agreement.renterAccepted) throw new ValidationError('Renter has already signed');
+      updateData.renterAccepted = true;
     } else {
-      throw new ValidationError('Invalid role for signing');
+      throw new ForbiddenError('You are not a participant in this booking');
     }
 
     return await agreementsRepository.updateSignature(agreement.id, updateData);
