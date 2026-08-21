@@ -239,3 +239,44 @@
   color: var(--color-text-muted);
   margin: 0.35rem 0 0;
 }
+
+/* ── Own profile actions (edit + logout) ─────────────────── */
+
+.hr-profile__own-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .hr-profile__own-actions {
+    align-items: flex-end;
+  }
+}
+
+.hr-profile__logout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.25rem;
+  background: transparent;
+  color: var(--color-error, #ba1a1a);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-error, #ba1a1a);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.hr-profile__logout-btn:hover {
+  background: var(--color-error, #ba1a1a);
+  color: #fff;
+}
+
+.hr-profile__logout-btn .material-symbols-outlined {
+  font-size: 18px;
+}
