@@ -9,6 +9,13 @@ import {
 } from '../../savedList/hooks/useSavedList';
 import './ListingDetailPage.css';
 
+function formatDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('en-ET', {
+    year: 'numeric', month: 'long', day: 'numeric',
+  });
+}
+
 export function ListingDetailPage() {
   const { listingId } = useParams();
 
@@ -110,29 +117,51 @@ export function ListingDetailPage() {
 
         <p>{listing.description}</p>
 
-        <p>
-          <strong>Category:</strong>{' '}
-          {listing.category?.name || 'Uncategorized'}
-        </p>
+        <div className="listing-detail-page__info-grid">
+          <div className="listing-detail-page__info-row">
+            <span className="listing-detail-page__info-label">Category:</span>
+            <span className="listing-detail-page__info-value">{listing.category?.name || 'Uncategorized'}</span>
+          </div>
 
-        <p>
-          <strong>Price:</strong> {listing.pricePerUnit} /{' '}
-          {listing.pricingUnit}
-        </p>
+          <div className="listing-detail-page__info-row">
+            <span className="listing-detail-page__info-label">Price:</span>
+            <span className="listing-detail-page__info-value">{listing.pricePerUnit} / {listing.pricingUnit}</span>
+          </div>
 
-        {listing.depositAmount && (
-          <p>
-            <strong>Deposit:</strong> {listing.depositAmount}
-          </p>
-        )}
+          {listing.depositAmount && (
+            <div className="listing-detail-page__info-row">
+              <span className="listing-detail-page__info-label">Deposit:</span>
+              <span className="listing-detail-page__info-value">{listing.depositAmount}</span>
+            </div>
+          )}
 
-        <p>
-          <strong>Location:</strong> {listing.approxLocation}
-        </p>
+          <div className="listing-detail-page__info-row">
+            <span className="listing-detail-page__info-label">Location:</span>
+            <span className="listing-detail-page__info-value">{listing.approxLocation}</span>
+          </div>
 
-        <p>
-          <strong>Status:</strong> {listing.status}
-        </p>
+          <div className="listing-detail-page__info-row">
+            <span className="listing-detail-page__info-label">Status:</span>
+            <span className="listing-detail-page__info-value">{listing.status}</span>
+          </div>
+
+          {listing.availabilities?.length > 0 && (
+            <>
+              <div className="listing-detail-page__info-row">
+                <span className="listing-detail-page__info-label">Available From:</span>
+                <span className="listing-detail-page__info-value">
+                  {formatDate(listing.availabilities[0].startDate)}
+                </span>
+              </div>
+              <div className="listing-detail-page__info-row">
+                <span className="listing-detail-page__info-label">Available Until:</span>
+                <span className="listing-detail-page__info-value">
+                  {formatDate(listing.availabilities[0].endDate)}
+                </span>
+              </div>
+            </>
+          )}
+        </div>
 
         <Link to={`/listings/${listing.id}/book`}>
           Book this listing
