@@ -41,7 +41,9 @@ async function create(req, res) {
     latitude: req.body.latitude ? parseFloat(req.body.latitude) : 0,
     longitude: req.body.longitude ? parseFloat(req.body.longitude) : 0,
     ownerId: req.user.userId,
-    status: 'PUBLISHED'
+    status: 'PUBLISHED',
+    availableFrom: req.body.availableFrom || null,
+    availableTo: req.body.availableTo || null,
   };
 
   const newListing = await service.create(listingData, imageUrls);
