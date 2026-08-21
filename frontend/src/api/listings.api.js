@@ -16,6 +16,8 @@ export function createListing(data, onUploadProgress) {
     formData.append('depositAmount', data.depositAmount);
   }
   formData.append('approxLocation', data.approxLocation);
+  if (data.availableFrom) formData.append('availableFrom', data.availableFrom);
+  if (data.availableTo) formData.append('availableTo', data.availableTo);
 
   (data.images || []).forEach((image) => {
     formData.append('images', image);
