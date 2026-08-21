@@ -1,5 +1,20 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './HeroSection.css';
 
-import './HeroSection.css';function HeroSection() {
+function HeroSection() {
+  const navigate = useNavigate();
+  const [query, setQuery] = useState('');
+  const [location, setLocation] = useState('');
+
+  function handleSearch(e) {
+    e.preventDefault();
+    const params = new URLSearchParams();
+    if (query.trim()) params.set('query', query.trim());
+    if (location.trim()) params.set('location', location.trim());
+    navigate(`/listings?${params.toString()}`);
+  }
+
   return (
     <section className="hero">
       <div className="hero__overlay" />
@@ -12,12 +27,14 @@ import './HeroSection.css';function HeroSection() {
           gear into extra income.
         </p>
 
-        <div className="hero__search">
+        <form className="hero__search" onSubmit={handleSearch}>
           <div className="hero__search-field">
             <span>⌕</span>
             <input
               type="text"
               placeholder="What are you looking for?"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
             />
           </div>
 
@@ -26,21 +43,15 @@ import './HeroSection.css';function HeroSection() {
             <input
               type="text"
               placeholder="Location (e.g., Bole)"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
             />
           </div>
 
-          <div className="hero__search-field">
-            <span>▣</span>
-            <input
-              type="text"
-              placeholder="Dates"
-            />
-          </div>
-
-          <button type="button">
+          <button type="submit">
             Search Rentals
           </button>
-        </div>
+        </form>
       </div>
     </section>
   );
