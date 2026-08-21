@@ -13,6 +13,8 @@ model User {
   phone                String?                   @unique
   passwordHash         String
   role                 Role                      @default(USER)
+  isRestricted         Boolean                   @default(false)
+  restrictionReason    String?
   createdAt            DateTime                  @default(now())
   updatedAt            DateTime                  @updatedAt
   auditEvents          AuditEvent[]
