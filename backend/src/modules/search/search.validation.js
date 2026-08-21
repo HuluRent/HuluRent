@@ -3,6 +3,7 @@ const { z } = require('zod');
 const searchSchema = z.object({
   q: z.string().optional(),
   categoryId: z.string().uuid().optional(),
+  location: z.string().optional(),
   minPrice: z.coerce.number().min(0).optional(),
   maxPrice: z.coerce.number().min(0).optional(),
   status: z.enum(['DRAFT', 'PUBLISHED', 'UNAVAILABLE', 'SUSPENDED', 'ARCHIVED']).optional(),
