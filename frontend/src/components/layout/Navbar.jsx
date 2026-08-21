@@ -61,6 +61,14 @@ const Navbar = () => {
             </Link>
 
             <Link
+              to="/saved-list"
+              className="navbar__icon-button"
+              aria-label="Saved List"
+            >
+              <span className="material-symbols-outlined">bookmark</span>
+            </Link>
+
+            <Link
               to="/profile"
               className="navbar__icon-button"
               aria-label="Profile"
@@ -97,6 +105,10 @@ const Navbar = () => {
 
           <Link to="/listings/create" onClick={closeMenu}>
             List an Item
+          </Link>
+
+          <Link to="/saved-list" onClick={closeMenu}>
+            Saved
           </Link>
 
           <Link to="/login" onClick={closeMenu}>

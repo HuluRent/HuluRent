@@ -20,6 +20,7 @@ const { reviewsRouter } = require('../modules/reviews/reviews.routes');
 const { reportsRouter } = require('../modules/reports/reports.routes');
 const { adminRouter } = require('../modules/admin/admin.routes');
 const { notificationsRouter } = require('../modules/notifications/notifications.routes');
+const { savedListRouter } = require('../modules/savedList/savedList.routes');
 
 const router = Router();
 
@@ -41,5 +42,6 @@ router.use('/reviews', reviewsRouter);
 router.use('/reports', reportsRouter);
 router.use('/admin', adminRouter);
 router.use('/notifications', notificationsRouter);
+router.use('/saved-list', savedListRouter);
 
 module.exports = router;

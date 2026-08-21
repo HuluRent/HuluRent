@@ -1,30 +1,59 @@
 // Browse/search page — converted from the Stitch AI design. This is the
-// app's homepage ("/" in router.jsx).
+// app's homepage ("/search" in router.jsx).
 //
 // Two things worth knowing if you're picking this up:
-//  1. "Favorites" (the heart icon on each card) is NOT in the documented
-//     product scope (spec.md) or API contract (api-reference.md) — it's
-//     implemented as local component state only in ListingCard.jsx, not
-//     persisted. If the team wants real favorites, that needs a schema
-//     addition and an endpoint spec'd first, not silent scope creep here.
+//  1. The Saved List (bookmark icon on each card) is a real persisted feature
+//     backed by /saved-list API endpoints. The saved list is fetched once here
+//     and threaded down to cards — no per-card fetches.
 //  2. Search filter contracts (location, verifiedOnly, sort, multi-category)
 //     were added to api-reference.md's Search section specifically to
 //     support this page — read that note if backend search.service.js
 //     doesn't match what this page sends.
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useSearchListings } from '../hooks/useSearchListings';
 import { useFilters } from '../hooks/useFilters';
 import { SearchBar } from '../components/SearchBar';
 import { FilterPanel } from '../components/FilterPanel';
 import { ResultsGrid } from '../components/ResultsGrid';
 import { Pagination } from '../../../components/Pagination';
+import { useAuth } from '../../../hooks/useAuth';
+import {
+  useSavedList,
+  useAddToSavedList,
+  useRemoveFromSavedList,
+} from '../../savedList/hooks/useSavedList';
 
 export function SearchPage() {
   const { filters, updateFilter, toggleCategory, clearAll } = useFilters();
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
   const { data, isLoading, isError } = useSearchListings(filters);
+
+  // Saved list — only fetch when authenticated
+  const { isAuthenticated } = useAuth();
+  const { data: savedListData } = useSavedList({ enabled: isAuthenticated });
+  const addMutation = useAddToSavedList();
+  const removeMutation = useRemoveFromSavedList();
+
+  // Track which listing is currently being toggled (for spinner feedback)
+  const [pendingId, setPendingId] = useState(null);
+
+  // Build a Set of saved listing IDs for O(1) lookup
+  const savedIds = useMemo(() => {
+    if (!savedListData) return null;
+    return new Set(savedListData.map((entry) => entry.listingId));
+  }, [savedListData]);
+
+  function handleSave(listingId) {
+    setPendingId(listingId);
+    addMutation.mutate(listingId, { onSettled: () => setPendingId(null) });
+  }
+
+  function handleUnsave(listingId) {
+    setPendingId(listingId);
+    removeMutation.mutate(listingId, { onSettled: () => setPendingId(null) });
+  }
 
   function handleHeroSearch({ query, location }) {
     updateFilter('query', query);
@@ -71,6 +100,10 @@ export function SearchPage() {
             sort={filters.sort}
             onSortChange={(value) => updateFilter('sort', value)}
             onMobileFilterToggle={() => setIsMobileFilterOpen((v) => !v)}
+            savedIds={isAuthenticated ? savedIds : null}
+            onSave={isAuthenticated ? handleSave : undefined}
+            onUnsave={isAuthenticated ? handleUnsave : undefined}
+            savePendingId={pendingId}
           />
 
           {data && (

@@ -3,31 +3,45 @@
 // "Search" section) — this component should never need its own data
 // transformation beyond what formatCurrency.js does.
 
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { formatCurrency } from '../../../utils/formatCurrency';
 
-export function ListingCard({ item }) {
-  // Local-only, not persisted — see the note in SearchPage.jsx: "favorites"
-  // isn't in the documented product scope or API contract yet.
-  const [isFavorite, setIsFavorite] = useState(false);
+/**
+ * @param {{ item: object, isSaved: boolean, onSave: (id: string) => void, onUnsave: (id: string) => void, isSavePending: boolean }} props
+ */
+export function ListingCard({ item, isSaved = false, onSave, onUnsave, isSavePending = false }) {
+  function handleSaveToggle(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isSavePending) return;
+    if (isSaved) {
+      onUnsave?.(item.id);
+    } else {
+      onSave?.(item.id);
+    }
+  }
 
   return (
     <div className="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-subtle hover:shadow-hover transition-shadow group flex flex-col h-full relative">
-      <button
-        onClick={() => setIsFavorite(!isFavorite)}
-        aria-label={isFavorite ? 'Remove from favorites' : 'Add to favorites'}
-        className="absolute top-3 right-3 z-10 p-1.5 bg-surface/80 rounded-full hover:bg-surface transition-colors"
-      >
-        <span
-          className={`material-symbols-outlined transition-colors ${
-            isFavorite ? 'text-error' : 'text-on-surface-variant hover:text-error'
-          }`}
-          style={isFavorite ? { fontVariationSettings: "'FILL' 1" } : {}}
+      {/* Save button — only rendered when parent supplies handlers (auth required) */}
+      {(onSave || onUnsave) && (
+        <button
+          onClick={handleSaveToggle}
+          aria-label={isSaved ? 'Remove from Saved List' : 'Save listing'}
+          aria-pressed={isSaved}
+          disabled={isSavePending}
+          className="absolute top-3 right-3 z-10 p-1.5 bg-surface/80 rounded-full hover:bg-surface transition-colors disabled:opacity-50"
         >
-          favorite
-        </span>
-      </button>
+          <span
+            className={`material-symbols-outlined transition-colors ${
+              isSaved ? 'text-primary' : 'text-on-surface-variant hover:text-primary'
+            }`}
+            style={isSaved ? { fontVariationSettings: "'FILL' 1" } : {}}
+          >
+            bookmark
+          </span>
+        </button>
+      )}
 
       <Link to={`/listings/${item.id}`} className="h-48 w-full bg-surface-variant relative block overflow-hidden">
         {item.thumbnailUrl ? (

@@ -24,6 +24,7 @@ import EditProfilePage from '../features/profile/pages/EditProfilePage';
 import ChatPage from '../features/messaging/pages/ChatPage';
 
 import NotificationsPage from '../features/notifications/pages/NotificationsPage';
+import SavedListPage from '../features/savedList/pages/SavedListPage';
 
 const router = createBrowserRouter([
   {
@@ -96,6 +97,10 @@ const router = createBrowserRouter([
       {
         path: '/notifications',
         element: <NotificationsPage />,
+      },
+      {
+        path: '/saved-list',
+        element: <SavedListPage />,
       },
     ],
   },
