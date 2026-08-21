@@ -4,9 +4,10 @@ async function searchItems(queryFilters) {
   const {
     q,
     categoryId,
+    location,
     minPrice,
     maxPrice,
-    status = 'PUBLISHED', // Default to only showing published items to public
+    status = 'PUBLISHED',
     minLat,
     maxLat,
     minLng,
@@ -21,11 +22,16 @@ async function searchItems(queryFilters) {
     where.categoryId = categoryId;
   }
 
+  // Text search across name and description
   if (q) {
     where.OR = [
       { name: { contains: q, mode: 'insensitive' } },
       { description: { contains: q, mode: 'insensitive' } }
     ];
+  }
+  // Location is a separate AND condition — narrows results to a specific area
+  if (location) {
+    where.approxLocation = { contains: location, mode: 'insensitive' };
   }
 
   if (minPrice !== undefined || maxPrice !== undefined) {
@@ -41,7 +47,7 @@ async function searchItems(queryFilters) {
   }
 
   const skip = (page - 1) * limit;
-  
+
   return searchRepo.findItems(where, skip, limit);
 }
 

@@ -12,6 +12,12 @@ import { EmptyState } from '../../../components/EmptyState';
 import { Pagination } from '../../../components/Pagination';
 import { formatCurrency } from '../../../utils/formatCurrency';
 
+function getImageUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  return `${import.meta.env.VITE_SOCKET_URL || 'http://localhost:3140'}${url}`;
+}
+
 const STATUS_STYLES = {
   DRAFT: 'bg-surface-container-high text-on-surface-variant',
   PUBLISHED: 'bg-primary-container text-on-primary',
@@ -71,7 +77,7 @@ export function MyListingsPage() {
             >
               <div className="w-16 h-16 rounded-lg bg-surface-variant flex-shrink-0 overflow-hidden flex items-center justify-center">
                 {item.images?.[0]?.url ? (
-                  <img src={item.images[0].url} alt="" className="w-full h-full object-cover" />
+                  <img src={getImageUrl(item.images[0].url)} alt="" className="w-full h-full object-cover" />
                 ) : (
                   <span className="material-symbols-outlined text-on-surface-variant">image</span>
                 )}

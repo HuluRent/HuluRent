@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import './FinalCTA.css';
 
 function FinalCTA() {
@@ -11,9 +12,9 @@ function FinalCTA() {
           out items they aren't using every day.
         </p>
 
-        <button type="button" className="final-cta__button">
+        <Link to="/listings/create" className="final-cta__button">
           List an Item Now
-        </button>
+        </Link>
       </div>
     </section>
   );

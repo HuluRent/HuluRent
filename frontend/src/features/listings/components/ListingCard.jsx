@@ -6,6 +6,16 @@
 import { Link } from 'react-router-dom';
 import { formatCurrency } from '../../../utils/formatCurrency';
 
+// Convert relative /uploads/... URLs to absolute backend URLs
+function getImageUrl(url) {
+  if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url; // already absolute
+  }
+  const backendUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:3140';
+  return `${backendUrl}${url}`;
+}
+
 /**
  * @param {{ item: object, isSaved: boolean, onSave: (id: string) => void, onUnsave: (id: string) => void, isSavePending: boolean }} props
  */
@@ -44,9 +54,9 @@ export function ListingCard({ item, isSaved = false, onSave, onUnsave, isSavePen
       )}
 
       <Link to={`/listings/${item.id}`} className="h-48 w-full bg-surface-variant relative block overflow-hidden">
-        {item.thumbnailUrl ? (
+        {(item.thumbnailUrl || item.images?.[0]?.url) ? (
           <img
-            src={item.thumbnailUrl}
+            src={getImageUrl(item.thumbnailUrl || item.images?.[0]?.url)}
             alt={item.name}
             className="w-full h-full object-cover rounded-t-xl group-hover:scale-105 transition-transform duration-300"
           />

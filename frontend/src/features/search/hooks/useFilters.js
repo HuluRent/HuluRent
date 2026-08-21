@@ -1,23 +1,36 @@
 // Local filter state for the browse/search page. Deliberately not in
 // AppShell-level context — filters are specific to this page's session,
-// not global app state (see ARCHITECTURE.md §4.1 on what belongs in Context
-// vs. component state).
+// not global app state.
+//
+// On first mount, reads ?query=, ?location=, and ?category= from the URL
+// so that home-page category cards and the hero search bar can deep-link
+// directly into a pre-filtered browse page.
 
 import { useState, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 const DEFAULT_FILTERS = {
   query: '',
   location: '',
+  categorySlug: '',   // used for URL-based category pre-selection
   categoryIds: [],
   minPrice: '',
   maxPrice: '',
   verifiedOnly: false,
-  sort: 'recommended',
+  sort: 'newest',
   page: 1,
 };
 
 export function useFilters() {
-  const [filters, setFilters] = useState(DEFAULT_FILTERS);
+  const [searchParams] = useSearchParams();
+
+  // Seed initial state from URL query params (set by category cards / hero search)
+  const [filters, setFilters] = useState(() => ({
+    ...DEFAULT_FILTERS,
+    query: searchParams.get('query') || '',
+    location: searchParams.get('location') || '',
+    categorySlug: searchParams.get('category') || '',
+  }));
 
   const updateFilter = useCallback((key, value) => {
     setFilters((prev) => ({ ...prev, [key]: value, page: key === 'page' ? value : 1 }));

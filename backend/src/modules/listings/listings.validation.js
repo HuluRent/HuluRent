@@ -7,7 +7,10 @@ const createListingSchema = z.object({
   pricePerUnit: z.coerce.number().positive(),
   pricingUnit: z.enum(['hour', 'day', 'week', 'month']),
   depositAmount: z.coerce.number().positive().optional(),
-  approxLocation: z.string().min(2).max(100)
+  approxLocation: z.string().min(2).max(100),
+  // Availability window — stored in the Availability model
+  availableFrom: z.string().optional(),
+  availableTo: z.string().optional(),
 });
 
 const updateListingSchema = createListingSchema.partial().extend({
