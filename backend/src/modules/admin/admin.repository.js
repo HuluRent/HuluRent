@@ -159,12 +159,29 @@ async function findAuditLogs({ page = 1, limit = 50 }) {
   return { items, total };
 }
 
+/**
+ * Update a user's isRestricted status.
+ */
+const updateUserRestriction = async (id, isRestricted) => {
+  return prisma.user.update({
+    where: { id },
+    data: { isRestricted },
+    select: { id: true, email: true, role: true, isRestricted: true }
+  });
+};
+
 module.exports = {
   findReports,
+<<<<<<< Updated upstream
   findReportById,
   updateReportStatus,
   findUsers,
   findUserById,
   updateUserRestriction,
   findAuditLogs
+=======
+  countReports,
+  updateReportStatus,
+  updateUserRestriction
+>>>>>>> Stashed changes
 };

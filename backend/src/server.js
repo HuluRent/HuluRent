@@ -11,9 +11,9 @@ const server = http.createServer(app);
 // Attach Socket.io for real-time messaging
 attachSocketServer(server);
 
-// TODO: once jobs/scheduler.js is implemented —
-// const { startScheduler } = require('./jobs/scheduler');
-// startScheduler();
+// Initialize background jobs (e.g. expiring bookings)
+const { initScheduler } = require('./jobs/scheduler');
+initScheduler();
 
 server.listen(env.port, () => {
   console.log(`hulurent-backend listening on port ${env.port}`);

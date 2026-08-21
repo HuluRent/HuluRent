@@ -1,4 +1,4 @@
-const logger = require('../../config/logger');
+const logger = require('../config/logger');
 
 async function expirePendingBookings() {
   logger.info('Running cron job: Expiring pending bookings...');

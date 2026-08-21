@@ -1,4 +1,4 @@
-const logger = require('../../config/logger');
+const logger = require('../config/logger');
 const { expireStaleInspections } = require('../modules/inspections/inspections.repository');
 const { INSPECTION_EXPIRY_HOURS } = require('../shared/constants/inspection-states');
 

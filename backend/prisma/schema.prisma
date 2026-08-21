@@ -13,8 +13,12 @@ model User {
   phone                String?                   @unique
   passwordHash         String
   role                 Role                      @default(USER)
+<<<<<<< Updated upstream
   isRestricted         Boolean                   @default(false)
   restrictionReason    String?
+=======
+  isRestricted         Boolean                   @default(false)    
+>>>>>>> Stashed changes
   createdAt            DateTime                  @default(now())
   updatedAt            DateTime                  @updatedAt
   auditEvents          AuditEvent[]
@@ -35,6 +39,7 @@ model User {
 
   @@index([email])
 }
+
 
 model Profile {
   id          String   @id @default(uuid())
