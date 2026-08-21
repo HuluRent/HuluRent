@@ -13,7 +13,7 @@ export function AuthProvider({ children }) {
   });
 
   const register = async (fullName, email, password) => {
-    const data = await registerRequest(fullName, email, password);
+    const data = await registerRequest(email, password);
 
     localStorage.setItem('token', data.accessToken);
     localStorage.setItem('user', JSON.stringify(data.user));
@@ -32,6 +32,11 @@ export function AuthProvider({ children }) {
     return data.user;
   };
 
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -45,6 +50,7 @@ export function AuthProvider({ children }) {
         login,
         register,
         logout,
+        updateUser,
         isAuthenticated: Boolean(user),
       }}
     >
