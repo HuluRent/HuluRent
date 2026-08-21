@@ -25,6 +25,8 @@ const initialValues = {
   pricingUnit: 'day',
   depositAmount: '',
   approxLocation: '',
+  availableFrom: '',
+  availableTo: '',
 };
 
 function validatePositiveDecimal(value, required = true) {
@@ -146,6 +148,13 @@ export default function ListingForm({
         formData.approxLocation.trim().length < 2
           ? 'Please provide an approximate location.'
           : '',
+      availableFrom: !formData.availableFrom ? 'Please set an availability start date.' : '',
+      availableTo: (() => {
+        if (!formData.availableTo) return 'Please set an availability end date.';
+        if (formData.availableFrom && formData.availableTo <= formData.availableFrom)
+          return 'End date must be after start date.';
+        return '';
+      })(),
     };
 
     setErrors(nextErrors);
@@ -366,6 +375,52 @@ export default function ListingForm({
             <p className="listing-form__error">
               {errors.depositAmount}
             </p>
+          )}
+        </div>
+
+        <div className="listing-form__field">
+          <label className="listing-form__label" htmlFor="listing-available-from">
+            Available From
+          </label>
+
+          <input
+            className="listing-form__input"
+            id="listing-available-from"
+            name="availableFrom"
+            type="date"
+            value={formData.availableFrom}
+            min={new Date().toISOString().split('T')[0]}
+            onChange={handleChange}
+            required
+          />
+
+          {errors.availableFrom && (
+            <p className="listing-form__error">{errors.availableFrom}</p>
+          )}
+        </div>
+
+        <div className="listing-form__field">
+          <label className="listing-form__label" htmlFor="listing-available-to">
+            Available Until
+          </label>
+
+          <input
+            className="listing-form__input"
+            id="listing-available-to"
+            name="availableTo"
+            type="date"
+            value={formData.availableTo}
+            min={formData.availableFrom || new Date().toISOString().split('T')[0]}
+            onChange={handleChange}
+            required
+          />
+
+          <p className="listing-form__hint">
+            The last date this item is available for rental.
+          </p>
+
+          {errors.availableTo && (
+            <p className="listing-form__error">{errors.availableTo}</p>
           )}
         </div>
 
