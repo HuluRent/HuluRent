@@ -1,7 +1,7 @@
 const { z } = require('zod');
 
 const createBookingSchema = z.object({
-  itemId: z.string().uuid(),
+  itemId: z.string(),
   startDate: z.coerce.date(),
   endDate: z.coerce.date()
 });

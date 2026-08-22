@@ -52,7 +52,7 @@ function attachSocketServer(httpServer) {
     // Delegate messaging events to the messaging module
     registerMessagingHandlers(socket, io);
 
-    socket.on('disconnect', (reason) => {
+    socket.on('disconnect', () => {
       // Nothing to clean up — Socket.io removes the socket from all rooms
       // automatically on disconnect.
     });

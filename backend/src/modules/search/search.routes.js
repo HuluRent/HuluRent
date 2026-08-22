@@ -1,6 +1,5 @@
 const { Router } = require('express');
 const controller = require('./search.controller');
-const validateQuery = require('../../shared/middleware/validate-request');
 const asyncHandler = require('../../shared/utils/async-handler');
 const { searchSchema } = require('./search.validation');
 

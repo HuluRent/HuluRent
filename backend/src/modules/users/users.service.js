@@ -5,7 +5,8 @@ const { NotFoundError } = require('../../shared/errors/NotFoundError');
 exports.getProfile = async (userId) => {
   const user = await repo.findUserWithProfile(userId);
   if (!user) throw new NotFoundError('User not found');
-  const { passwordHash, ...safeUser } = user;
+  const safeUser = { ...user };
+  delete safeUser.passwordHash;
   return safeUser;
 };
 
@@ -14,7 +15,10 @@ exports.getPublicProfile = async (userId) => {
   if (!user) throw new NotFoundError('User not found');
   
   // Strip out sensitive fields (adjust these based on your schema)
-  const { passwordHash, email, phone, ...safeUser } = user;
+  const safeUser = { ...user };
+  delete safeUser.passwordHash;
+  delete safeUser.email;
+  delete safeUser.phone;
   return safeUser;
 };
 
