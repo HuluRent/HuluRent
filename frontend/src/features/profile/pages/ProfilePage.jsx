@@ -6,6 +6,7 @@ import { useUserReviews } from '../../reviews/hooks/useSubmitReview';
 import { LoadingSpinner } from '../../../components/LoadingSpinner';
 import { EmptyState } from '../../../components/EmptyState';
 import { LogoutModal } from '../../../components/LogoutModal';
+import { IdentityVerification } from '../../identity/components/IdentityVerification';
 
 export function ProfilePage() {
   const { userId } = useParams();
@@ -102,6 +103,8 @@ export function ProfilePage() {
           </div>
         )}
       </div>
+
+      {isOwnProfile && <IdentityVerification />}
 
       {/* ── Reviews Section ────────────────────────────── */}
       <div className="mb-10">
