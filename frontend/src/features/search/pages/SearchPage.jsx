@@ -135,3 +135,4 @@ export function SearchPage() {
 }
 
 export default SearchPage;
+

@@ -21,12 +21,12 @@ function CategorySection() {
   const [expandedCategory, setExpandedCategory] = useState(null);
 
   const categories = Array.isArray(categoriesData)
-  ? categoriesData
-  : Array.isArray(categoriesData?.items)
-    ? categoriesData.items
-    : Array.isArray(categoriesData?.data)
-      ? categoriesData.data
-      : [];
+    ? categoriesData
+    : Array.isArray(categoriesData?.items)
+      ? categoriesData.items
+      : Array.isArray(categoriesData?.data)
+        ? categoriesData.data
+        : [];
 
   // Build parent-child tree
   const parents = categories.filter(c => !c.parentId);

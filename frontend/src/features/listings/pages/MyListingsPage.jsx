@@ -5,12 +5,9 @@ import { LoadingSpinner } from '../../../components/LoadingSpinner';
 import { EmptyState } from '../../../components/EmptyState';
 import { Pagination } from '../../../components/Pagination';
 import { formatCurrency } from '../../../utils/formatCurrency';
+import { getImageUrl } from '../../../utils/getImageUrl';
 
-function getImageUrl(url) {
-  if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  return `${import.meta.env.VITE_SOCKET_URL || 'http://localhost:3140'}${url}`;
-}
+
 
 const STATUS_STYLES = {
   DRAFT: 'bg-slate-100 text-slate-700 border-slate-200',
@@ -138,3 +135,5 @@ export function MyListingsPage() {
     </div>
   );
 }
+
+
