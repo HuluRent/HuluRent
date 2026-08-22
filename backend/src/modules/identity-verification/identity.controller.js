@@ -19,7 +19,11 @@ async function verify(req, res) {
 async function getStatus(req, res) {
   const userId = req.user.userId;
   const status = await identityService.getVerificationStatus(userId);
-  res.status(200).json({ status: status?.status || 'UNVERIFIED' });
+  res.status(200).json({ 
+    status: status?.status || 'UNVERIFIED',
+    updatedAt: status?.updatedAt || null,
+    reference: status?.reference || null
+  });
 }
 
 module.exports = {

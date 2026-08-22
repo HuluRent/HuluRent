@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   useIdentityVerificationStatus,
   useInitiateIdentityVerification,
@@ -21,6 +21,63 @@ export function IdentityVerification() {
   const [otp, setOtp] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [canResend, setCanResend] = useState(false);
+
+  useEffect(() => {
+    if (statusData?.status === 'PENDING' && statusData?.updatedAt) {
+      const updateTimer = () => {
+        const now = Date.now();
+        const updated = new Date(statusData.updatedAt).getTime();
+        const diff = now - updated;
+        const fiveMinutes = 5 * 60 * 1000;
+        
+        if (diff >= fiveMinutes) {
+          setCanResend(true);
+          setTimeLeft(0);
+        } else {
+          setCanResend(false);
+          setTimeLeft(Math.floor((fiveMinutes - diff) / 1000));
+        }
+      };
+
+      updateTimer();
+      const interval = setInterval(updateTimer, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [statusData?.status, statusData?.updatedAt]);
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const handleResend = () => {
+    setErrorMessage('');
+    setSuccessMessage('');
+
+    const idToUse = idNumber.trim() || statusData?.reference;
+    if (!idToUse) {
+       setErrorMessage('ID number not found. Please enter it again.');
+       return;
+    }
+    
+    initiateMut.mutate(idToUse, {
+      onSuccess: () => {
+        setSuccessMessage('OTP resent successfully. Please check your email.');
+      },
+      onError: (err) => {
+        const message =
+          typeof err?.response?.data?.error === 'string'
+            ? err.response.data.error
+            : typeof err?.message === 'string'
+              ? err.message
+              : 'Failed to resend OTP';
+        setErrorMessage(message);
+      },
+    });
+  };
 
   // Temporary debugging so we can see the real API error
   if (isError) {
@@ -220,6 +277,21 @@ export function IdentityVerification() {
                 'Verify Identity'
               )}
             </button>
+
+            <div className="flex justify-center mt-2">
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={!canResend || initiateMut.isPending}
+                className="text-sm font-medium text-primary hover:text-primary-dark disabled:text-text-muted disabled:cursor-not-allowed transition-colors"
+              >
+                {initiateMut.isPending 
+                  ? 'Resending...' 
+                  : canResend 
+                    ? 'Resend OTP' 
+                    : `Resend OTP in ${formatTime(timeLeft)}`}
+              </button>
+            </div>
           </form>
         </div>
       )}
