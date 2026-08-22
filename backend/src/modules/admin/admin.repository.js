@@ -83,6 +83,7 @@ async function findUsers({ page = 1, limit = 20, q }) {
         restrictionReason: true,
         createdAt: true,
         profile: { select: { displayName: true, avatarUrl: true } },
+        identityVerification: { select: { status: true } },
         _count: { select: { reportsAgainst: true, itemsOwned: true } }
       },
       orderBy: { createdAt: 'desc' }

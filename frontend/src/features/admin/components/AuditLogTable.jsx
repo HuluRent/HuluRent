@@ -38,6 +38,7 @@ export function AuditLogTable({ users = [], searchQuery, onSearchChange }) {
                 <th className="font-label-md text-label-md text-on-surface-variant py-3 px-4">Name</th>
                 <th className="font-label-md text-label-md text-on-surface-variant py-3 px-4">Email</th>
                 <th className="font-label-md text-label-md text-on-surface-variant py-3 px-4">Role</th>
+                <th className="font-label-md text-label-md text-on-surface-variant py-3 px-4">Verification</th>
                 <th className="font-label-md text-label-md text-on-surface-variant py-3 px-4">Joined</th>
                 <th className="font-label-md text-label-md text-on-surface-variant py-3 px-4">Actions</th>
               </tr>
@@ -50,6 +51,11 @@ export function AuditLogTable({ users = [], searchQuery, onSearchChange }) {
                   <td className="py-3 px-4">
                     <span className={`px-2 py-0.5 rounded-full font-label-sm text-label-sm ${u.role === 'ADMIN' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
                       {u.role}
+                    </span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <span className={`px-2 py-0.5 rounded-full font-label-sm text-label-sm ${u.identityVerification?.status === 'VERIFIED' ? 'bg-green-100 text-green-800' : u.identityVerification?.status === 'PENDING' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-800'}`}>
+                      {u.identityVerification?.status || 'UNVERIFIED'}
                     </span>
                   </td>
                   <td className="font-body-sm text-on-surface-variant py-3 px-4">

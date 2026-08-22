@@ -175,7 +175,8 @@ class BookingsService {
               }
             }
           }
-        }
+        },
+        reviews: true
       }
     });
 

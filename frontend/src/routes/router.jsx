@@ -33,6 +33,7 @@ import TermsOfUsePage from '../features/info/pages/TermsOfUsePage';
 import PrivacyPolicyPage from '../features/info/pages/PrivacyPolicyPage';
 
 import { RoleGuard } from '../components/RoleGuard';
+import { VerificationGuard } from '../components/VerificationGuard';
 import { AdminDashboardPage } from '../features/admin/pages/AdminDashboardPage';
 import AdminUsersPage from '../features/admin/pages/AdminUsersPage';
 import AdminReportsPage from '../features/admin/pages/AdminReportsPage';
@@ -63,7 +64,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/listings/create',
-        element: <ListingCreatePage />,
+        element: (
+          <VerificationGuard fallbackMessage="Verify your identity first to list on HuluRent.">
+            <ListingCreatePage />
+          </VerificationGuard>
+        ),
       },
       {
         path: '/listings/:listingId',
@@ -75,7 +80,11 @@ const router = createBrowserRouter([
       },
       {
         path: '/listings/:listingId/book',
-        element: <BookingRequestPage />,
+        element: (
+          <VerificationGuard fallbackMessage="Verify your identity first to rent on HuluRent.">
+            <BookingRequestPage />
+          </VerificationGuard>
+        ),
       },
       {
         path: '/my-listings',

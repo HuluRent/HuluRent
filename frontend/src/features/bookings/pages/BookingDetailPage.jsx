@@ -7,6 +7,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { LoadingSpinner } from '../../../components/LoadingSpinner';
 import { EmptyState } from '../../../components/EmptyState';
 import { formatCurrency } from '../../../utils/formatCurrency';
+import { ReviewForm } from '../../reviews/components/ReviewForm';
 
 export default function BookingDetailPage() {
   const { bookingId } = useParams();
@@ -58,6 +59,8 @@ export default function BookingDetailPage() {
 
   const isOwner = user?.id === booking.owner?.id;
   const isRenter = user?.id === booking.renter?.id;
+  
+  const hasReviewed = booking.reviews?.some(r => r.authorId === user?.id);
 
   const handleAction = (mutationFn) => {
     if (window.confirm('Are you sure you want to proceed with this action?')) {
@@ -133,6 +136,24 @@ export default function BookingDetailPage() {
               </div>
             </div>
           </div>
+          
+          {booking.status === 'COMPLETED' && !hasReviewed && (
+            <div className="bg-white rounded-2xl border border-surface-border p-6 shadow-sm">
+              <h2 className="text-xl font-bold text-text mb-4">Leave a Review</h2>
+              <p className="text-text-muted mb-6">How was your experience with {isOwner ? booking.renter?.displayName : booking.owner?.displayName}?</p>
+              <ReviewForm 
+                bookingId={booking.id} 
+                onSuccess={() => queryClient.invalidateQueries({ queryKey: ['booking', bookingId] })} 
+              />
+            </div>
+          )}
+          
+          {hasReviewed && (
+            <div className="bg-surface-muted rounded-2xl border border-surface-border p-6 text-center text-text-muted flex flex-col items-center">
+              <span className="material-symbols-outlined text-4xl mb-2 text-green-500">check_circle</span>
+              <p className="font-medium text-text">You have left a review for this booking.</p>
+            </div>
+          )}
         </div>
 
         <div>

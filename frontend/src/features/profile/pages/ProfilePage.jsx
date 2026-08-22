@@ -8,6 +8,8 @@ import { EmptyState } from '../../../components/EmptyState';
 import { LogoutModal } from '../../../components/LogoutModal';
 import { IdentityVerification } from '../../identity/components/IdentityVerification';
 
+import { ReportModal } from '../../reports/components/ReportModal';
+
 export function ProfilePage() {
   const { userId } = useParams();
   const { user: currentUser, logout } = useAuth();
@@ -16,6 +18,7 @@ export function ProfilePage() {
   const isOwnProfile = !userId || userId === currentUser?.id;
 
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
 
   const { data: profile, isLoading, isError } = usePublicProfile(profileUserId);
   const { data: reviewsData } = useUserReviews(profileUserId);
@@ -86,7 +89,7 @@ export function ProfilePage() {
           )}
         </div>
 
-        {isOwnProfile && (
+        {isOwnProfile ? (
           <div className="flex flex-col gap-3 w-full md:w-auto mt-4 md:mt-0 z-10">
             <Link to="/profile/edit" className="hr-btn-primary !py-2.5 flex items-center justify-center gap-2">
               <span className="material-symbols-outlined text-[20px]">edit</span>
@@ -100,6 +103,19 @@ export function ProfilePage() {
               <span className="material-symbols-outlined text-[20px]">logout</span>
               Log out
             </button>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-3 w-full md:w-auto mt-4 md:mt-0 z-10">
+            {currentUser && (
+              <button
+                type="button"
+                onClick={() => setShowReportModal(true)}
+                className="px-4 py-2.5 rounded-xl border border-red-200 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
+              >
+                <span className="material-symbols-outlined text-[20px]">flag</span>
+                Report User
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -157,6 +173,13 @@ export function ProfilePage() {
         isOpen={showLogoutModal}
         onConfirm={handleLogoutConfirm}
         onCancel={() => setShowLogoutModal(false)}
+      />
+
+      <ReportModal
+        isOpen={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        subjectId={profileUserId}
+        subjectName={profile.displayName}
       />
     </div>
   );

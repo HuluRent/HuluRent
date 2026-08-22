@@ -35,7 +35,9 @@ export function ListingCreatePage() {
       {error && !createdListingId && (
         <div className="mb-8 p-4 bg-red-50 border border-red-100 rounded-xl flex items-start gap-3 text-red-700 text-sm font-medium">
           <span className="material-symbols-outlined text-red-500">error</span>
-          Couldn't create the listing. Try again in a moment.
+          {error.response?.data?.error === 'Verify your identity first to continue.'
+            ? 'Verify your identity first.'
+            : "Couldn't create the listing. Try again in a moment."}
         </div>
       )}
 

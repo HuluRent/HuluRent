@@ -28,6 +28,11 @@ async function findById(id) {
               displayName: true,
               avatarUrl: true
             }
+          },
+          identityVerification: {
+            select: {
+              status: true
+            }
           }
         }
       }
@@ -44,7 +49,7 @@ async function findById(id) {
       avatarUrl: item.owner.profile?.avatarUrl || null,
       rating: 4.8,
       reviewCount: 12,
-      isVerified: true
+      isVerified: item.owner.identityVerification?.status === 'VERIFIED'
     } : null
   };
 }
@@ -83,6 +88,11 @@ async function findAll(filters = {}) {
               displayName: true,
               avatarUrl: true
             }
+          },
+          identityVerification: {
+            select: {
+              status: true
+            }
           }
         }
       }
@@ -98,7 +108,7 @@ async function findAll(filters = {}) {
       avatarUrl: item.owner.profile?.avatarUrl || null,
       rating: 4.8,
       reviewCount: 12,
-      isVerified: true
+      isVerified: item.owner.identityVerification?.status === 'VERIFIED'
     } : null
   }));
 }

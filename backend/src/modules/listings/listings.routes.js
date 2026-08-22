@@ -7,6 +7,8 @@ const asyncHandler = require('../../shared/utils/async-handler');
 const upload = require('../../shared/middleware/upload');
 const { createListingSchema, updateListingSchema } = require('./listings.validation');
 
+const requireVerifiedUser = require('../../shared/middleware/requireVerifiedUser');
+
 const listingsRouter = Router();
 
 listingsRouter.get('/', asyncHandler(controller.list));
@@ -16,6 +18,7 @@ listingsRouter.get('/:id', asyncHandler(controller.getById));
 listingsRouter.post(
   '/',
   authenticate,
+  requireVerifiedUser,
   upload.array('images', 5),
   validateRequest(createListingSchema),
   asyncHandler(controller.create)

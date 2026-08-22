@@ -75,7 +75,11 @@ export function BookingRequestForm({ item }) {
         {mutation.isError && (
           <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-xl border border-red-100 flex items-start gap-3">
             <span className="material-symbols-outlined text-red-500">error</span>
-            <p className="text-sm font-medium">{mutation.error.response?.data?.error?.message || mutation.error.message || 'An error occurred while booking. Please try again.'}</p>
+            <p className="text-sm font-medium">
+              {mutation.error.response?.data?.error === 'Verify your identity first to continue.'
+                ? 'Verify your identity first.'
+                : mutation.error.response?.data?.error?.message || mutation.error.response?.data?.error || mutation.error.message || 'An error occurred while booking. Please try again.'}
+            </p>
           </div>
         )}
 

@@ -11,9 +11,12 @@ const {
 } = require('./bookings.schemas');
 const { getBookingOwnerId } = require('./bookings.repository');
 
+const requireVerifiedUser = require('../../shared/middleware/requireVerifiedUser');
+
 router.post(
   '/',
   authenticate,
+  requireVerifiedUser,
   validateRequest(createBookingSchema),
   bookingsController.createBooking
 );
