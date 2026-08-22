@@ -8,7 +8,7 @@ class EvidenceService {
   /**
    * Records a new piece of photographic evidence
    */
-  async submitEvidence({ bookingId, uploaderId, role, photoUrl, stage }) {
+  async submitEvidence({ bookingId, uploaderId, photoUrl, stage }) {
     
     const validStages = ['PICKUP', 'RETURN'];
     if (!validStages.includes(stage)) {

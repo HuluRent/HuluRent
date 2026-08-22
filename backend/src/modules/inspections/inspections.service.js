@@ -7,7 +7,6 @@ const auditService = require('../audit/audit.service');
 const { NotFoundError } = require('../../shared/errors/NotFoundError');
 const { BadRequestError } = require('../../shared/errors/BadRequestError');
 const { ForbiddenError } = require('../../shared/errors/ForbiddenError');
-const logger = require('../../config/logger');
 
 class InspectionsService {
 

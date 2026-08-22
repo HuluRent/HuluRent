@@ -10,34 +10,35 @@ const {
 const authenticate = require('../../shared/middleware/authenticate');
 const validateRequest = require('../../shared/middleware/validate-request');
 const validateQuery = require('./messaging.query-validation');
+const asyncHandler = require('../../shared/utils/async-handler');
 
 const messagingRouter = Router();
 
 messagingRouter.get(
   '/conversations',
   authenticate,
-  controller.listConversations
+  asyncHandler(controller.listConversations)
 );
 
 messagingRouter.get(
   '/conversations/:conversationId/messages',
   authenticate,
   validateQuery(messagePaginationSchema),
-  controller.listMessages
+  asyncHandler(controller.listMessages)
 );
 
 messagingRouter.post(
   '/conversations/:conversationId/messages',
   authenticate,
   validateRequest(sendMessageSchema),
-  controller.createMessage
+  asyncHandler(controller.createMessage)
 );
 
 messagingRouter.post(
   '/conversations',
   authenticate,
   validateRequest(startConversationSchema),
-  controller.startConversation
+  asyncHandler(controller.startConversation)
 );
 
 module.exports = { messagingRouter };

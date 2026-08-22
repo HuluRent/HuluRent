@@ -32,7 +32,7 @@ const login = async ({email, password}) => {
     
 } 
 
-const logout = async ({token}) => {
+const logout = async () => {
     return {message: 'Logout successful'};
 };
 

@@ -26,7 +26,7 @@ const messagePaginationSchema = z.object({
 });
 
 const startConversationSchema = z.object({
-  listingId: z.string().uuid('Invalid listing ID'),
+  listingId: z.string().min(1, 'Listing ID is required'),
 });
 
 module.exports = {
